@@ -27,6 +27,6 @@
     "touch": "^1.0.0"
   },
   "bin": {
-  "autograder": "./index.js"
+  "autolab": "./index.js"
   }
 }

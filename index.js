@@ -14,6 +14,8 @@ var request = require('request');
 var files = require('./lib/files');
 var https = require('https');
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 hostpref = new Preferences('autolab.host');
 if (!hostpref.host) {
 	hostpref.host = {
@@ -58,38 +60,16 @@ function init(callback) {
 		}
 	}
 	];
-
-	// if (!hostpref.host) {
-	// 	questions = questions.concat(
-	// 	{
-	// 		name: 'host',
-	// 		type: 'input',
-	// 		message: 'Enter the host to be accessed',
-	// 		validate: function(value) {
-	// 			if (value.length) {
-	// 				return true;
-	// 			}
-	// 			else {
-	// 				return 'Please enter the host';
-	// 			}
-	// 		}
-	// 	});
-	// }
-
-	if (prefs.gitlab && prefs.gitlab.time - Math.floor(Date.now() / 1000) < 7200) {
-		timeLeft = 120 + (Math.floor(prefs.gitlab.time/60) - Math.floor(Date.now() / 60000));
-		console.log(chalk.blue("You are already authenticated. If this is not you, or you want to exit the session, use 'autograder exit'. Session will expire in " + timeLeft + ' minutes'));
+	var sesstime =  Math.floor(Date.now() / 1000) - prefs.gitlab.time
+	if (prefs.gitlab && sesstime < 7200 && sesstime > 0 ) {
+		timeLeft = 120 - (Math.floor(sesstime/60));
+		console.log(chalk.blue("You are already authenticated. If this is not you, or you want to exit the session, use 'autolab exit'. Session will expire in " + timeLeft + ' minutes'));
 	} else {
 		inquirer.prompt(questions).then(function(answers) {
 			var status = new Spinner('Authenticating you, please wait ...');
 			status.start()
-			var options = {
-				url: hostpref.host.host +'/api/v3/session?login=' + arguments['0']['username'] + '&password=' + arguments['0']['password'],
-				strictSSL: false,
-				secureProtocol: 'TLSv1_method'
-			}
 			request.post(
-				options,
+				hostpref.host.host +'/api/v3/session?login=' + arguments['0']['username'] + '&password=' + arguments['0']['password'],
 				function (error, response, body) {
 					status.stop()
 					token = JSON.parse(body)['private_token'];
@@ -104,9 +84,11 @@ function init(callback) {
 							time: Math.floor(Date.now() / 1000)
 						};
 						console.log(chalk.green('Successfully authenticated!'));
-						git.init();
-						console.log(chalk.white('Hi ' + JSON.parse(body)['name'].split(' ')[0] + ", proceed to making commits in this repository. See 'autograder --help' for help."));
-						console.log(chalk.blue("Your session will be active for the next two hours. Use 'autograder exit' to exit the session."));
+						if (!('.git' in _.without(fs.readdirSync('.')))) {
+							git.init();
+						}
+						console.log(chalk.white('Hi ' + JSON.parse(body)['name'].split(' ')[0] + ", proceed to making commits in this repository. See 'autolab --help' for help."));
+						console.log(chalk.blue("Your session will be active for the next two hours. Use 'autolab exit' to exit the session."));
 					}
 				});
 		});
@@ -136,7 +118,7 @@ function createRepo(callback) {
 	{
 		name: 'lab',
 		type: 'input',
-		message: 'Enter the Lab No. to be created',
+		message: 'Enter the Lab Name to be created',
 		validate: function(value) {
 			if (value.length) {
 				return true;
@@ -148,26 +130,26 @@ function createRepo(callback) {
 	}];
 	inquirer.prompt(questions).then(function (answers) {
 		var prefs = new Preferences('in.ac.bits-goa.autolab');
-		var labno = 'lab' + arguments['0']['lab'];
-		var options = {
-				url: hostpref.host.host +'/api/v3/projects?private_token=' + prefs.gitlab.token,
-				strictSSL: false,
-				secureProtocol: 'TLSv1_method'
-			}
+		var labno = arguments['0']['lab'];
 		request.post(
-			options,
+			hostpref.host.host +'/api/v3/projects?private_token=' + prefs.gitlab.token,
 			{ json: {'name' : labno}},
 			function (error, response, body) {
+				if (error) {
+					console.log(error);
+					return;
+				}
 				if (response.statusCode == 201) {
 					console.log(chalk.green('Successfully created online repo ' + labno));
-					git.addRemote('autolab', hostpref.host.host +'/' + prefs.gitlab.username + '/' + labno);
+					// git.addRemote('autolab', hostpref.host.host +'/' + prefs.gitlab.username + '/' + labno);
 				}
 				if (response.statusCode == 401 || response.statusCode == 403 ) {
-					console.log(chalk.red("Authentication problem!. Use 'autograder init' to authenticate." ))
+					console.log(chalk.red("Authentication problem!. Use 'autolab init' to authenticate." ))
 				}
 				if (response.statusCode == 400) {
 					console.log(chalk.yellow("Already created " + labno))
 				}
+				console.log(response.statusCode)
 
 		});
 	});
@@ -190,20 +172,15 @@ function deleteRepo(callback) {
 	}];
 	inquirer.prompt(questions).then(function (answers) {
 		var prefs = new Preferences('in.ac.bits-goa.autolab');
-		var labno = 'lab' + arguments['0']['lab'];
-		var options = {
-			url: hostpref.host.host +'/projects/' + prefs.gitlab.username + '%2F' +labno +'?private_token=' + prefs.gitlab.token,
-			strictSSL: false,
-			secureProtocol: 'TLSv1_method'
-		}
+		var labno = arguments['0']['lab'];
 		request.delete(
-			options,
+			hostpref.host.host +'/api/v3/projects/' + prefs.gitlab.username + '%2F' +labno +'?private_token=' + prefs.gitlab.token,
 			function (error, response, body) {
-				if (response.statusCode == 201) {
+				if (response.statusCode == 200) {
 					console.log(chalk.green('Successfully deleted' + labno));
 				}
 				if (response.statusCode == 401 || response.statusCode == 403 ) {
-					console.log(chalk.red("Authentication problem!. Use 'autograder init' to authenticate." ))
+					console.log(chalk.red("Authentication problem!. Use 'autolab init' to authenticate." ))
 				}
 				if (response.statusCode == 400) {
 					console.log(chalk.yellow("No online repo with the name " + labno))
@@ -240,14 +217,14 @@ var argv = require('minimist')(process.argv.slice(2));
 
 if (argv._[0] == 'init') {
 	init();
-} else if (argv._[0] == 'online') {
+} else if (argv._[0] == 'git') {
 	if (argv._[1] == 'create') {
 		createRepo();
 	}
 	if (argv._[1] == 'delete') {
 		deleteRepo();
 	}
-	if (argv._[1] == 'changehost') {
+	if (argv._[1] == 'changeserver') {
 		changeHost();
 	}
 } else if (argv._[0] == 'push') {
@@ -256,7 +233,7 @@ if (argv._[0] == 'init') {
 	var prefs = new Preferences('in.ac.bits-goa.autolab');
 	prefs.gitlab = {
 		token: '',
-		time: Math.floor(Date.now() / 1000) + 9999
+		time: 0
 	};
 	console.log('Successfully exited!')
 
