@@ -60,13 +60,14 @@ function init(callback) {
 		}
 	}
 	];
-	var sesstime =  Math.floor(Date.now() / 1000) - prefs.gitlab.time
-	if (prefs.gitlab && sesstime < 7200 && sesstime > 0 ) {
-		timeLeft = 120 - (Math.floor(sesstime/60));
+	
+	if (prefs.gitlab && Math.floor(Date.now() / 1000) - prefs.gitlab.time < 7200 && Math.floor(Date.now() / 1000) - prefs.gitlab.time > 0 ) {
+		timeLeft = 120 - ((Math.floor(prefs.gitlab.time < 7200 && Math.floor(Date.now() / 1000) - prefs.gitlab.time)/60));
 		console.log(chalk.blue("You are already authenticated. If this is not you, or you want to exit the session, use 'autolab exit'. Session will expire in " + timeLeft + ' minutes'));
 	} else {
 		inquirer.prompt(questions).then(function(answers) {
 			var status = new Spinner('Authenticating you, please wait ...');
+			pass = arguments['0']['password'];
 			status.start()
 			request.post(
 				hostpref.host.host +'/api/v3/session?login=' + arguments['0']['username'] + '&password=' + arguments['0']['password'],
@@ -80,6 +81,7 @@ function init(callback) {
 						prefs.gitlab = {
 							name: JSON.parse(body)['name'].split(' ')[0],
 							username: JSON.parse(body)['username'],
+							password: pass,
 							token: token,
 							time: Math.floor(Date.now() / 1000)
 						};
@@ -141,7 +143,7 @@ function createRepo(callback) {
 				}
 				if (response.statusCode == 201) {
 					console.log(chalk.green('Successfully created online repo ' + labno));
-					// git.addRemote('autolab', hostpref.host.host +'/' + prefs.gitlab.username + '/' + labno);
+					git.addRemote('autolab', (hostpref.host.host.search(/https:\/\//)? 'http://' : 'https://') + prefs.gitlab.username.replace(/@/g, '%40') + ':' + prefs.gitlab.password.replace(/@/g, '%40') + '@' + hostpref.host.host.replace(/^https?\:\/\//i, "") +'/' + prefs.gitlab.username + '/' + labno);
 				}
 				if (response.statusCode == 401 || response.statusCode == 403 ) {
 					console.log(chalk.red("Authentication problem!. Use 'autolab init' to authenticate." ))
@@ -149,9 +151,8 @@ function createRepo(callback) {
 				if (response.statusCode == 400) {
 					console.log(chalk.yellow("Already created " + labno))
 				}
-				console.log(response.statusCode)
-
-		});
+				console.log(response.statusCode);
+			});
 	});
 }
 
@@ -235,6 +236,6 @@ if (argv._[0] == 'init') {
 		token: '',
 		time: 0
 	};
-	console.log('Successfully exited!')
+	console.log('Successfully exited!');
 
 }
