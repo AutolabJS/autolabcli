@@ -10,7 +10,6 @@ var git = require('simple-git')();
 var touch = require('touch');
 var fs = require('fs');
 var request = require('request');
-var files = require('./lib/files');
 var https = require('https');
 var Table = require('cli-table');
 
@@ -89,7 +88,7 @@ function init(callback) {
 							bitsid: bitsid,
 							time: Math.floor(Date.now() / 1000)
 						};
-						console.log(chalk.green('Successfully authenticated!'));
+						console.log(chalk.green('\nSuccessfully authenticated!'));
 						if (!('.git' in _.without(fs.readdirSync('.')))) {
 							git.init();
 						}
@@ -199,6 +198,7 @@ function push() {
 	{
 		name: 'choice',
 		type: 'list',
+		message: 'Select what you want to do? (Space to select)',
 		choices: ['Add Commit Push', 'Push']
 	},
 	{
@@ -206,7 +206,7 @@ function push() {
 		type: 'input',
 		message: 'Enter the commit message',
 		when: function(answers){
-			return answers.choice == 'Add or Commit';
+			return answers.choice == 'Add Commit Push';
 		},
 		validate: function(value) {
 			if (value.length) {
