@@ -1,11 +1,10 @@
 #!/usr/bin/env node
 var chalk = require('chalk');
 var clear = require('clear');
-var CLI = require('clui');
 var figlet = require('figlet');
 var inquirer = require('inquirer');
 var Preferences = require('preferences');
-var Spinner = CLI.Spinner;
+var Spinner = require('cli-spinner').Spinner;
 var _ = require('lodash');
 var git = require('simple-git')();
 var touch = require('touch');
@@ -68,6 +67,7 @@ function init(callback) {
 	} else {
 		inquirer.prompt(questions).then(function(answers) {
 			var status = new Spinner('Authenticating you, please wait ...');
+			status.setSpinnerString(0);
 			pass = arguments['0']['password'];
 			bitsid = arguments['0']['bitsid'];
 			username = 'f' + bitsid.substr(0,4) + bitsid.substr(8,3);
@@ -222,6 +222,7 @@ function push() {
 				git.add('./*').commit(answers.message);
 			}
 		var status = new Spinner('Pushing the code');
+		status.setSpinnerString(0);
 		status.start();
 		git.push('autolab', 'master');
 		status.stop();
@@ -232,6 +233,7 @@ function submit() {
 	var prefs = new Preferences('in.ac.bits-goa.autolab');
 	var commit_hash;
 	var spinner = new Spinner('Submitting results. Please wait ...');
+	spinner.setSpinnerString(0);
 	git.revparse(['--verify','HEAD'], function(err, data) {
 		commit_hash = data;
 		spinner.start();
@@ -250,7 +252,6 @@ function submit() {
 
 		socket.on('scores', function(data) {
 			total_score=0;
-			spinner.message('Scored successfully. Please wait for further processes');
 			console.log(chalk.green('\nSubmission successful. Retreiving results'));
 			var table = new Table({
 				chars: { 'top': '═' , 'top-mid': '╤' , 'top-left': '╔' , 'top-right': '╗'
