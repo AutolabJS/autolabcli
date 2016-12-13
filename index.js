@@ -13,6 +13,7 @@ var fs = require('fs');
 var request = require('request');
 var files = require('./lib/files');
 var https = require('https');
+var Table = require('cli-table');
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
@@ -34,15 +35,15 @@ function init(callback) {
 
 	var questions = [
 	{
-		name: 'username',
+		name: 'bitsid',
 		type: 'input',
-		message: 'Enter your Gitlab username or email address:',
+		message: 'Enter your BITS ID:',
 		validate: function(value) {
-			if (value.length) {
+			if (value.match(/[0-9]{4}[A-C][1-9][A-CPT][PS1-9][0-9]{3}[G]/g)) {
 				return true;
 			}
 			else {
-				return 'Please enter your Gitlab username or e-mail address';
+				return 'Enter the correct BITS ID';
 			}
 		}
 	},
@@ -58,7 +59,7 @@ function init(callback) {
 				return 'Please enter your password';
 			}
 		}
-	}
+	},
 	];
 	
 	if (prefs.gitlab && Math.floor(Date.now() / 1000) - prefs.gitlab.time < 7200 && Math.floor(Date.now() / 1000) - prefs.gitlab.time > 0 ) {
@@ -68,9 +69,11 @@ function init(callback) {
 		inquirer.prompt(questions).then(function(answers) {
 			var status = new Spinner('Authenticating you, please wait ...');
 			pass = arguments['0']['password'];
+			bitsid = arguments['0']['bitsid'];
+			username = 'f' + bitsid.substr(0,4) + bitsid.substr(8,3);
 			status.start()
 			request.post(
-				hostpref.host.host +'/api/v3/session?login=' + arguments['0']['username'] + '&password=' + arguments['0']['password'],
+				hostpref.host.host +'/api/v3/session?login=' + username + '&password=' + arguments['0']['password'],
 				function (error, response, body) {
 					status.stop()
 					token = JSON.parse(body)['private_token'];
@@ -83,6 +86,7 @@ function init(callback) {
 							username: JSON.parse(body)['username'],
 							password: pass,
 							token: token,
+							bitsid: bitsid,
 							time: Math.floor(Date.now() / 1000)
 						};
 						console.log(chalk.green('Successfully authenticated!'));
@@ -193,9 +197,17 @@ function deleteRepo(callback) {
 function push() {
 	var questions = [
 	{
+		name: 'choice',
+		type: 'list',
+		choices: ['Add Commit Push', 'Push']
+	},
+	{
 		name: 'message',
 		type: 'input',
 		message: 'Enter the commit message',
+		when: function(answers){
+			return answers.choice == 'Add or Commit';
+		},
 		validate: function(value) {
 			if (value.length) {
 				return true;
@@ -205,14 +217,84 @@ function push() {
 			}
 		}
 	}];
-
 	inquirer.prompt(questions).then(function (answers) {
+		if (answers.choice == 'Add Commit Push') {
+				git.add('./*').commit(answers.message);
+			}
 		var status = new Spinner('Pushing the code');
 		status.start();
-		git.add('./*').commit(arguments[0]['message']).push('autolab', 'master');
+		git.push('autolab', 'master');
 		status.stop();
+		});
+}
+
+function submit() {
+	var prefs = new Preferences('in.ac.bits-goa.autolab');
+	var commit_hash;
+	var spinner = new Spinner('Submitting results. Please wait ...');
+	git.revparse(['--verify','HEAD'], function(err, data) {
+		commit_hash = data;
+		spinner.start();
+		var socket = require('socket.io-client')(hostpref.host.host+':'+'9000');
+		socket.emit('submission', [prefs.gitlab.bitsid, 'lab0', commit_hash, 'java']);
+		socket.on('invalid', function(data) {
+			console.log(chalk.red('Access Denied. Please try submitting again'));
+			process.exit(0);
+		});
+
+		socket.on('submission_pending',function(data)
+		{
+			console.log(chalk.yellow('You have a pending submission. Please try after some time.'));
+			process.exit(0);
+		});
+
+		socket.on('scores', function(data) {
+			total_score=0;
+			spinner.message('Scored successfully. Please wait for further processes');
+			console.log(chalk.green('\nSubmission successful. Retreiving results'));
+			var table = new Table({
+				chars: { 'top': '═' , 'top-mid': '╤' , 'top-left': '╔' , 'top-right': '╗'
+		         , 'bottom': '═' , 'bottom-mid': '╧' , 'bottom-left': '╚' , 'bottom-right': '╝'
+		         , 'left': '║' , 'left-mid': '╟' , 'mid': '─' , 'mid-mid': '┼'
+		         , 'right': '║' , 'right-mid': '╢' , 'middle': '│' },
+				head: ['Test Case #', 'Status', 'Score'],
+				colWidths: [15,25,15]
+			});
+			for(i=0;i<data.marks.length;i++)
+		    {
+		    	total_score=total_score+ parseInt(data.marks[i]);
+		    	status = "Accepted";
+		    	if(data.comment[i]==0) {
+		    		status="Wrong Answer"
+		    	}
+		    	if(data.comment[i]==1 && data.marks[i]==0) {
+		    		status="Compilation Error"
+		    	}
+		    	if(data.comment[i]==2 && data.marks[i]==0) {
+		    		status="Timeout"
+		    	}
+		    	table.push(
+		    		[(i+1), status, data.marks[i]]
+		    		);
+		    }
+		    console.log(table.toString());
+		    if (total_score < 0) {
+		    	total_score = 0;
+		    }
+		    if (data.status!=0) {
+		    	console.log(chalk.red('Penalty:') + data.penalty);
+		    }
+		    console.log('Total Score = ' + chalk.blue(total_score));
+		    if (data.status==0) {
+		    	console.log(chalk.yellow('Warning:') + 'This lab is not active. The result of this evaluation is not added to the scoreboard.');
+		    }
+		    spinner.stop();
+		    process.exit(0);
+		});
 	});
 }
+
+
 
 var argv = require('minimist')(process.argv.slice(2));
 
@@ -230,7 +312,10 @@ if (argv._[0] == 'init') {
 	}
 } else if (argv._[0] == 'push') {
 	push();
-}else if (argv._[0] == 'exit'){
+} else if (argv._[0] == 'submit') {
+	submit();
+}
+else if (argv._[0] == 'exit'){
 	var prefs = new Preferences('in.ac.bits-goa.autolab');
 	prefs.gitlab = {
 		token: '',
