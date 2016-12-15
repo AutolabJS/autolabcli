@@ -33,15 +33,15 @@ function init(callback) {
 
 	var questions = [
 	{
-		name: 'bitsid',
+		name: 'username',
 		type: 'input',
-		message: 'Enter your BITS ID:',
+		message: 'Enter your GitLab username',
 		validate: function(value) {
-			if (value.match(/[0-9]{4}[A-C][1-9][A-CPT][PS1-9][0-9]{3}[G]/g)) {
+			if (value.length) {
 				return true;
 			}
 			else {
-				return 'Enter the correct BITS ID';
+				return 'Please enter your username';
 			}
 		}
 	},
@@ -68,11 +68,10 @@ function init(callback) {
 			var status = new Spinner('Authenticating you, please wait ...');
 			status.setSpinnerString(0);
 			pass = arguments['0']['password'];
-			bitsid = arguments['0']['bitsid'];
-			username = 'f' + bitsid.substr(0,4) + bitsid.substr(8,3);
+			username = arguments['0']['username'];
 			status.start()
 			request.post(
-				hostpref.host.host +'/api/v3/session?login=' + username + '&password=' + arguments['0']['password'],
+				hostpref.host.host +'/api/v3/session?login=' + username + '&password=' + pass,
 				function (error, response, body) {
 					status.stop()
 					token = JSON.parse(body)['private_token'];
@@ -85,7 +84,6 @@ function init(callback) {
 							username: JSON.parse(body)['username'],
 							password: pass,
 							token: token,
-							bitsid: bitsid,
 							time: Math.floor(Date.now() / 1000)
 						};
 						console.log(chalk.green('\nSuccessfully authenticated!'));
@@ -238,7 +236,7 @@ function submit() {
 		commit_hash = data;
 		spinner.start();
 		var socket = require('socket.io-client')(hostpref.host.host+':'+'9000');
-		socket.emit('submission', [prefs.gitlab.bitsid, 'lab0', commit_hash, 'java']);
+		socket.emit('submission', [prefs.gitlab.username, 'lab0', commit_hash, 'java']);
 		socket.on('invalid', function(data) {
 			console.log(chalk.red('Access Denied. Please try submitting again'));
 			process.exit(0);
