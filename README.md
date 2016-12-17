@@ -6,7 +6,7 @@ A client command line interface for submissions to [JavaAutolab](https://github.
 * `autolab git create` - Creates a repository on gitlab
 * `autolab git delete` - Deletes the specified repository
 * `autolab git changeserver` - To change the host of the gitlab server
-* `autolab push` - Adds, commits, pushes the code
+* `autolab git push` - Adds, commits, pushes the code
 * `autolab submit` -  To submit the code to JavaAutolab and fetch the results
 
 
