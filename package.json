@@ -20,6 +20,7 @@
     "figlet": "^1.2.0",
     "gitlab": "^1.7.1",
     "inquirer": "^1.2.3",
+    "jshint": "^2.9.4",
     "lodash": "^4.17.2",
     "minimist": "^1.2.0",
     "preferences": "^0.2.1",
