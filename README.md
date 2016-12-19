@@ -16,10 +16,23 @@ $ git clone https://github.com/prasadtalasila/autolabcli
 $ cd autolabcli
 ```
 
+###Normal Installation
 Install autolab and its dependencies
  ```
-$ npm install -g
+$ npm install -g --production
  ```
+###Development Installation
+Install:
+```
+$ npm install
+$ npm install grunt-cli -g
+```
+Test:
+```
+$ grunt test
+```
+
+Replace `autolab` with `node index.js` when running commands.
 
 ##Screenshot
 ![autolab-screenshot](https://cloud.githubusercontent.com/assets/13795788/21156451/e1d7cf04-c19b-11e6-9174-593ab68be76a.png)

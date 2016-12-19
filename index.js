@@ -16,7 +16,7 @@ touch('.gitignore');
 var conf = 0;
 fs.readFile('.gitignore', function (err, data) {
   if (err) throw err;
-  if(data.indexOf('.config.json') < 0){
+  if(data.indexOf('.config.json') < 0) {
   	fs.appendFile('.gitignore', '\n.config.json', function (err) {});
   }
 });
@@ -32,7 +32,8 @@ var argv = require('minimist')(process.argv.slice(2));
 
 if (argv._[0] == 'init') {
 	init();
-} else if (argv._[0] == 'git') {
+}
+else if (argv._[0] == 'git') {
 	if (argv._[1] == 'create') {
 		git.createRepo();
 	}
@@ -45,10 +46,11 @@ if (argv._[0] == 'init') {
 	if (argv._[1] == 'push') {
 		git.push();
 	}
-} else if (argv._[0] == 'submit') {
+}
+else if (argv._[0] == 'submit') {
 	submit();
 }
-else if (argv._[0] == 'exit'){
-	rev.exit;
+else if (argv._[0] == 'exit') {
+	rev.exit();
 	console.log('Successfully exited!');
 }
