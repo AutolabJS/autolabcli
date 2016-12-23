@@ -1,13 +1,14 @@
 #AutoLab CLI
 A client command line interface for submissions to [JavaAutolab](https://github.com/prasadtalasila/JavaAutolab).
 ##Commands
-* `autolab init` - Takes the credentials.
-* `autolab exit` - Wipes off the credentials. Will have to do an init again, to work with autolab.
-* `autolab git create` - Creates a repository on gitlab
-* `autolab git delete` - Deletes the specified repository
+* `autolab init` - Initializes local repository and authenticates
+* `autolab exit` - Wipes off the credentials from the system
+* `autolab git create` - Creates a repository on Gitlab
+* `autolab git delete` - Deletes the specified repository from Gitlab
 * `autolab git changeserver` - To change the host of the gitlab server
 * `autolab git push` - Adds, commits, pushes the code
 * `autolab submit` -  To submit the code to JavaAutolab and fetch the results
+* `autolab exit` - Print help manual
 
 
 ##Installation

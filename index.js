@@ -9,6 +9,7 @@ var init = require('./lib/init');
 var git = require('./lib/git');
 var submit = require('./lib/submit');
 var rev = require('./lib/rev');
+var help = require('./lib/help');
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
@@ -49,6 +50,9 @@ else if (argv._[0] == 'git') {
 }
 else if (argv._[0] == 'submit') {
 	submit();
+}
+else if (argv._[0] == 'help') {
+	help();
 }
 else if (argv._[0] == 'exit') {
 	rev.exit();
