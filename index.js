@@ -23,9 +23,11 @@ fs.readFile('.gitignore', function (err, data) {
 });
 
 hostpref = new Preferences('autolab.host');
-if (!hostpref.host) {
+//Also accounted for backward compatibility
+if (!hostpref.host || !hostpref.host.host || !hostpref.host.lang) {
 	hostpref.host = {
 		host: 'https://autolab.bits-goa.ac.in',
+		lang: 'java',
 	};
 }
 
@@ -47,10 +49,13 @@ else if (argv._[0] == 'git') {
 	if (argv._[1] == 'push') {
 		git.push();
 	}
+	if (argv._[1] == 'changelang') {
+		git.changeLang();
+	}
 }
 else if (argv._[0] == 'submit') {
 	submit();
-}
+} 
 else if (argv._[0] == 'help') {
 	help();
 }
