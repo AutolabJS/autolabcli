@@ -1,6 +1,6 @@
 {
-  "name": "autolab-cli",
-  "version": "1.0.0",
+  "name": "autolabcli",
+  "version": "0.0.0",
   "description": "Command line interface for JavaAutolab",
   "main": "index.js",
   "scripts": {
@@ -42,5 +42,9 @@
     "jshint": "^2.9.4",
     "mocha": "^3.2.0",
     "mock-stdin": "^0.3.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/prasadtalasila/autolabcli"
   }
 }

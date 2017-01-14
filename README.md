@@ -1,5 +1,7 @@
 #AutoLab CLI
 A client command line interface for submissions to [JavaAutolab](https://github.com/prasadtalasila/JavaAutolab).
+
+
 ##Commands
 * `autolab init` - Initializes local repository and authenticates
 * `autolab exit` - Wipes off the credentials from the system
@@ -14,27 +16,8 @@ A client command line interface for submissions to [JavaAutolab](https://github.
 
 ##Installation
 ```
-$ git clone https://github.com/prasadtalasila/autolabcli
-$ cd autolabcli
+npm install -g autolabcli
 ```
-
-###Normal Installation
-Install autolab and its dependencies
- ```
-$ npm install -g --production
- ```
-###Development Installation
-Install:
-```
-$ npm install
-$ npm install grunt-cli -g
-```
-Test:
-```
-$ grunt test
-```
-
-Replace `autolab` with `node index.js` when running commands.
 
 ##Screenshot
 ![autolab-screenshot](https://cloud.githubusercontent.com/assets/13795788/21156451/e1d7cf04-c19b-11e6-9174-593ab68be76a.png)
