@@ -1,5 +1,9 @@
-#AutoLab CLI
+#AutoLab CLI  
+
+[![Code Climate](https://codeclimate.com/github/prasadtalasila/autolabcli/badges/gpa.svg)](https://codeclimate.com/github/prasadtalasila/autolabcli)    
+
 A client command line interface for submissions to [JavaAutolab](https://github.com/prasadtalasila/JavaAutolab).
+
 
 
 ##Commands
