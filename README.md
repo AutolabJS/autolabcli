@@ -1,4 +1,4 @@
-#AutoLab CLI  
+# AutoLab CLI #
 
 [![Code Climate](https://codeclimate.com/github/prasadtalasila/autolabcli/badges/gpa.svg)](https://codeclimate.com/github/prasadtalasila/autolabcli)    
 
@@ -6,7 +6,7 @@ A client command line interface for submissions to [JavaAutolab](https://github.
 
 
 
-##Commands
+## Commands ##
 * `autolab init` - Initializes local repository and authenticates
 * `autolab exit` - Wipes off the credentials from the system
 * `autolab git create` - Creates a repository on Gitlab
@@ -18,13 +18,13 @@ A client command line interface for submissions to [JavaAutolab](https://github.
 * `autolab exit` - Print help manual
 
 
-##Installation
+## Installation ##
 ```
 npm install -g autolabcli
 ```
 
-##Screenshot
+## Screenshot ##
 ![autolab-screenshot](https://cloud.githubusercontent.com/assets/13795788/21156451/e1d7cf04-c19b-11e6-9174-593ab68be76a.png)
 
-##License
+## License ##
 GNU General Public License
