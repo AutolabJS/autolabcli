@@ -1,8 +1,8 @@
 # AutoLab CLI #
 
-[![Code Climate](https://codeclimate.com/github/prasadtalasila/autolabcli/badges/gpa.svg)](https://codeclimate.com/github/prasadtalasila/autolabcli)    
+[![Code Climate](https://codeclimate.com/github/prasadtalasila/autolabcli/badges/gpa.svg)](https://codeclimate.com/github/prasadtalasila/autolabcli) [![Known Vulnerabilities](https://snyk.io/test/github/autolabjs/autolabcli/badge.svg)](https://snyk.io/test/github/autolabjs/autolabcli) [![Build Status](https://travis-ci.org/AutolabJS/autolabcli.svg?branch=master)](https://travis-ci.org/AutolabJS/autolabcli)    
 
-A client command line interface for submissions to [JavaAutolab](https://github.com/prasadtalasila/JavaAutolab).
+A client command line interface for submissions to [AutolabJS](https://github.com/AutolabJS/AutolabJS).
 
 
 
