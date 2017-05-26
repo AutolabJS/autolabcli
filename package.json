@@ -4,6 +4,9 @@
   "description": "Command line interface for JavaAutolab",
   "main": "index.js",
   "scripts": {
+    "lint": "eslint test/*.js lib/*.js *.js",
+    "test:watch": "npm run test -- -w",
+    "pretest":"node index.js",
     "test": "./node_modules/mocha/bin/mocha test"
   },
   "keywords": [
@@ -34,13 +37,6 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "eslint": "^3.12.2",
-    "grunt": "^1.0.1",
-    "grunt-contrib-jshint": "^1.1.0",
-    "grunt-contrib-watch": "^1.0.0",
-    "grunt-eslint": "^19.0.0",
-    "grunt-mocha-test": "^0.13.2",
-    "grunt-run": "^0.6.0",
-    "jshint": "^2.9.4",
     "mocha": "^3.2.0",
     "mock-stdin": "^0.3.1"
   },
