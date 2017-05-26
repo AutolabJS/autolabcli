@@ -39,6 +39,7 @@
     "grunt-contrib-watch": "^1.0.0",
     "grunt-eslint": "^19.0.0",
     "grunt-mocha-test": "^0.13.2",
+    "grunt-run": "^0.6.0",
     "jshint": "^2.9.4",
     "mocha": "^3.2.0",
     "mock-stdin": "^0.3.1"
