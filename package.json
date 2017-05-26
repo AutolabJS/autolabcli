@@ -4,9 +4,9 @@
   "description": "Command line interface for JavaAutolab",
   "main": "index.js",
   "scripts": {
-    "lint": "jshint **.js",
+    "lint": "eslint test/*.js lib/*.js *.js",
     "test:watch": "npm run test -- -w",
-    "test": "mocha test/"
+    "test": "test": "node index.js && ./node_modules/mocha/bin/mocha test"
   },
   "keywords": [
     "AutoLab",
