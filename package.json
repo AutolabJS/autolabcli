@@ -7,8 +7,13 @@
     "lint": "eslint test/*.js lib/*.js *.js",
     "test:watch": "npm run test -- -w",
     "pretest": "node index.js && export PATH=$PATH:./node_modules/.bin",
+<<<<<<< 2debdf4f55df9e33510b8885547a3f836ba6f60f
     "test": "nyc --reporter=lcov --reporter=text-lcov -s --all mocha test > /dev/null",
     "posttest": "nyc report && nyc report --reporter=text-lcov | coveralls"
+=======
+    "test": "nyc --reporter=lcov --reporter=text-lcov --all mocha test", 	
+    "posttest": "nyc report && codeclimate-test-reporter < coverage/lcov.info"    
+>>>>>>> code coverage report added
   },
   "keywords": [
     "AutoLab",

@@ -2,5 +2,9 @@ language: node_js
 node_js:
   - "6"
 before_script:
+<<<<<<< 2debdf4f55df9e33510b8885547a3f836ba6f60f
+=======
+  - npm install codeclimate-test-reporter
+>>>>>>> code coverage report added
   - npm install
 script: npm test
