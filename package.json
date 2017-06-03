@@ -6,8 +6,9 @@
   "scripts": {
     "lint": "eslint test/*.js lib/*.js *.js",
     "test:watch": "npm run test -- -w",
-    "pretest":"node index.js",
-    "test": "./node_modules/mocha/bin/mocha test"
+    "pretest": "node index.js && export PATH=$PATH:./node_modules/.bin",
+    "test": "nyc --reporter=lcov --reporter=text-lcov --all mocha test", 	
+    "posttest": "nyc report && codeclimate-test-reporter < coverage/lcov.info"    
   },
   "keywords": [
     "AutoLab",
@@ -37,8 +38,10 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "eslint": "^3.12.2",
+    "istanbul": "^0.4.5",
     "mocha": "^3.2.0",
-    "mock-stdin": "^0.3.1"
+    "mock-stdin": "^0.3.1",
+    "nyc": "^10.3.2"
   },
   "repository": {
     "type": "git",
