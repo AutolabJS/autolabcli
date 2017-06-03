@@ -7,8 +7,8 @@
     "lint": "eslint test/*.js lib/*.js *.js",
     "test:watch": "npm run test -- -w",
     "pretest": "node index.js && export PATH=$PATH:./node_modules/.bin",
-    "test": "nyc --reporter=lcov --reporter=text-lcov --all mocha test", 	
-    "posttest": "nyc report && codeclimate-test-reporter < coverage/lcov.info"    
+    "test": "nyc --reporter=lcov --reporter=text-lcov -s --all mocha test > /dev/null",
+    "posttest": "nyc report && nyc report --reporter=text-lcov | coveralls"
   },
   "keywords": [
     "AutoLab",
