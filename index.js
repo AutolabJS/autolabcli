@@ -1,4 +1,8 @@
 #!/usr/bin/env node
+/**
+* <h3>Module imports functions from other modules and calls them when user inputs the required input </h3>
+* @module index
+*/
 var clear = require('clear');
 var Preferences = require('preferences');
 var _ = require('lodash');
@@ -55,7 +59,7 @@ else if (argv._[0] == 'git') {
 }
 else if (argv._[0] == 'submit') {
 	submit();
-} 
+}
 else if (argv._[0] == 'help') {
 	help();
 }
