@@ -55,7 +55,7 @@ else if (argv._[0] == 'git') {
 }
 else if (argv._[0] == 'submit') {
 	submit();
-} 
+}
 else if (argv._[0] == 'help') {
 	help();
 }
