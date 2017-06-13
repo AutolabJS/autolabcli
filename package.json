@@ -1,6 +1,6 @@
 {
   "name": "autolabcli",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Command line interface for JavaAutolab",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,8 @@
     "test:watch": "npm run test -- -w",
     "pretest": "node index.js && export PATH=$PATH:./node_modules/.bin",
     "test": "nyc --reporter=lcov --reporter=text-lcov -s --all mocha test > /dev/null",
-    "posttest": "nyc report && nyc report --reporter=text-lcov | coveralls"
+    "posttest": "nyc report && nyc report --reporter=text-lcov | coveralls",
+    "jsdocs": "jsdoc -c conf.json"
   },
   "keywords": [
     "AutoLab",
@@ -42,7 +43,8 @@
     "istanbul": "^0.4.5",
     "mocha": "^3.2.0",
     "mock-stdin": "^0.3.1",
-    "nyc": "^10.3.2"
+    "nyc": "^10.3.2",
+    "jsdoc": "^3.4.3"
   },
   "repository": {
     "type": "git",
