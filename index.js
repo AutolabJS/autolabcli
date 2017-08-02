@@ -16,6 +16,7 @@ var rev = require('./lib/rev');
 var help = require('./lib/help');
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+process.env.GIT_SSL_NO_VERIFY = '1';
 
 touch('.gitignore');
 var conf = 0;
