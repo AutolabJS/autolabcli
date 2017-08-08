@@ -10,6 +10,7 @@ var touch = require('touch');
 var fs = require('fs');
 
 var init = require('./lib/init');
+var prefs = require('./lib/prefs');
 var git = require('./lib/git');
 var submit = require('./lib/submit');
 var rev = require('./lib/rev');
@@ -41,6 +42,14 @@ var argv = require('minimist')(process.argv.slice(2));
 if (argv._[0] == 'init') {
 	init();
 }
+else if (argv._[0] == 'prefs') {
+	if (argv._[1] == 'changeserver') {
+		prefs.changeHost();
+	}
+	if (argv._[1] == 'changelang') {
+		prefs.changeLang();
+	}
+}
 else if (argv._[0] == 'git') {
 	if (argv._[1] == 'create') {
 		git.createRepo();
@@ -48,14 +57,8 @@ else if (argv._[0] == 'git') {
 	if (argv._[1] == 'delete') {
 		git.deleteRepo();
 	}
-	if (argv._[1] == 'changeserver') {
-		git.changeHost();
-	}
 	if (argv._[1] == 'push') {
 		git.push();
-	}
-	if (argv._[1] == 'changelang') {
-		git.changeLang();
 	}
 }
 else if (argv._[0] == 'submit') {
