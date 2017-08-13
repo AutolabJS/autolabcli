@@ -1,5 +1,5 @@
 {
-  "name": "autolabcli",
+  "name": "@autolabjs/autolabcli",
   "version": "0.0.2",
   "description": "Command line interface for JavaAutolab",
   "main": "index.js",
@@ -15,7 +15,7 @@
     "AutoLab",
     "CLI"
   ],
-  "author": "Sebastin Santy",
+  "author": "AutolabJS",
   "license": "GPL-3.0",
   "dependencies": {
     "chalk": "^1.1.3",
@@ -48,6 +48,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/prasadtalasila/autolabcli"
+    "url": "https://github.com/AutolabJS/autolabcli"
   }
 }

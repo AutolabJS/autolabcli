@@ -20,7 +20,7 @@ A client command line interface for submissions to [AutolabJS](https://github.co
 
 ## Installation ##
 ```
-npm install -g autolabcli
+npm install -g @autolabjs/autolabcli
 ```
 
 ## Screenshot ##
