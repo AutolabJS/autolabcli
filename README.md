@@ -11,20 +11,18 @@ A client command line interface for submissions to [AutolabJS](https://github.co
 * `autolab exit` - Wipes off the credentials from the system
 * `autolab git create` - Creates a repository on Gitlab
 * `autolab git delete` - Deletes the specified repository from Gitlab
-* `autolab git changeserver` - To change the host of the gitlab server
-* `autolab git changelang` - To change the language of the code submission
 * `autolab git push` - Adds, commits, pushes the code
+* `autolab prefs changeserver` - To change the host of the gitlab server
+* `autolab prefs changelang` - To change the language of the code submission
 * `autolab submit` -  To submit the code to JavaAutolab and fetch the results
-* `autolab exit` - Print help manual
+* `autolab help` - Print help manual
 
+Check [Assignment Submission Instructions](https://github.com/AutolabJS/autolabcli/wiki/Assignment-Submission-using-autolab-CLI) for the sequence of commands.
 
 ## Installation ##
 ```
 npm install -g @autolabjs/autolabcli
 ```
-
-## Screenshot ##
-![autolab-screenshot](https://cloud.githubusercontent.com/assets/13795788/21156451/e1d7cf04-c19b-11e6-9174-593ab68be76a.png)
 
 ## License ##
 GNU General Public License
