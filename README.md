@@ -1,2 +1,2 @@
 # autolabcli
-Command line interface for autolab
+Codebase for backward incompatible revision of autolabcli v0.1.1.
