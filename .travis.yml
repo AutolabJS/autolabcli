@@ -1,8 +1,8 @@
 language: node_js
 node_js:
-  - "6"
+  - "8"
 before_script:
   - npm install
 script: 
   - npm test
-  - npm run-script jsdocs
+  - bash script/docs_auto_deploy.sh

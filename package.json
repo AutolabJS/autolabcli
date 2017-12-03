@@ -1,7 +1,7 @@
 {
   "name": "@autolabjs/autolabcli",
   "version": "0.1.1",
-  "description": "Command line interface for JavaAutolab",
+  "description": "Command line interface for AutolabJS",
   "main": "index.js",
   "scripts": {
     "lint": "eslint test/*.js lib/*.js *.js",
@@ -9,7 +9,7 @@
     "pretest": "node index.js && export PATH=$PATH:./node_modules/.bin",
     "test": "nyc --reporter=lcov --reporter=text-lcov -s --all mocha test > /dev/null",
     "posttest": "nyc report && nyc report --reporter=text-lcov | coveralls",
-    "jsdocs": "jsdoc -c conf.json"
+    "jsdocs": "./node_modules/jsdoc/jsdoc.js --configure conf.json --private --recurse --readme README.md index.js lib/"
   },
   "keywords": [
     "AutoLab",
