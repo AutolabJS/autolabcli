@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 /**
+* <h3>This module is the launch point for the autolabcli application</h3>
 * <h3>Module imports functions from other modules and calls them when user inputs the required input </h3>
 * @module index
 */

@@ -40,9 +40,9 @@ git checkout $TARGET_BRANCH || git checkout --orphan $TARGET_BRANCH
 cd ..
 
 # Clean out existing contents
-rm -rf docs/**/* || exit 0
+rm -rf docs/* || exit 0
 
-# create the sphinx documents
+# create the documents using JSDoc
 createDocs
 
 # Now let's go have some fun with the cloned repo
@@ -50,18 +50,12 @@ cd docs
 git config user.name "Travis CI"
 git config user.email "$COMMIT_AUTHOR_EMAIL"
 
-# If there are no changes to the compiled out (e.g. this is a README update) then just bail.
-if [ -z $(git diff --exit-code  > /dev/null) ]; then
-    echo "No changes to the documentation on this push; exiting."
-    exit 0
-fi
-
 # Commit the "changes", i.e. the new version.
 # The delta will show diffs between new and old versions.
 git add .
 git commit -m "[Travis Commit] Automated Deploy to gh-pages | Caused by ${SHA}
 refer auto_commit_script: https://github.com/AutolabJS/autolabcli/blob/$SOURCE_BRANCH/script/doc_auto_deploy.sh
-"
+" || exit 0	# fail silently if there is nothing to commit
 
 #go to parent directory and perform SSH configuration
 cd ..
