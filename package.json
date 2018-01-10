@@ -4,7 +4,7 @@
   "description": "Codebase for backward incompatible revision of autolabcli v0.1.1.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test"
+    "test": "mocha 'test/**/*.js'"
   },
   "bin": {
     "autolab": "./index.js"
