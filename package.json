@@ -12,14 +12,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/1AmNegan/autolabcli.git"
+    "url": "https://github.com/AutolabJS/autolabcli.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Sribalaji M",
+  "license": "GPL v3.0",
   "bugs": {
-    "url": "https://github.com/1AmNegan/autolabcli/issues"
+    "url": "https://github.com/AutolabJS/autolabcli/issues"
   },
-  "homepage": "https://github.com/1AmNegan/autolabcli#readme",
+  "homepage": "https://github.com/AutolabJS/autolabcli#readme",
   "dependencies": {
     "caporal": "^0.9.0",
     "inquirer": "^5.0.0"
