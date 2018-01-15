@@ -23,13 +23,26 @@ describe('for getInput', () => {
   });
 
   it('should return promise with correct values when flags not provided', () => {
-    process.nextTick(() => {
-      stdin.send(['testuser2', '123']);
-      return initInput.getInput(null, {}).should.eventually.deep.equal({
-        username: 'testuser2',
-        password: '123'
-      });
-    });
+    setTimeout(() => stdin.send('testuser2\n'), 1);
+    setTimeout(() => stdin.send('123\n'), 2);
+
+    return initInput.getInput(null, {}).should.eventually.deep.equal({
+      username: 'testuser2',
+      password: '123'
+    });;
+
+  });
+
+  it('should not accept empty getInput', () => {
+    setTimeout(() => stdin.send('\n'), 1);
+    setTimeout(() => stdin.send('testuser2\n'), 2);
+    setTimeout(() => stdin.send('\n'), 3);
+    setTimeout(() => stdin.send('123\n'), 4);
+
+    return initInput.getInput(null, {}).should.eventually.deep.equal({
+      username: 'testuser2',
+      password: '123'
+    });;
 
   });
 
