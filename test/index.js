@@ -1,6 +1,6 @@
-const chai = require("chai");
-const sinon = require("sinon");
-const sinonChai = require("sinon-chai");
+const chai = require('chai');
+const sinon = require('sinon');
+const sinonChai = require('sinon-chai');
 const { exec } = require('child_process');
 const path = require('path');
 

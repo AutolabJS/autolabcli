@@ -1,6 +1,8 @@
-const chai = require("chai");
-const sinon = require("sinon");
-const sinonChai = require("sinon-chai");
+const chai = require('chai');
+const sinon = require('sinon');
+const sinonChai = require('sinon-chai');
+const chalk = require('chalk');
+const figlet = require('figlet');
 
 const initOutput = require('../../../../lib/cli/output/init');
 
@@ -10,10 +12,19 @@ chai.use(sinonChai);
 chai.should();
 
 describe('For init output', () => {
-  it('log out the expected string', () => {
-    const logSpy = sinon.spy(console, 'log');
+
+  const logSpy = sinon.spy(console, 'log');
+
+  it('should send expected welcome text', () => {
+    const figletSpy = sinon.spy(figlet, 'textSync');
+    initOutput.sendWelcome();
+    expect(logSpy).to.have.been.called;
+    expect(figletSpy).to.have.been.deep.calledWith('Autolab CLI', { horizontalLayout: 'full' });
+  });
+
+  it('should log out the expected string', () => {
     const outputString = 'Your username is: testuser\nYour password is: 123';
-    initOutput.send(outputString);
+    initOutput.sendResult(outputString);
     expect(logSpy).to.have.been.calledWith(outputString);
   });
 });
