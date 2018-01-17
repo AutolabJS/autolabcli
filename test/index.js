@@ -15,7 +15,7 @@ describe('For application entry point', () => {
 
   it('should start the controller', () => {
     const startSpy = sinon.spy(controller, 'start');
-    exec('npm link;autolab', (err, stdout, stdin) => {
+    exec('npm link;autolabjs', (err, stdout, stdin) => {
       expect(startSpy).to.have.been.called;
     });
   });

@@ -17,14 +17,12 @@ describe('For init controller', () => {
   it('should call the action of program with right arguments', (done) => {
 
     const getInputSpy = sinon.spy(initInput, 'getInput');
-    const getOutputStringSpy = sinon.spy(initModel, 'getOutputString');
     const sendResultSpy = sinon.spy(initOutput, 'sendResult');
     const sendWelcomeSpy = sinon.spy(initOutput, 'sendWelcome');
 
     initController.addTo(program);
 
     expect(getInputSpy).to.not.have.been.called;
-    expect(getOutputStringSpy).to.not.have.been.called;
     expect(sendResultSpy).to.not.have.been.called;
     expect(sendWelcomeSpy).to.not.have.been.called;
 
@@ -34,9 +32,11 @@ describe('For init controller', () => {
     });
 
     expect(getInputSpy).to.have.been.called;
-    setTimeout(() => {expect(getOutputStringSpy).to.have.been.called}, 0);
     setTimeout(() => {expect(sendWelcomeSpy).to.have.been.called}, 0);
-    setTimeout(() => {expect(sendResultSpy).to.have.been.called; done()}, 0);
+    setTimeout(() => {
+      expect(sendResultSpy).to.have.been.calledWith('testuser1', '123');
+      done();
+    }, 0);
 
   });
 });

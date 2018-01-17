@@ -8,7 +8,7 @@
     "posttest": "nyc report --reporter=lcov > coverage.lcov && codecov"
   },
   "bin": {
-    "autolab": "./index.js"
+    "autolabjs": "./index.js"
   },
   "repository": {
     "type": "git",

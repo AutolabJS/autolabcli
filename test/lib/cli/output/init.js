@@ -23,8 +23,8 @@ describe('For init output', () => {
   });
 
   it('should log out the expected string', () => {
-    const outputString = 'Your username is: testuser\nYour password is: 123';
-    initOutput.sendResult(outputString);
+    const outputString = `Your username is: ${chalk.blue('testuser1')}\nYour password is: ${chalk.red('123')}`;
+    initOutput.sendResult('testuser1', '123');
     expect(logSpy).to.have.been.calledWith(outputString);
   });
 });
