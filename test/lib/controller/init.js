@@ -16,9 +16,14 @@ chai.should();
 describe('For init controller', () => {
   it('should call the action of program with right arguments', (done) => {
 
-    const getInputSpy = sinon.spy(initInput, 'getInput');
-    const sendResultSpy = sinon.spy(initOutput, 'sendResult');
-    const sendWelcomeSpy = sinon.spy(initOutput, 'sendWelcome');
+    const sandbox = sinon.createSandbox();
+
+    afterEach(() => {
+      sandbox.restore();
+    });
+    const getInputSpy = sandbox.spy(initInput, 'getInput');
+    const sendResultSpy = sandbox.spy(initOutput, 'sendResult');
+    const sendWelcomeSpy = sandbox.spy(initOutput, 'sendWelcome');
 
     initController.addTo(program);
 

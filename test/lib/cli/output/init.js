@@ -13,10 +13,20 @@ chai.should();
 
 describe('For init output', () => {
 
-  const logSpy = sinon.spy(console, 'log');
+  const sandbox = sinon.createSandbox();
+  let logSpy;
+
+  beforeEach(() => {
+    logSpy = sandbox.spy(console, 'log');
+  });
+
+  afterEach(() => {
+    sandbox.restore();
+  });
+
 
   it('should send expected welcome text', () => {
-    const figletSpy = sinon.spy(figlet, 'textSync');
+    const figletSpy = sandbox.spy(figlet, 'textSync');
     initOutput.sendWelcome();
     expect(logSpy).to.have.been.called;
     expect(figletSpy).to.have.been.deep.calledWith('Autolab CLI', { horizontalLayout: 'full' });

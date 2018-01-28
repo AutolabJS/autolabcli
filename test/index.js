@@ -13,8 +13,14 @@ chai.should();
 
 describe('For application entry point', () => {
 
+  const sandbox = sinon.createSandbox();
+
+  afterEach(() => {
+    sandbox.restore();
+  });
+
   it('should start the controller', () => {
-    const startSpy = sinon.spy(controller, 'start');
+    const startSpy = sandbox.spy(controller, 'start');
     exec('npm link;autolabjs', (err, stdout, stdin) => {
       expect(startSpy).to.have.been.called;
     });

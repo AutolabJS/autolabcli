@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "nyc --reporter=lcov --reporter=text-lcov -s --all mocha 'test/**/*.js' > /dev/null",
+    "pretest": "npm link",
     "posttest": "nyc report --reporter=lcov > coverage.lcov && codecov"
   },
   "bin": {

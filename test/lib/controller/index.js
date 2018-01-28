@@ -13,8 +13,14 @@ chai.should();
 
 describe('For controller entry point', () => {
 
+  const sandbox = sinon.createSandbox();
+
+  afterEach(() => {
+    sandbox.restore();
+  });
+
   it('should call the other controllers', () => {
-    const initAddToSpy = sinon.spy(initController, 'addTo');
+    const initAddToSpy = sandbox.spy(initController, 'addTo');
     program
       .version('1.0.0')
       .description('A Command Line Interface (CLI) for AutolabJS');
