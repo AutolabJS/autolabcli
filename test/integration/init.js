@@ -4,7 +4,6 @@ const sinonChai = require('sinon-chai');
 const { exec } = require('child_process');
 const path = require('path');
 const figlet = require('figlet');
-const { expect } = chai;
 const chalk = require('chalk');
 const controller = require('../../lib/controller');
 
@@ -23,7 +22,7 @@ describe('For init command', () => {
     exec('autolabjs init -u testuser1 -p 123', (err, stdout, stderr) => {
       let outputString = figlet.textSync('Autolab CLI', { horizontalLayout: 'full' });
       outputString += '\n' + 'Your username is: testuser1\nYour password is: 123\n';
-      expect(stdout).to.equal(outputString);
+      stdout.should.equal(outputString);
       done();
     });
   });
@@ -39,9 +38,9 @@ describe('For init command', () => {
     setTimeout(() => stdin.send('123\n'), 2);
     setTimeout(() => {
       let outputString = chalk.yellow(figlet.textSync('Autolab CLI', { horizontalLayout: 'full' }));
-      expect(logSpy).to.have.been.calledWith(outputString);
+      logSpy.should.have.been.calledWith(outputString);
       outputString = `Your username is: ${chalk.blue('testuser1')}\nYour password is: ${chalk.red('123')}`;
-      expect(logSpy).to.have.been.calledWith(outputString);
+      logSpy.should.to.have.been.calledWith(outputString);
       done();
     },3);
 

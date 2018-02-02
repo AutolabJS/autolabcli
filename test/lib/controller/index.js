@@ -6,8 +6,6 @@ const program = require('caporal');
 const controller = require('../../../lib/controller');
 const initController = require('../../../lib/controller/init');
 
-const { expect } = chai;
-
 chai.use(sinonChai);
 chai.should();
 
@@ -20,13 +18,12 @@ describe('For controller entry point', () => {
   });
 
   it('should call the other controllers', () => {
-    const initAddToSpy = sandbox.spy(initController, 'addTo');
-    program
-      .version('1.0.0')
-      .description('A Command Line Interface (CLI) for AutolabJS');
-    sinon.stub(program, 'parse').callsFake(() => {});
+    const initAddToStub = sandbox.stub(initController, 'addTo');
+    const parseStub = sandbox.stub(program, 'parse');
 
     controller.start();
-    expect(initAddToSpy).to.have.been.deep.calledWith(program);
+
+    initAddToStub.should.have.been.deep.calledWith(program);
+    parseStub.should.have.been.deep.calledWith(process.argv);
   });
 });

@@ -8,38 +8,40 @@ const initOutput = require('../../../lib/cli/output/init');
 const initModel = require('../../../lib/model/init');
 const initController = require('../../../lib/controller/init');
 
-const { expect } = chai;
-
 chai.use(sinonChai);
 chai.should();
 
 describe('For init controller', () => {
+
+  const sandbox = sinon.createSandbox();
+
+  afterEach(() => {
+    sandbox.restore();
+  });
+
   it('should call the action of program with right arguments', (done) => {
 
-    const sandbox = sinon.createSandbox();
-
-    afterEach(() => {
-      sandbox.restore();
-    });
-    const getInputSpy = sandbox.spy(initInput, 'getInput');
-    const sendResultSpy = sandbox.spy(initOutput, 'sendResult');
-    const sendWelcomeSpy = sandbox.spy(initOutput, 'sendWelcome');
+    const getInputstub = sandbox.stub(initInput, 'getInput').withArgs(
+      {}, { u: 'testuser1', p: '123'}
+    ).returns(
+      Promise.resolve({username: 'testuser1', password: '123'})
+    )
+    const sendResultstub = sandbox.stub(initOutput, 'sendResult');
+    const sendWelcomestub = sandbox.stub(initOutput, 'sendWelcome');
 
     initController.addTo(program);
-
-    expect(getInputSpy).to.not.have.been.called;
-    expect(sendResultSpy).to.not.have.been.called;
-    expect(sendWelcomeSpy).to.not.have.been.called;
 
     program.exec(['init'], {
       u: 'testuser1',
       p: '123'
     });
 
-    expect(getInputSpy).to.have.been.called;
-    setTimeout(() => {expect(sendWelcomeSpy).to.have.been.called}, 0);
+    getInputstub.should.have.been.called;
     setTimeout(() => {
-      expect(sendResultSpy).to.have.been.calledWith('testuser1', '123');
+      sendWelcomestub.should.have.been.called;
+    }, 0);
+    setTimeout(() => {
+      sendResultstub.should.have.been.calledWith('testuser1', '123');
       done();
     }, 0);
 
