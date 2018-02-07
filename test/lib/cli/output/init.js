@@ -19,11 +19,16 @@ describe('For init output', () => {
 
 
   it('should send expected welcome text', () => {
-    const logSpy = sandbox.spy(console, 'log');
-    const figletStub = sandbox.stub(figlet, 'textSync');
+    const logStub = sandbox.stub(console, 'log');
+    const mockFiglet = sandbox.mock(figlet);
+
+    mockFiglet.expects('textSync').once().withExactArgs('Autolab CLI', { horizontalLayout: 'full' }).
+      returns('Autolab CLI');
+
     initOutput.sendWelcome();
-    logSpy.should.have.been.called;
-    figletStub.should.have.been.deep.calledWith('Autolab CLI', { horizontalLayout: 'full' });
+    
+    mockFiglet.verify();
+    logStub.should.have.been.calledWith(chalk.yellow('Autolab CLI'));
   });
 
   it('should log out the expected string', () => {

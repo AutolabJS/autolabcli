@@ -17,9 +17,10 @@ describe('For application entry point', () => {
   });
 
   it('should start the controller', () => {
-    const startStub = sandbox.stub(controller, 'start');
+    const mockController = sandbox.mock(controller);
+    mockController.expects('start').once();
     exec('npm link;autolabjs', (err, stdout, stderr) => {
-      startStub.should.have.been.called;
+      mockController.verify();
     });
   });
 });

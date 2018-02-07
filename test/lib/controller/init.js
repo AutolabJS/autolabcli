@@ -21,13 +21,18 @@ describe('For init controller', () => {
 
   it('should call the action of program with right arguments', (done) => {
 
-    const getInputstub = sandbox.stub(initInput, 'getInput').withArgs(
+    const mockInitInput = sandbox.mock(initInput);
+    const mockInitOutput = sandbox.mock(initOutput);
+
+    mockInitInput.expects('getInput').once().withExactArgs(
       {}, { u: 'testuser1', p: '123'}
     ).returns(
       Promise.resolve({username: 'testuser1', password: '123'})
-    )
-    const sendResultstub = sandbox.stub(initOutput, 'sendResult');
-    const sendWelcomestub = sandbox.stub(initOutput, 'sendWelcome');
+    );
+
+    mockInitOutput.expects('sendWelcome').once();
+    mockInitOutput.expects('sendResult').once();
+
 
     initController.addTo(program);
 
@@ -36,12 +41,9 @@ describe('For init controller', () => {
       p: '123'
     });
 
-    getInputstub.should.have.been.called;
     setTimeout(() => {
-      sendWelcomestub.should.have.been.called;
-    }, 0);
-    setTimeout(() => {
-      sendResultstub.should.have.been.calledWith('testuser1', '123');
+      mockInitInput.verify();
+      mockInitOutput.verify();
       done();
     }, 0);
 

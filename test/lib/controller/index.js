@@ -18,12 +18,15 @@ describe('For controller entry point', () => {
   });
 
   it('should call the other controllers', () => {
-    const initAddToStub = sandbox.stub(initController, 'addTo');
-    const parseStub = sandbox.stub(program, 'parse');
+    const mockInitController = sandbox.mock(initController);
+    const mockProgram = sandbox.mock(program);
+
+    mockInitController.expects('addTo').once().withExactArgs(program);
+    mockProgram.expects('parse').once().withExactArgs(process.argv);
 
     controller.start();
-
-    initAddToStub.should.have.been.deep.calledWith(program);
-    parseStub.should.have.been.deep.calledWith(process.argv);
+    
+    mockInitController.verify();
+    mockProgram.verify();
   });
 });
