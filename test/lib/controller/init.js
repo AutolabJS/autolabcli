@@ -8,33 +8,42 @@ const initOutput = require('../../../lib/cli/output/init');
 const initModel = require('../../../lib/model/init');
 const initController = require('../../../lib/controller/init');
 
-const { expect } = chai;
-
 chai.use(sinonChai);
 chai.should();
 
 describe('For init controller', () => {
+
+  const sandbox = sinon.createSandbox();
+
+  afterEach(() => {
+    sandbox.restore();
+  });
+
   it('should call the action of program with right arguments', (done) => {
 
-    const getInputSpy = sinon.spy(initInput, 'getInput');
-    const sendResultSpy = sinon.spy(initOutput, 'sendResult');
-    const sendWelcomeSpy = sinon.spy(initOutput, 'sendWelcome');
+    const mockInitInput = sandbox.mock(initInput);
+    const mockInitOutput = sandbox.mock(initOutput);
+
+    mockInitInput.expects('getInput').once().withExactArgs(
+      {}, { u: 'testuser1', p: '123'}
+    ).returns(
+      Promise.resolve({username: 'testuser1', password: '123'})
+    );
+
+    mockInitOutput.expects('sendWelcome').once();
+    mockInitOutput.expects('sendResult').once();
+
 
     initController.addTo(program);
-
-    expect(getInputSpy).to.not.have.been.called;
-    expect(sendResultSpy).to.not.have.been.called;
-    expect(sendWelcomeSpy).to.not.have.been.called;
 
     program.exec(['init'], {
       u: 'testuser1',
       p: '123'
     });
 
-    expect(getInputSpy).to.have.been.called;
-    setTimeout(() => {expect(sendWelcomeSpy).to.have.been.called}, 0);
     setTimeout(() => {
-      expect(sendResultSpy).to.have.been.calledWith('testuser1', '123');
+      mockInitInput.verify();
+      mockInitOutput.verify();
       done();
     }, 0);
 

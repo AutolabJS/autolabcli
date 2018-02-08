@@ -15,6 +15,10 @@ describe('for getInput', () => {
     stdin = require('mock-stdin').stdin();
   });
 
+  afterEach(() => {
+    stdin.restore();
+  })
+
   it('should return promise with correct values when flags provided', () => {
     return initInput.getInput(null, mockUser).should.eventually.deep.equal({
       username: mockUser.u,
