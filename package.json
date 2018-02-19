@@ -6,7 +6,7 @@
   "scripts": {
     "pretest": "npm link",
     "posttest": "nyc report --reporter=lcov > coverage.lcov && codecov",
-    "test": "nyc --reporter=lcov --reporter=text-lcov -s --all mocha 'test/*.js' 'test/integration/**/*.js' 'test/lib/**/*.js'",
+    "test": "nyc --reporter=lcov --reporter=text-lcov -s --all mocha 'test/*.js' 'test/integration/**/*.js' 'test/lib/**/*.js' > /dev/null",
     "cucumber": "cucumber-js 'test/feature/features' -r 'test/feature/steps'"
   },
   "bin": {
