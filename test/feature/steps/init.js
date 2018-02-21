@@ -12,7 +12,7 @@ const controller = require('../../../lib/controller');
 chai.use(sinonChai);
 chai.should();
 
-let username, password, logSpy;
+let username, password, logSpy, errorOutput;
 
 Before(() => {
   logSpy = sinon.spy(console, 'log');
@@ -30,6 +30,7 @@ Given('a valid username as {string} and corresponding password as {string}', (us
 When('I run init command with {string} as username and {string} as password using {string}', (username, password, inputType, done) => {
   if(inputType === 'flags') {
       exec(`autolabjs init -u ${username} -p ${password}`, (err, stdout, stderr) => {
+        errorOutput = stdout;
         done();
       });
   }
@@ -53,6 +54,15 @@ Then('My login credentials and private token should be stored locally', () => {
   gitLabPref.privateToken.should.not.be.empty;
 });
 
-Then('I should be displayed a warning message', () => {
-  logSpy.should.have.been.calledWith(chalk.red('Invalid Username or Password'));
+Then('I should be displayed a warning message when input is given using {string}', (inputType, done) => {
+  if(inputType === 'prompt') {
+    setTimeout(() => {
+      logSpy.withArgs(chalk.red('\nInvalid Username or Password')).should.have.been.called;
+      done();
+    }, 500);
+  }
+  else if (inputType === 'flags') {
+    errorOutput.should.contain('Invalid Username or Password');
+    done();
+  }
 });
