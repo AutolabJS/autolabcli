@@ -23,16 +23,33 @@ describe('For init controller', () => {
 
     const mockInitInput = sandbox.mock(initInput);
     const mockInitOutput = sandbox.mock(initOutput);
+    const mockInitModel = sandbox.mock(initModel);
 
+    mockInitOutput.expects('sendOutput').withExactArgs({
+        name: 'welcome'
+    });
     mockInitInput.expects('getInput').once().withExactArgs(
       {}, { u: 'testuser1', p: '123'}
     ).returns(
       Promise.resolve({username: 'testuser1', password: '123'})
     );
-
-    mockInitOutput.expects('sendWelcome').once();
-    mockInitOutput.expects('sendResult').once();
-
+    mockInitOutput.expects('sendOutput').withExactArgs({
+        name: 'authentication_started'
+    });
+    mockInitModel.expects('authenticate').withExactArgs({
+      username: 'testuser1',
+      password: '123'
+    }).returns(Promise.resolve({
+      name: 'test_user1',
+      code: 200
+    }));
+    mockInitOutput.expects('sendOutput').withExactArgs({
+        name: 'authentication_ended',
+        details: {
+          name: 'test_user1',
+          code: 200
+        }
+    });
 
     initController.addTo(program);
 
@@ -44,6 +61,7 @@ describe('For init controller', () => {
     setTimeout(() => {
       mockInitInput.verify();
       mockInitOutput.verify();
+      mockInitModel.verify();
       done();
     }, 0);
 

@@ -6,8 +6,8 @@
   "scripts": {
     "pretest": "npm link",
     "posttest": "nyc report --reporter=lcov > coverage.lcov && codecov",
-    "test": "nyc --reporter=lcov --reporter=text-lcov -s --all mocha 'test/*.js' 'test/integration/**/*.js' 'test/lib/**/*.js' > /dev/null",
-    "cucumber": "cucumber-js 'test/feature/features' -r 'test/feature/steps' > /dev/null"
+    "test": "nyc --reporter=lcov --reporter=text-lcov -s --all mocha 'test/*.js' 'test/integration/**/*.js' 'test/lib/**/*.js'",
+    "cucumber": "cucumber-js 'test/feature/features' -r 'test/feature/steps'"
   },
   "bin": {
     "autolabjs": "./index.js"
@@ -39,6 +39,7 @@
     "cucumber": "^4.0.0",
     "mocha": "^4.1.0",
     "mock-stdin": "^0.3.1",
+    "nock": "^9.2.3",
     "nyc": "^11.4.1",
     "sinon": "^4.1.5",
     "sinon-chai": "^2.14.0"
