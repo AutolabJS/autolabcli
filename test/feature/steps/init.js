@@ -8,14 +8,15 @@ const path = require('path');
 const figlet = require('figlet');
 const chalk = require('chalk');
 const controller = require('../../../lib/controller');
+const preferenceManager = require('../../../lib/utils/preference-manager');
 
 chai.use(sinonChai);
 chai.should();
 
-let username, password, logSpy, errorOutput;
+let logSpy;
 
 Before(() => {
-  logSpy = sinon.spy(console, 'log');
+  logSpy = sinon.stub(console, 'log');
 });
 
 After(() => {
@@ -48,7 +49,7 @@ When('I run init command with {string} as username and {string} as password usin
 });
 
 Then('My login credentials and private token should be stored locally', () => {
-  const gitLabPref = new Preferences('autolabjs.gitlab');
+  const gitLabPref = preferenceManager.getGitLabCredentials();
   gitLabPref.username.should.equal(username);
   gitLabPref.password.should.equal(password);
   gitLabPref.privateToken.should.not.be.empty;
