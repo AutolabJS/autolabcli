@@ -8,7 +8,7 @@ const exitOutput = require('../../../../lib/cli/output/exit');
 chai.use(sinonChai);
 chai.should();
 
-describe('For init output', () => {
+describe('For exit output', () => {
 
   const sandbox = sinon.createSandbox();
 

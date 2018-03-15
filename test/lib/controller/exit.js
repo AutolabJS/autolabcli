@@ -25,7 +25,7 @@ describe('For exit controller', () => {
     const mockexitModel = sandbox.mock(exitModel);
     const mockCommandValidator = sandbox.mock(commandValidator);
 
-    mockCommandValidator.expects('validateCommand').once();
+    mockCommandValidator.expects('validateSession').once().returns(true);
     mockexitModel.expects('logout').once();
     mockexitOutput.expects('sendOutput').once().withExactArgs({
         name: 'logout_success'
@@ -43,4 +43,26 @@ describe('For exit controller', () => {
     }, 0);
 
   });
+
+  it('should not execute when already exited', (done) => {
+
+    const mockexitOutput = sandbox.mock(exitOutput);
+    const mockexitModel = sandbox.mock(exitModel);
+    const mockCommandValidator = sandbox.mock(commandValidator);
+
+    mockCommandValidator.expects('validateSession').once().returns(false);
+    mockexitModel.expects('logout').never();
+
+    exitController.addTo(program);
+
+    program.exec(['exit'], {});
+
+    setTimeout(() => {
+      mockCommandValidator.verify();
+      mockexitModel.verify();
+      done();
+    }, 0);
+
+  });
+
 });

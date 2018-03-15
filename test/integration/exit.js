@@ -47,7 +47,6 @@ describe('Integration test for exit command', () => {
       controller.start();
       preferenceManager.getPrivateToken().should.equal('');
       preferenceManager.getStoredTime().should.equal(-1);
-      preferenceManager.getLocationDirectory().should.equal('');
       done();
     },100);
   });

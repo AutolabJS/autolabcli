@@ -18,8 +18,10 @@ describe('for exitModel', () => {
   it('should call appropriate methods of preference manager', async () => {
     const mockPreferenceManager = sinon.mock(preferenceManager);
     mockPreferenceManager.expects('deleteCredentials').once();
-    mockPreferenceManager.expects('removeLocationDirectory').once();
 
+    exitModel.logout();
+
+    mockPreferenceManager.verify();
   });
 
 });
