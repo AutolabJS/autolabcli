@@ -45,8 +45,8 @@ describe('Integration test for exit command', () => {
       process.argv = [ '/usr/local/nodejs/bin/node',
         '/usr/local/nodejs/bin/autolab', 'exit' ];
       controller.start();
-      preferenceManager.getPrivateToken().should.equal('');
-      preferenceManager.getStoredTime().should.equal(-1);
+      preferenceManager.getPreference({name: 'gitLabPrefs'}).privateToken.should.equal('');
+      preferenceManager.getPreference({name: 'gitLabPrefs'}).storedTime.should.equal(-1);
       done();
     },100);
   });

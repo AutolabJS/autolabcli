@@ -24,7 +24,7 @@ describe('for command validator', () => {
   it('should have session validator as expected', () => {
     const logSpy = sandbox.stub(console, 'log');
     const mockPreferenceManager = sandbox.mock(preferenceManager);
-    mockPreferenceManager.expects('getStoredTime').once().returns(-1);
+    mockPreferenceManager.expects('getPreference').once().returns(-1);
     mockPreferenceManager.expects('deleteCredentials').once();
 
     const isValid = commandValidator.validateSession();

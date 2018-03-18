@@ -22,6 +22,14 @@ When('I run exit command', () => {
 });
 
 Then('My login credentials should be removed', () => {
-  preferenceManager.getPrivateToken().should.equal('');
-  preferenceManager.getStoredTime().should.equal(-1);
+  preferenceManager.getPreference({name: 'gitLabPrefs'}).privateToken.should.equal('');
+  preferenceManager.getPreference({name: 'gitLabPrefs'}).storedTime.should.equal(-1);
+});
+
+Given('I am NOT logged in', () => {
+  preferenceManager.deleteCredentials();
+});
+
+Then('I should receive a warning message for invalid exit', () => {
+  global.logSpy.should.have.been.calledWith(chalk.red(`Your session has expired. Please run 'autolabjs init' to login again`));
 });

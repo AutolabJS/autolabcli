@@ -13,14 +13,12 @@ const preferenceManager = require('../../../lib/utils/preference-manager');
 chai.use(sinonChai);
 chai.should();
 
-let logSpy;
-
 Before(() => {
-  logSpy = sinon.stub(console, 'log');
+  global.logSpy = sinon.stub(console, 'log');
 });
 
 After(() => {
-  logSpy.restore();
+  global.logSpy.restore();
 });
 
 Given('a valid username as {string} and corresponding password as {string}', (user, pass) => {
@@ -49,7 +47,11 @@ When('I run init command with {string} as username and {string} as password usin
 });
 
 Then('My login credentials and private token should be stored locally', () => {
-  const gitLabPref = preferenceManager.getGitLabCredentials();
+  const prefDirectory = `${require('os').homedir()}/.autolabjs`;
+  const gitLabPref = new Preferences('autolabjs.gitlab.credentials', {}, {
+  encrypt: true,
+  file: `${prefDirectory}/gitlab-credentials`
+  });
   gitLabPref.username.should.equal(username);
   gitLabPref.password.should.equal(password);
   gitLabPref.privateToken.should.not.be.empty;
@@ -58,7 +60,7 @@ Then('My login credentials and private token should be stored locally', () => {
 Then('I should be displayed a warning message when input is given using {string}', (inputType, done) => {
   if(inputType === 'prompt') {
     setTimeout(() => {
-      logSpy.withArgs(chalk.red('\nInvalid Username or Password')).should.have.been.called;
+      global.logSpy.withArgs(chalk.red('\nInvalid Username or Password')).should.have.been.called;
       done();
     }, 500);
   }

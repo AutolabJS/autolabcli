@@ -4,7 +4,6 @@
   "description": "Codebase for backward incompatible revision of autolabcli v0.1.1.",
   "main": "index.js",
   "scripts": {
-    "pretest": "npm link",
     "posttest": "nyc report --reporter=lcov > coverage.lcov && codecov",
     "test": "nyc --reporter=lcov --reporter=text-lcov -s --all mocha 'test/*.js' 'test/integration/**/*.js' 'test/lib/**/*.js'",
     "cucumber": "cucumber-js 'test/feature/features' -r 'test/feature/steps'"
@@ -26,8 +25,10 @@
     "caporal": "^0.9.0",
     "chalk": "^2.3.0",
     "cli-spinner": "^0.2.8",
+    "cli-table": "^0.3.1",
     "figlet": "^1.2.0",
     "inquirer": "^5.0.0",
+    "lodash": "^4.17.5",
     "preferences": "^1.0.2",
     "request": "^2.83.0",
     "request-promise": "^4.2.2"
