@@ -45,4 +45,12 @@ describe('for initModel', () => {
     status.code.should.equal(401);
   });
 
+  it('should return code 4 if unkown error occurs', async () => {
+    let status = await initModel.authenticate({
+      username: 'testuser',
+      password: '123'
+    });
+    status.code.should.equal(4);
+  });
+
 });
