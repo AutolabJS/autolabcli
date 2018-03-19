@@ -43,7 +43,7 @@ describe('Integration test for init command', () => {
       let outputString = chalk.yellow(figlet.textSync('AutolabJS   CLI', { horizontalLayout: 'default' }));
       logSpy.should.have.been.calledWith(outputString);
       logSpy.should.to.have.been.calledWith(chalk.green('\nHi test_user2! Proceed to making commits in this repository. Run \'autolabjs help\' for help.'));
-      preferenceManager.getPrivateToken().should.equal('zxcvbnb');
+      preferenceManager.getPreference({name: 'gitLabPrefs'}).privateToken.should.equal('zxcvbnb');
       done();
     },100);
   });
@@ -61,7 +61,7 @@ describe('Integration test for init command', () => {
       let outputString = chalk.yellow(figlet.textSync('AutolabJS   CLI', { horizontalLayout: 'default' }));
       logSpy.should.have.been.calledWith(outputString);
       logSpy.should.to.have.been.calledWith(chalk.green('\nHi test_user2! Proceed to making commits in this repository. Run \'autolabjs help\' for help.'));
-      preferenceManager.getPrivateToken().should.equal('zxcvbnb');
+      preferenceManager.getPreference({name: 'gitLabPrefs'}).privateToken.should.equal('zxcvbnb');
       done();
     },100);
 

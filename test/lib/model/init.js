@@ -31,7 +31,7 @@ describe('for initModel', () => {
     });
     status.code.should.equal(200);
     status.name.should.equal('test_user3');
-    preferenceManager.getPrivateToken().should.equal('zxcvbnb');
+    preferenceManager.getPreference({name: 'gitLabPrefs'}).privateToken.should.equal('zxcvbnb');
   });
 
   it('should return status code of 401 when invalid login provided', async () => {
@@ -43,6 +43,14 @@ describe('for initModel', () => {
       password: '123'
     });
     status.code.should.equal(401);
+  });
+
+  it('should return code 4 if unkown error occurs', async () => {
+    let status = await initModel.authenticate({
+      username: 'testuser',
+      password: '123'
+    });
+    status.code.should.equal(4);
   });
 
 });

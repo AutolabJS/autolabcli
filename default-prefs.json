@@ -1,0 +1,23 @@
+{
+  "supportedLanguages" : [
+    "java",
+    "c",
+    "cpp",
+    "cpp14",
+    "python2",
+    "python3"
+  ],
+
+  "submission" : {
+    "language": "java"
+    },
+
+  "main_server" : {
+    "host": "autolab.bits-goa.ac.in",
+    "port": "9000"
+  },
+
+  "gitlab" : {
+    "host": "autolab.bits-goa.ac.in"
+  }
+}
