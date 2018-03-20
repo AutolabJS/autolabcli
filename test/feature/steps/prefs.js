@@ -18,7 +18,7 @@ When('I run prefs command with {string}', (argument) => {
   process.argv = [ '/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolab', 'prefs', argument];
   if (argument === 'changeserver') {
-    process.argv = process.argv.concat(['--url', 'abc', '--port', '5678']);
+    process.argv = process.argv.concat(['--host', 'abc.com', '--port', '5678']);
   }
   if (argument === 'changelang') {
     const mockInquirer = sinon.mock(inquirer);
@@ -33,7 +33,7 @@ Then('I should be able to change the submission language', () => {
 
 Then('I should be able to change the submission server', () => {
   preferenceManager.getPreference({name: 'cliPrefs'}).main_server.should.deep.equal({
-    host: 'abc',
+    host: 'abc.com',
     port: '5678'
   });
 });
@@ -45,7 +45,7 @@ Then('I should be able to see the preferences', (done) => {
   });
   table.push(
     ['Language', 'cpp14'],
-    ['Server url', 'abc'],
+    ['Server host', 'abc.com'],
     ['Server port', 5678]
   );
 

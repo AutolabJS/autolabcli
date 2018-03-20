@@ -8,6 +8,9 @@ chai.use(sinonChai);
 chai.should();
 
 const prefsInput = require('../../../../lib/cli/input/prefs');
+const defaultPrefPath = require('path').join(__dirname, '..', '..', '..', '..', 'default-prefs.json');
+const defaultPrefs = JSON.parse(require('fs').readFileSync(defaultPrefPath, 'utf8'));
+const {supportedLanguages} = defaultPrefs;
 
 chai.use(chaiAsPromised);
 chai.should();
@@ -21,10 +24,10 @@ describe('for prefs input', () => {
     sandbox.restore();
   });
 
-  it('should send the right event when language is changed', async () => {
+  it('should send the right event when language is changed using prompt', async () => {
     mockInquirer = sandbox.mock(inquirer);
     mockInquirer.expects('prompt').returns(Promise.resolve({lang: 'cpp14'}));
-    const ret = await prefsInput.getInput({preference: 'changelang'}, null);
+    const ret = await prefsInput.getInput({preference: 'changelang'}, {lang: null});
     ret.should.deep.equal({
       name: 'lang_changed',
       details: {
@@ -33,28 +36,66 @@ describe('for prefs input', () => {
     });
   });
 
+  it('should send the right event when language is changed using flags', async () => {
+    const ret = await prefsInput.getInput({preference: 'changelang'}, {lang: 'cpp'});
+    ret.should.deep.equal({
+      name: 'lang_changed',
+      details: {
+        lang: 'cpp'
+      }
+    });
+  });
+
+  it('should send the right event when invalid language is provided using lan', async () => {
+    const ret = await prefsInput.getInput({preference: 'changelang'}, {lang: 'python4'});
+    ret.should.deep.equal({
+      name: 'invalid_lang',
+      details: {
+        supportedLanguages
+      }
+    });
+  });
+
   it('should send the right event when server is changed', async () => {
     const ret = await prefsInput.getInput({
       preference: 'changeserver',
     }, {
-      url: 'abc',
+      host: 'abc.com',
       port: '5555'
     });
     ret.should.deep.equal({
       name: 'server_changed',
       details: {
-        host: 'abc',
+        host: 'abc.com',
         port: '5555'
       }
     });
   });
 
-  it('should send the appropriate message when url is not given', async () => {
+  it('should prompt when host is not given', async () => {
+    mockInquirer = sandbox.mock(inquirer);
+    mockInquirer.expects('prompt').returns(Promise.resolve({host: 'abc.com', port:'5555'}));
     const ret = await prefsInput.getInput({
       preference: 'changeserver',
     }, {port: '5555'});
     ret.should.deep.equal({
-      name: 'no_url',
+      name: 'server_changed',
+      details: {
+        host: 'abc.com',
+        port: '5555'
+      }
+    });
+  });
+
+  it('should send the appropriate message when invalid host is given', async () => {
+    const ret = await prefsInput.getInput({
+      preference: 'changeserver',
+    }, {
+      host: 'abc',
+      port: '555'
+    });
+    ret.should.deep.equal({
+      name: 'invalid_host',
     });
   });
 
@@ -62,7 +103,7 @@ describe('for prefs input', () => {
     const ret = await prefsInput.getInput({
       preference: 'changeserver',
     }, {
-      url: 'abc',
+      host: 'abc.com',
       port: '555a'
     });
     ret.should.deep.equal({

@@ -5,6 +5,9 @@ const chalk = require('chalk');
 const Table = require('cli-table');
 
 const prefsOutput = require('../../../../lib/cli/output/prefs');
+const defaultPrefPath = require('path').join(__dirname, '..', '..', '..', '..', 'default-prefs.json');
+const defaultPrefs = JSON.parse(require('fs').readFileSync(defaultPrefPath, 'utf8'));
+const {supportedLanguages} = defaultPrefs;
 
 chai.use(sinonChai);
 chai.should();
@@ -32,18 +35,25 @@ describe('For prefs output', () => {
     logStub.should.have.been.calledWith(chalk.green(`Your submission server has been chaged to abc at port 8999`));
   });
 
-  it('should send expected output when no url is provided', () => {
+  it('should send expected output when no host is provided', () => {
     const logStub = sandbox.stub(console, 'log');
 
-    prefsOutput.sendOutput({name: 'no_url'});
-    logStub.should.have.been.calledWith(chalk.red(`Please provide the url of the new server`));
+    prefsOutput.sendOutput({name: 'invalid_host'});
+    logStub.should.have.been.calledWith(chalk.red(`Please provide a valid host`));
   });
 
   it('should send expected output when invalid port is provided', () => {
     const logStub = sandbox.stub(console, 'log');
 
     prefsOutput.sendOutput({name: 'invalid_port'});
-    logStub.should.have.been.calledWith(chalk.red(`Please provide the a valid port of the new server`));
+    logStub.should.have.been.calledWith(chalk.red(`Please provide a valid port`));
+  });
+
+  it('should send expected output when invalid language is provided', () => {
+    const logStub = sandbox.stub(console, 'log');
+
+    prefsOutput.sendOutput({name: 'invalid_lang', details: {supportedLanguages}});
+    logStub.should.have.been.calledWith(chalk.red(`Please provide the a valid language. The supportedLanguages are ${supportedLanguages}`));
   });
 
   it('should draw table for show prefs command', () => {
@@ -64,7 +74,7 @@ describe('For prefs output', () => {
     });
     table.push(
       ['Language', 'python2'],
-      ['Server url', 'fdsf@fsd.com'],
+      ['Server host', 'fdsf@fsd.com'],
       ['Server port', 5235]
     );
 

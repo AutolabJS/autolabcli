@@ -6,6 +6,7 @@ const path = require('path');
 const figlet = require('figlet');
 const chalk = require('chalk');
 const nock = require('nock');
+const inquirer = require('inquirer');
 const controller = require('../../lib/controller');
 const preferenceManager = require('../../lib/utils/preference-manager');
 
@@ -13,7 +14,6 @@ chai.use(sinonChai);
 chai.should();
 
 describe('Integration test for init command', () => {
-
   const sandbox = sinon.createSandbox();
 
   beforeEach(() => {
@@ -33,7 +33,6 @@ describe('Integration test for init command', () => {
 
   it('should have ouptput as expected when init command is provided with flags', (done) => {
 
-    const stdin = require('mock-stdin').stdin();
     const logSpy = sandbox.stub(console, 'log');
     process.argv = [ '/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolab', 'init', '-u', 'testuser2', '-p', '123' ];
@@ -49,19 +48,19 @@ describe('Integration test for init command', () => {
   });
 
   it('should have ouptput as expected when init command is NOT provided with flags', (done) => {
-    const stdin = require('mock-stdin').stdin();
     const logSpy = sandbox.stub(console, 'log');
     process.argv = [ '/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolab', 'init' ];
+    const mockInquirer = sandbox.mock(inquirer);
+    mockInquirer.expects('prompt').returns(Promise.resolve({username: 'testuser2', password: '123'}));
 
     controller.start();
-    setTimeout(() => stdin.send('testuser2\n'), 1);
-    setTimeout(() => stdin.send('123\n'), 2);
     setTimeout(() => {
       let outputString = chalk.yellow(figlet.textSync('AutolabJS   CLI', { horizontalLayout: 'default' }));
       logSpy.should.have.been.calledWith(outputString);
       logSpy.should.to.have.been.calledWith(chalk.green('\nHi test_user2! Proceed to making commits in this repository. Run \'autolabjs help\' for help.'));
       preferenceManager.getPreference({name: 'gitLabPrefs'}).privateToken.should.equal('zxcvbnb');
+      mockInquirer.verify();
       done();
     },100);
 

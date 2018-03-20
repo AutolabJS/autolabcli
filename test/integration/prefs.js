@@ -10,7 +10,7 @@ const preferenceManager = require('../../lib/utils/preference-manager');
 chai.use(sinonChai);
 chai.should();
 
-describe('Integration test for init command', () => {
+describe('Integration test for prefs command', () => {
 
   const sandbox = sinon.createSandbox();
 
@@ -39,15 +39,15 @@ describe('Integration test for init command', () => {
     const logSpy = sandbox.stub(console, 'log');
     process.argv = [ '/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolab', 'prefs', 'changeserver',
-      '--url', 'xyz', '--port', '9090'];
+      '--host', 'xyz.com', '--port', '9090'];
 
     controller.start();
     setTimeout(() => {
       preferenceManager.getPreference({name: 'cliPrefs'}).main_server.should.deep.equal({
-        host: 'xyz',
+        host: 'xyz.com',
         port: '9090'
       });
-      logSpy.should.have.been.calledWith(chalk.green(`Your submission server has been chaged to xyz at port 9090`));
+      logSpy.should.have.been.calledWith(chalk.green(`Your submission server has been chaged to xyz.com at port 9090`));
       done();
     }, 0);
 
@@ -61,7 +61,7 @@ describe('Integration test for init command', () => {
     });
     table.push(
       ['Language', 'python3'],
-      ['Server url', 'xyz'],
+      ['Server host', 'xyz.com'],
       ['Server port', 9090]
     );
     process.argv = [ '/usr/local/nodejs/bin/node',

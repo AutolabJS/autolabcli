@@ -37,7 +37,7 @@ describe('For prefs controller', () => {
       }
     };
     mockprefsInput.expects('getInput').once().withExactArgs(
-      {preference: 'changeserver'}, { url: 'abc', port: '8999'}
+      {preference: 'changeserver'}, { host: 'abc', port: '8999', lang: undefined}
     ).returns(
       Promise.resolve(changedPrefs));
     mockprefsModel.expects('storePrefs').withExactArgs(changedPrefs).returns(Promise.resolve(changedPrefs));
@@ -46,7 +46,7 @@ describe('For prefs controller', () => {
     prefsController.addTo(program);
 
     program.exec(['prefs', 'changeserver'], {
-      url: 'abc',
+      host: 'abc',
       port: '8999'
     });
 
