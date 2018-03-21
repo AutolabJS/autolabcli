@@ -3,12 +3,13 @@ const chai = require('chai');
 const chaiAsPromised = require("chai-as-promised");
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
+const path = require('path');
 
 chai.use(sinonChai);
 chai.should();
 
 const prefsInput = require('../../../../lib/cli/input/prefs');
-const defaultPrefPath = require('path').join(__dirname, '..', '..', '..', '..', 'default-prefs.json');
+const defaultPrefPath = path.join(__dirname, '../../../../default-prefs.json');
 const defaultPrefs = JSON.parse(require('fs').readFileSync(defaultPrefPath, 'utf8'));
 const {supportedLanguages} = defaultPrefs;
 
@@ -26,7 +27,7 @@ describe('for prefs input', () => {
 
   it('should send the right event when language is changed using prompt', async () => {
     mockInquirer = sandbox.mock(inquirer);
-    mockInquirer.expects('prompt').returns(Promise.resolve({lang: 'cpp14'}));
+    mockInquirer.expects('prompt').resolves({lang: 'cpp14'});
     const ret = await prefsInput.getInput({preference: 'changelang'}, {lang: null});
     ret.should.deep.equal({
       name: 'lang_changed',
@@ -36,7 +37,7 @@ describe('for prefs input', () => {
     });
   });
 
-  it('should send the right event when language is changed using flags', async () => {
+  it('should send the right event when language is changed using lang flag', async () => {
     const ret = await prefsInput.getInput({preference: 'changelang'}, {lang: 'cpp'});
     ret.should.deep.equal({
       name: 'lang_changed',
@@ -46,7 +47,7 @@ describe('for prefs input', () => {
     });
   });
 
-  it('should send the right event when invalid language is provided using lan', async () => {
+  it('should send the right event when invalid language is provided using lang flag', async () => {
     const ret = await prefsInput.getInput({preference: 'changelang'}, {lang: 'python4'});
     ret.should.deep.equal({
       name: 'invalid_lang',
@@ -74,7 +75,7 @@ describe('for prefs input', () => {
 
   it('should prompt when host is not given', async () => {
     mockInquirer = sandbox.mock(inquirer);
-    mockInquirer.expects('prompt').returns(Promise.resolve({host: 'abc.com', port:'5555'}));
+    mockInquirer.expects('prompt').resolves({host: 'abc.com', port:'5555'});
     const ret = await prefsInput.getInput({
       preference: 'changeserver',
     }, {port: '5555'});

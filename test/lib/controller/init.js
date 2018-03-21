@@ -30,19 +30,17 @@ describe('For init controller', () => {
     });
     mockInitInput.expects('getInput').once().withExactArgs(
       {}, { u: 'testuser1', p: '123'}
-    ).returns(
-      Promise.resolve({username: 'testuser1', password: '123'})
-    );
+    ).resolves({username: 'testuser1', password: '123'});
     mockInitOutput.expects('sendOutput').withExactArgs({
         name: 'authentication_started'
     });
     mockInitModel.expects('authenticate').withExactArgs({
       username: 'testuser1',
       password: '123'
-    }).returns(Promise.resolve({
+    }).resolves({
       name: 'test_user1',
       code: 200
-    }));
+    });
     mockInitOutput.expects('sendOutput').withExactArgs({
         name: 'authentication_ended',
         details: {

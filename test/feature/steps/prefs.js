@@ -22,7 +22,7 @@ When('I run prefs command with {string}', (argument) => {
   }
   if (argument === 'changelang') {
     const mockInquirer = sinon.mock(inquirer);
-    mockInquirer.expects('prompt').returns(Promise.resolve({lang: 'cpp14'}));
+    mockInquirer.expects('prompt').resolves({lang: 'cpp14'});
   }
   controller.start();
 });

@@ -52,7 +52,7 @@ describe('Integration test for init command', () => {
     process.argv = [ '/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolab', 'init' ];
     const mockInquirer = sandbox.mock(inquirer);
-    mockInquirer.expects('prompt').returns(Promise.resolve({username: 'testuser2', password: '123'}));
+    mockInquirer.expects('prompt').resolves({username: 'testuser2', password: '123'});
 
     controller.start();
     setTimeout(() => {

@@ -28,7 +28,7 @@ describe('for init getInput', () => {
 
   it('should return promise with correct values when flags not provided', () => {
     const mockInquirer = sandbox.mock(inquirer);
-    mockInquirer.expects('prompt').returns(Promise.resolve({username: 'testuser2', password: '123'}));
+    mockInquirer.expects('prompt').resolves({username: 'testuser2', password: '123'});
 
     return initInput.getInput(null, {}).should.eventually.deep.equal({
       username: 'testuser2',

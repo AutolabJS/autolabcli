@@ -3,9 +3,10 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const chalk = require('chalk');
 const Table = require('cli-table');
+const path = require('path');
 
 const prefsOutput = require('../../../../lib/cli/output/prefs');
-const defaultPrefPath = require('path').join(__dirname, '..', '..', '..', '..', 'default-prefs.json');
+const defaultPrefPath = path.join(__dirname, '../../../../default-prefs.json');
 const defaultPrefs = JSON.parse(require('fs').readFileSync(defaultPrefPath, 'utf8'));
 const {supportedLanguages} = defaultPrefs;
 
@@ -25,14 +26,14 @@ describe('For prefs output', () => {
     const logStub = sandbox.stub(console, 'log');
 
     prefsOutput.sendOutput({name: 'lang_changed', details:{lang: 'cpp'}});
-    logStub.should.have.been.calledWith(chalk.green(`Your submission language has been chaged to cpp`));
+    logStub.should.have.been.calledWith(chalk.green(`Your submission language has been changed to cpp`));
   });
 
   it('should send expected output when server is changed', () => {
     const logStub = sandbox.stub(console, 'log');
 
     prefsOutput.sendOutput({name: 'server_changed', details:{host: 'abc', port: '8999'}});
-    logStub.should.have.been.calledWith(chalk.green(`Your submission server has been chaged to abc at port 8999`));
+    logStub.should.have.been.calledWith(chalk.green(`Your submission server has been changed to abc at port 8999`));
   });
 
   it('should send expected output when no host is provided', () => {
@@ -53,7 +54,7 @@ describe('For prefs output', () => {
     const logStub = sandbox.stub(console, 'log');
 
     prefsOutput.sendOutput({name: 'invalid_lang', details: {supportedLanguages}});
-    logStub.should.have.been.calledWith(chalk.red(`Please provide the a valid language. The supportedLanguages are ${supportedLanguages}`));
+    logStub.should.have.been.calledWith(chalk.red(`Please provide the a valid language. The supported languages are ${supportedLanguages}`));
   });
 
   it('should draw table for show prefs command', () => {

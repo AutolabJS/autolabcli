@@ -23,12 +23,12 @@ describe('Integration test for prefs command', () => {
     process.argv = [ '/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolab', 'prefs', 'changelang'];
     const mockInquirer = sandbox.mock(inquirer);
-    mockInquirer.expects('prompt').returns(Promise.resolve({lang: 'python3'}));
+    mockInquirer.expects('prompt').resolves({lang: 'python3'});
 
     controller.start();
     setTimeout(() => {
       preferenceManager.getPreference({name: 'cliPrefs'}).submission.language.should.equal('python3');
-      logSpy.should.have.been.calledWith(chalk.green(`Your submission language has been chaged to python3`));
+      logSpy.should.have.been.calledWith(chalk.green(`Your submission language has been changed to python3`));
       mockInquirer.verify();
       done();
     }, 0);
@@ -47,7 +47,7 @@ describe('Integration test for prefs command', () => {
         host: 'xyz.com',
         port: '9090'
       });
-      logSpy.should.have.been.calledWith(chalk.green(`Your submission server has been chaged to xyz.com at port 9090`));
+      logSpy.should.have.been.calledWith(chalk.green(`Your submission server has been changed to xyz.com at port 9090`));
       done();
     }, 0);
 
