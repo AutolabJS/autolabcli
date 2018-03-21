@@ -1,22 +1,22 @@
 const initInput = require('../../../../lib/cli/input/init');
+const sinon = require('sinon');
+const sinonChai = require('sinon-chai');
 const chai = require('chai');
 const chaiAsPromised = require("chai-as-promised");
+const inquirer = require('inquirer');
 
 chai.use(chaiAsPromised);
+chai.use(sinonChai);
 chai.should();
 
 mockUser = {u: 'testuser', p:'123'};
 
-describe('for getInput', () => {
+describe('for init getInput', () => {
 
-  let stdin;
-
-  beforeEach(() => {
-    stdin = require('mock-stdin').stdin();
-  });
+  const sandbox = sinon.createSandbox();
 
   afterEach(() => {
-    stdin.restore();
+    sandbox.restore();
   })
 
   it('should return promise with correct values when flags provided', () => {
@@ -27,8 +27,8 @@ describe('for getInput', () => {
   });
 
   it('should return promise with correct values when flags not provided', () => {
-    setTimeout(() => stdin.send('testuser2\n'), 1);
-    setTimeout(() => stdin.send('123\n'), 2);
+    const mockInquirer = sandbox.mock(inquirer);
+    mockInquirer.expects('prompt').resolves({username: 'testuser2', password: '123'});
 
     return initInput.getInput(null, {}).should.eventually.deep.equal({
       username: 'testuser2',
@@ -38,6 +38,7 @@ describe('for getInput', () => {
   });
 
   it('should not accept empty getInput', () => {
+    let stdin = require('mock-stdin').stdin();
     setTimeout(() => stdin.send('\n'), 1);
     setTimeout(() => stdin.send('testuser2\n'), 2);
     setTimeout(() => stdin.send('\n'), 3);
