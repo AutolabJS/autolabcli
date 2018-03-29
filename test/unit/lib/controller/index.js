@@ -3,8 +3,8 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const program = require('caporal');
 
-const controller = require('../../../lib/controller');
-const initController = require('../../../lib/controller/init');
+const controller = require('../../../../lib/controller');
+const initController = require('../../../../lib/controller/init');
 
 chai.use(sinonChai);
 chai.should();

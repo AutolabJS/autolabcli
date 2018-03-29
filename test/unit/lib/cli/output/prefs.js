@@ -5,8 +5,8 @@ const chalk = require('chalk');
 const Table = require('cli-table');
 const path = require('path');
 
-const prefsOutput = require('../../../../lib/cli/output/prefs');
-const defaultPrefPath = path.join(__dirname, '../../../../default-prefs.json');
+const prefsOutput = require('../../../../../lib/cli/output/prefs');
+const defaultPrefPath = path.join(__dirname, '../../../../../default-prefs.json');
 const defaultPrefs = JSON.parse(require('fs').readFileSync(defaultPrefPath, 'utf8'));
 const {supportedLanguages} = defaultPrefs;
 
@@ -17,16 +17,13 @@ describe('For prefs output', () => {
 
   const sandbox = sinon.createSandbox();
 
-  afterEach(() => {
-    sandbox.restore();
-  });
-
-
   it('should send expected output when language is changed', () => {
     const logStub = sandbox.stub(console, 'log');
 
     prefsOutput.sendOutput({name: 'lang_changed', details:{lang: 'cpp'}});
     logStub.should.have.been.calledWith(chalk.green(`Your submission language has been changed to cpp`));
+
+    sandbox.restore();
   });
 
   it('should send expected output when server is changed', () => {
@@ -34,6 +31,8 @@ describe('For prefs output', () => {
 
     prefsOutput.sendOutput({name: 'server_changed', details:{host: 'abc', port: '8999'}});
     logStub.should.have.been.calledWith(chalk.green(`Your submission server has been changed to abc at port 8999`));
+
+    sandbox.restore();
   });
 
   it('should send expected output when no host is provided', () => {
@@ -41,6 +40,8 @@ describe('For prefs output', () => {
 
     prefsOutput.sendOutput({name: 'invalid_host'});
     logStub.should.have.been.calledWith(chalk.red(`Please provide a valid host`));
+
+    sandbox.restore();
   });
 
   it('should send expected output when invalid port is provided', () => {
@@ -48,6 +49,8 @@ describe('For prefs output', () => {
 
     prefsOutput.sendOutput({name: 'invalid_port'});
     logStub.should.have.been.calledWith(chalk.red(`Please provide a valid port`));
+
+    sandbox.restore();
   });
 
   it('should send expected output when invalid language is provided', () => {
@@ -55,6 +58,8 @@ describe('For prefs output', () => {
 
     prefsOutput.sendOutput({name: 'invalid_lang', details: {supportedLanguages}});
     logStub.should.have.been.calledWith(chalk.red(`Please provide the a valid language. The supported languages are ${supportedLanguages}`));
+
+    sandbox.restore();
   });
 
   it('should draw table for show prefs command', () => {
@@ -80,6 +85,8 @@ describe('For prefs output', () => {
     );
 
     logStub.should.have.been.calledWith(table.toString());
+
+    sandbox.restore();
   });
 
 });

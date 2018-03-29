@@ -15,7 +15,6 @@ chai.should();
 
 describe('Integration test for init command', () => {
   const sandbox = sinon.createSandbox();
-
   beforeEach(() => {
     const fakeServer = nock('https://autolab.bits-goa.ac.in')
                        .post('/api/v4/session?login=testuser2&password=123');
@@ -26,12 +25,7 @@ describe('Integration test for init command', () => {
     });
   });
 
-
-  afterEach(() => {
-    sandbox.restore();
-  });
-
-  it('should have ouptput as expected when init command is provided with flags', (done) => {
+  it('should have output as expected when init command is provided with flags', (done) => {
 
     const logSpy = sandbox.stub(console, 'log');
     process.argv = [ '/usr/local/nodejs/bin/node',
@@ -41,13 +35,16 @@ describe('Integration test for init command', () => {
     setTimeout(() => {
       let outputString = chalk.yellow(figlet.textSync('AutolabJS   CLI', { horizontalLayout: 'default' }));
       logSpy.should.have.been.calledWith(outputString);
-      logSpy.should.to.have.been.calledWith(chalk.green('\nHi test_user2! Proceed to making commits in this repository. Run \'autolabjs help\' for help.'));
+      logSpy.should.to.have.been.calledWith(chalk.green('\nHi test_user2! You have successfully logged into AutolabJS. Run \'autolabjs help\' for help.'));
       preferenceManager.getPreference({name: 'gitLabPrefs'}).privateToken.should.equal('zxcvbnb');
-      done();
+      setTimeout(() => {
+        sandbox.restore();
+        done();
+      }, 0);
     },100);
   });
 
-  it('should have ouptput as expected when init command is NOT provided with flags', (done) => {
+  it('should have output as expected when init command is NOT provided with flags', (done) => {
     const logSpy = sandbox.stub(console, 'log');
     process.argv = [ '/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolab', 'init' ];
@@ -58,10 +55,13 @@ describe('Integration test for init command', () => {
     setTimeout(() => {
       let outputString = chalk.yellow(figlet.textSync('AutolabJS   CLI', { horizontalLayout: 'default' }));
       logSpy.should.have.been.calledWith(outputString);
-      logSpy.should.to.have.been.calledWith(chalk.green('\nHi test_user2! Proceed to making commits in this repository. Run \'autolabjs help\' for help.'));
+      logSpy.should.to.have.been.calledWith(chalk.green('\nHi test_user2! You have successfully logged into AutolabJS. Run \'autolabjs help\' for help.'));
       preferenceManager.getPreference({name: 'gitLabPrefs'}).privateToken.should.equal('zxcvbnb');
       mockInquirer.verify();
-      done();
+      setTimeout(() => {
+        sandbox.restore();
+        done();
+      }, 0);
     },100);
 
   });

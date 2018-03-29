@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "posttest": "nyc report --reporter=lcov > coverage.lcov && codecov",
-    "test": "nyc --reporter=lcov --reporter=text-lcov -s --all mocha 'test/*.js' 'test/integration/**/*.js' 'test/lib/**/*.js'",
-    "cucumber": "cucumber-js 'test/feature/features' -r 'test/feature/steps'"
+    "unit": "nyc --reporter=lcov --reporter=text-lcov -s --all mocha 'test/unit/**/*.js'",
+    "integration": "nyc --reporter=lcov --reporter=text-lcov -s --all mocha 'test/integration/**/*.js'",
+    "feature": "cucumber-js 'test/feature/features' -r 'test/feature/steps'"
   },
   "bin": {
     "autolabjs": "./index.js"
@@ -39,6 +40,9 @@
     "chai-as-promised": "^7.1.1",
     "codecov": "^3.0.0",
     "cucumber": "^4.0.0",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.9.0",
     "mocha": "^4.1.0",
     "mock-stdin": "^0.3.1",
     "nock": "^9.2.3",

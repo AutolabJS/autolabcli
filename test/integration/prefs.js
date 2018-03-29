@@ -14,10 +14,6 @@ describe('Integration test for prefs command', () => {
 
   const sandbox = sinon.createSandbox();
 
-  afterEach(() => {
-    sandbox.restore();
-  });
-
   it('should be able to change the language', (done) => {
     const logSpy = sandbox.stub(console, 'log');
     process.argv = [ '/usr/local/nodejs/bin/node',
@@ -30,6 +26,7 @@ describe('Integration test for prefs command', () => {
       preferenceManager.getPreference({name: 'cliPrefs'}).submission.language.should.equal('python3');
       logSpy.should.have.been.calledWith(chalk.green(`Your submission language has been changed to python3`));
       mockInquirer.verify();
+      sandbox.restore();
       done();
     }, 0);
 
@@ -48,6 +45,7 @@ describe('Integration test for prefs command', () => {
         port: '9090'
       });
       logSpy.should.have.been.calledWith(chalk.green(`Your submission server has been changed to xyz.com at port 9090`));
+      sandbox.restore();
       done();
     }, 0);
 
@@ -70,6 +68,7 @@ describe('Integration test for prefs command', () => {
     controller.start();
     setTimeout(() => {
       logSpy.should.have.been.calledWith(table.toString());
+      sandbox.restore();
       done();
     }, 0);
 

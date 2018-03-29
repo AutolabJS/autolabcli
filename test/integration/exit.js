@@ -31,11 +31,6 @@ describe('Integration test for exit command', () => {
     });
   });
 
-
-  afterEach(() => {
-    sandbox.restore();
-  });
-
   it('should remove the stored credentials', (done) => {
 
     const logSpy = sandbox.stub(console, 'log');
@@ -47,7 +42,10 @@ describe('Integration test for exit command', () => {
       controller.start();
       preferenceManager.getPreference({name: 'gitLabPrefs'}).privateToken.should.equal('');
       preferenceManager.getPreference({name: 'gitLabPrefs'}).storedTime.should.equal(-1);
-      done();
+      setTimeout(() => {
+        sandbox.restore();
+        done();
+      }, 0);
     },100);
   });
 

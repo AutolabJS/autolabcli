@@ -27,15 +27,21 @@ When('I run prefs command with {string}', (argument) => {
   controller.start();
 });
 
-Then('I should be able to change the submission language', () => {
-  preferenceManager.getPreference({name: 'cliPrefs'}).submission.language.should.equal('cpp14');
+Then('I should be able to change the submission language', (done) => {
+  setTimeout(() => {
+    preferenceManager.getPreference({name: 'cliPrefs'}).submission.language.should.equal('cpp14');
+    done();
+  }, 0);
 });
 
-Then('I should be able to change the submission server', () => {
-  preferenceManager.getPreference({name: 'cliPrefs'}).main_server.should.deep.equal({
-    host: 'abc.com',
-    port: '5678'
-  });
+Then('I should be able to change the submission server', (done) => {
+  setTimeout(() => {
+    preferenceManager.getPreference({name: 'cliPrefs'}).main_server.should.deep.equal({
+      host: 'abc.com',
+      port: '5678'
+    });
+    done();
+  }, 0);
 });
 
 Then('I should be able to see the preferences', (done) => {

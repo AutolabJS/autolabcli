@@ -3,7 +3,7 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const { exec } = require('child_process');
 
-const controller = require('../lib/controller');
+const controller = require('../../lib/controller');
 
 chai.use(sinonChai);
 chai.should();
