@@ -14,7 +14,7 @@ const preferenceManager = require('../../../lib/utils/preference-manager');
 chai.use(sinonChai);
 chai.should();
 
-When('I run prefs command with {string}', (argument) => {
+When('I run prefs command with {string}', async (argument) => {
   process.argv = [ '/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolab', 'prefs', argument];
   if (argument === 'changeserver') {
@@ -24,27 +24,21 @@ When('I run prefs command with {string}', (argument) => {
     const mockInquirer = sinon.mock(inquirer);
     mockInquirer.expects('prompt').resolves({lang: 'cpp14'});
   }
-  controller.start();
+   await controller.start();
 });
 
-Then('I should be able to change the submission language', (done) => {
-  setTimeout(() => {
+Then('I should be able to change the submission language', () => {
     preferenceManager.getPreference({name: 'cliPrefs'}).submission.language.should.equal('cpp14');
-    done();
-  }, 0);
 });
 
-Then('I should be able to change the submission server', (done) => {
-  setTimeout(() => {
+Then('I should be able to change the submission server', () => {
     preferenceManager.getPreference({name: 'cliPrefs'}).main_server.should.deep.equal({
       host: 'abc.com',
       port: '5678'
     });
-    done();
-  }, 0);
 });
 
-Then('I should be able to see the preferences', (done) => {
+Then('I should be able to see the preferences', () => {
   const table = new Table({
       head: [chalk.cyan('Preferences'), chalk.cyan('Values')]
     , colWidths: [15, 25]
@@ -55,8 +49,5 @@ Then('I should be able to see the preferences', (done) => {
     ['Server port', 5678]
   );
 
-  setTimeout(()=> {
     global.logSpy.should.have.been.calledWith(table.toString());
-    done();
-  }, 0);
 });
