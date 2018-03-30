@@ -5,7 +5,7 @@ const chalk = require('chalk');
 const figlet = require('figlet');
 const {Spinner} = require('cli-spinner');
 
-const initOutput = require('../../../../lib/cli/output/init');
+const initOutput = require('../../../../../lib/cli/output/init');
 
 chai.use(sinonChai);
 chai.should();
@@ -13,10 +13,6 @@ chai.should();
 describe('For init output', () => {
 
   const sandbox = sinon.createSandbox();
-
-  afterEach(() => {
-    sandbox.restore();
-  });
 
 
   it('should send expected welcome text', () => {
@@ -30,6 +26,8 @@ describe('For init output', () => {
 
     mockFiglet.verify();
     logStub.should.have.been.calledWith(chalk.yellow('Autolab CLI'));
+
+    sandbox.restore();
   });
 
   it('should start the spinner when authentication starts', () => {
@@ -43,6 +41,7 @@ describe('For init output', () => {
 
     mockStdout.verify();
 
+    sandbox.restore();
   });
 
   it('should display sucess message  for status code as 200', () => {
@@ -53,7 +52,9 @@ describe('For init output', () => {
       name: 'test_user'
     }});
 
-    logStub.should.have.been.calledWith(chalk.green('\nHi test_user! Proceed to making commits in this repository. Run \'autolabjs help\' for help.'));
+    logStub.should.have.been.calledWith(chalk.green('\nHi test_user! You have successfully logged into AutolabJS. Run \'autolabjs help\' for help.'));
+
+    sandbox.restore();
   });
 
   it('should display error message  for invalid credentials', () => {
@@ -64,6 +65,8 @@ describe('For init output', () => {
     }});
 
     logStub.should.have.been.calledWith(chalk.red('\nInvalid Username or Password'));
+
+    sandbox.restore();
   });
 
   it('should display appropriate error message  for no connection', () => {
@@ -74,6 +77,8 @@ describe('For init output', () => {
     }});
 
     logStub.should.have.been.calledWith(chalk.red('\nPlease check your network connection'));
+
+    sandbox.restore();
   });
 
 });

@@ -3,10 +3,10 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const program = require('caporal');
 
-const prefsInput = require('../../../lib/cli/input/prefs');
-const prefsOutput = require('../../../lib/cli/output/prefs');
-const prefsModel = require('../../../lib/model/prefs');
-const prefsController = require('../../../lib/controller/prefs');
+const prefsInput = require('../../../../lib/cli/input/prefs');
+const prefsOutput = require('../../../../lib/cli/output/prefs');
+const prefsModel = require('../../../../lib/model/prefs');
+const prefsController = require('../../../../lib/controller/prefs');
 
 chai.use(sinonChai);
 chai.should();

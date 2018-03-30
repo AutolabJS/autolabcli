@@ -8,8 +8,8 @@ const path = require('path');
 chai.use(sinonChai);
 chai.should();
 
-const prefsInput = require('../../../../lib/cli/input/prefs');
-const defaultPrefPath = path.join(__dirname, '../../../../default-prefs.json');
+const prefsInput = require('../../../../../lib/cli/input/prefs');
+const defaultPrefPath = path.join(__dirname, '../../../../../default-prefs.json');
 const defaultPrefs = JSON.parse(require('fs').readFileSync(defaultPrefPath, 'utf8'));
 const {supportedLanguages} = defaultPrefs;
 
