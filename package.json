@@ -4,10 +4,13 @@
   "description": "Codebase for backward incompatible revision of autolabcli v0.1.1.",
   "main": "index.js",
   "scripts": {
-    "posttest": "nyc report --reporter=lcov > coverage.lcov && codecov",
+    "posttest": "nyc report --reporter=lcov > coverage.lcov",
     "unit": "nyc --reporter=lcov --reporter=text-lcov -s --all mocha 'test/unit/**/*.js'",
+    "post-unit": "nyc report --reporter=lcov > coverage.lcov && codecov && rm -rf ~/.autolabjs",
     "integration": "nyc --reporter=lcov --reporter=text-lcov -s --all mocha 'test/integration/**/*.js'",
-    "feature": "cucumber-js 'test/feature/features' -r 'test/feature/steps'"
+    "post-integration": "CODECLIMATE_REPO_TOKEN=baebe9fb07d4b1cb32bae393a2eb1e66d8c8d1656b35db9d7d4c2eda3caf26ea codeclimate-test-reporter < ./coverage/lcov.info && rm -rf ~/.autolabjs",
+    "feature": "nyc --reporter=lcov --reporter=text-lcov -s --all cucumber-js 'test/feature/features' -r 'test/feature/steps'",
+    "post-feature": "cat ./coverage/lcov.info | coveralls"
   },
   "bin": {
     "autolabjs": "./index.js"
@@ -39,6 +42,7 @@
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "codecov": "^3.0.0",
+    "coveralls": "^3.0.0",
     "cucumber": "^4.0.0",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^12.1.0",

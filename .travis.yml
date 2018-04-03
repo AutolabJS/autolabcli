@@ -7,5 +7,6 @@ install:
 
 script:
   - npm run unit
-  - npm run posttest
+  - npm run post-unit
   - npm run integration
+  - npm run post-integration
