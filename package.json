@@ -4,7 +4,6 @@
   "description": "Codebase for backward incompatible revision of autolabcli v0.1.1.",
   "main": "index.js",
   "scripts": {
-    "posttest": "nyc report --reporter=lcov > coverage.lcov",
     "unit": "nyc --reporter=lcov --reporter=text-lcov -s --all mocha 'test/unit/**/*.js'",
     "post-unit": "nyc report --reporter=lcov > coverage.lcov && codecov && rm -rf ~/.autolabjs",
     "integration": "nyc --reporter=lcov --reporter=text-lcov -s --all mocha 'test/integration/**/*.js'",
