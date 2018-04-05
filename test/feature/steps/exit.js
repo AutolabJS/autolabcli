@@ -15,10 +15,10 @@ chai.should();
 Given('I have already logged in', () => {
 });
 
-When('I run exit command', () => {
+When('I run exit command', async () => {
   process.argv = [ '/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolab', 'exit' ];
-  controller.start();
+  await controller.start();
 });
 
 Then('My login credentials should be removed', () => {

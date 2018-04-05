@@ -42,7 +42,7 @@ describe('Integration test for prefs command', () => {
     sandbox.restore();
   });
 
-  it('should be able to change the main server', async () => {
+  it('should show the prefs', async () => {
     const logSpy = sandbox.stub(console, 'log');
     const table = new Table({
       head: [chalk.cyan('Preferences'), chalk.cyan('Values')],
