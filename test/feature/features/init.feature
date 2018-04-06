@@ -20,3 +20,8 @@ Feature: Init
     Given a valid username as 'AutolabJS_Tester' and corresponding password as 'autolabjs123'
     When I run init command with 'AutolabJS_Tester' as username and 'autolabjs121' as password using 'prompt'
     Then I should be displayed a warning message when input is given using 'prompt'
+
+  Scenario: Init command with empty inputs in prompt
+    Given a valid username as 'AutolabJS_Tester' and corresponding password as 'autolabjs123'
+    When I give empty input to init command at the prompt
+    Then I should be displayed a warning message to give non-empty input

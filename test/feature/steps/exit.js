@@ -12,13 +12,18 @@ const preferenceManager = require('../../../lib/utils/preference-manager');
 chai.use(sinonChai);
 chai.should();
 
-Given('I have already logged in', () => {
+Given('I have already logged in', async () => {
+  process.argv = ['/usr/local/nodejs/bin/node',
+    '/usr/local/nodejs/bin/autolabjs', 'init',
+    '-u', 'AutolabJS_Tester', '-p', 'autolabjs123'];
+
+  await controller.start();
 });
 
-When('I run exit command', () => {
+When('I run exit command', async () => {
   process.argv = [ '/usr/local/nodejs/bin/node',
-    '/usr/local/nodejs/bin/autolab', 'exit' ];
-  controller.start();
+    '/usr/local/nodejs/bin/autolabjs', 'exit' ];
+  await controller.start();
 });
 
 Then('My login credentials should be removed', () => {

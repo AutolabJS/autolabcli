@@ -7,65 +7,62 @@ const sinonChai = require('sinon-chai');
 const path = require('path');
 const figlet = require('figlet');
 const chalk = require('chalk');
+const inquirer = require('inquirer');
 const controller = require('../../../lib/controller');
+const initInput = require('../../../lib/cli/input/init');
 const preferenceManager = require('../../../lib/utils/preference-manager');
 
 chai.use(sinonChai);
 chai.should();
 
-Before(() => {
-  global.logSpy = sinon.stub(console, 'log');
-});
-
-After(() => {
-  global.logSpy.restore();
-});
+global.promptStub = sinon.stub(inquirer, 'prompt');
+global.logSpy = sinon.stub(console, 'log');
 
 Given('a valid username as {string} and corresponding password as {string}', (user, pass) => {
   username = user;
   password = pass;
 });
 
-When('I run init command with {string} as username and {string} as password using {string}', (username, password, inputType, done) => {
+When('I run init command with {string} as username and {string} as password using {string}', async (username, password, inputType) => {
   if(inputType === 'flags') {
-      exec(`autolabjs init -u ${username} -p ${password}`, (err, stdout, stderr) => {
-        errorOutput = stdout;
-        done();
-      });
+    process.argv = ['/usr/local/nodejs/bin/node',
+      '/usr/local/nodejs/bin/autolabjs', 'init', '-u', username, '-p', password];
+
+    await controller.start();
   }
   else if(inputType === 'prompt') {
-      const stdin = require('mock-stdin').stdin();
-      process.argv = [ '/usr/local/nodejs/bin/node',
-        '/usr/local/nodejs/bin/autolab', 'init' ];
-      controller.start();
-      setTimeout(() => stdin.send(`${username}\n`), 1);
-      setTimeout(() => stdin.send(`${password}\n`), 2);
-      setTimeout(() => {
-        done();
-      },3);
+    process.argv = ['/usr/local/nodejs/bin/node',
+      '/usr/local/nodejs/bin/autolabjs', 'init'];
+    global.promptStub.resolves({ username, password });
+
+    await controller.start();
   }
+});
+
+let emptyUsernamePrompt, emptyPasswordPrompt;
+When('I give empty input to init command at the prompt', async () => {
+  const invalidInputTester = () => {
+    const credentails = promptStub.getCalls()[0].args[0];
+    try {
+      emptyUsernamePrompt = promptStub.getCalls()[0].args[0][0].validate('');
+      emptyPasswordPrompt = promptStub.getCalls()[0].args[0][1].validate('');
+    } catch(e) {}
+  }
+
+  global.promptStub.callsFake(invalidInputTester);
+  const ret = await initInput.getInput(null, {});
 });
 
 Then('My login credentials and private token should be stored locally', () => {
-  const prefDirectory = `${require('os').homedir()}/.autolabjs`;
-  const gitLabPref = new Preferences('autolabjs.gitlab.credentials', {}, {
-  encrypt: true,
-  file: `${prefDirectory}/gitlab-credentials`
-  });
-  gitLabPref.username.should.equal(username);
-  gitLabPref.password.should.equal(password);
-  gitLabPref.privateToken.should.not.be.empty;
+  preferenceManager.getPreference({ name: 'gitLabPrefs' }).privateToken.should.not.be.empty;
 });
 
-Then('I should be displayed a warning message when input is given using {string}', (inputType, done) => {
-  if(inputType === 'prompt') {
-    setTimeout(() => {
-      global.logSpy.withArgs(chalk.red('\nInvalid Username or Password')).should.have.been.called;
-      done();
-    }, 500);
-  }
-  else if (inputType === 'flags') {
-    errorOutput.should.contain('Invalid Username or Password');
-    done();
-  }
+Then('I should be displayed a warning message when input is given using {string}', (inputType) => {
+  global.logSpy.should.have.been.calledWith(chalk.red('\nInvalid Username or Password'));
+});
+
+Then('I should be displayed a warning message to give non-empty input', () => {
+  global.promptStub.getCalls()[0].args[0][0].validate('testuser2').should.equal(true);
+  emptyUsernamePrompt.should.equal('Please enter your username');
+  emptyPasswordPrompt.should.equal('Please enter your password');
 });
