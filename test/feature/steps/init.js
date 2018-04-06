@@ -26,13 +26,13 @@ Given('a valid username as {string} and corresponding password as {string}', (us
 When('I run init command with {string} as username and {string} as password using {string}', async (username, password, inputType) => {
   if(inputType === 'flags') {
     process.argv = ['/usr/local/nodejs/bin/node',
-      '/usr/local/nodejs/bin/autolab', 'init', '-u', username, '-p', password];
+      '/usr/local/nodejs/bin/autolabjs', 'init', '-u', username, '-p', password];
 
     await controller.start();
   }
   else if(inputType === 'prompt') {
     process.argv = ['/usr/local/nodejs/bin/node',
-      '/usr/local/nodejs/bin/autolab', 'init'];
+      '/usr/local/nodejs/bin/autolabjs', 'init'];
     global.promptStub.resolves({ username, password });
 
     await controller.start();

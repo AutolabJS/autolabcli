@@ -20,7 +20,7 @@ chai.should();
 
 When('I run prefs command with {string} using {string}', async (argument, inputType) => {
   process.argv = [ '/usr/local/nodejs/bin/node',
-    '/usr/local/nodejs/bin/autolab', 'prefs', argument];
+    '/usr/local/nodejs/bin/autolabjs', 'prefs', argument];
   if (argument === 'changeserver') {
     if (inputType === 'flags') {
       process.argv = process.argv.concat(['--host', 'abc.com', '--port', '5678']);
@@ -42,26 +42,26 @@ When('I run prefs command with {string} using {string}', async (argument, inputT
 
 When('I run prefs command with changelang with invalid language', async () => {
   process.argv = [ '/usr/local/nodejs/bin/node',
-    '/usr/local/nodejs/bin/autolab', 'prefs', 'changelang', '--lang', 'javascript'];
+    '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changelang', '--lang', 'javascript'];
    await controller.start();
 });
 
 When('I run prefs command with show', async () => {
   process.argv = [ '/usr/local/nodejs/bin/node',
-    '/usr/local/nodejs/bin/autolab', 'prefs', 'show'];
+    '/usr/local/nodejs/bin/autolabjs', 'prefs', 'show'];
    await controller.start();
 });
 
 When('I run change server with invalid host', async () => {
   process.argv = [ '/usr/local/nodejs/bin/node',
-    '/usr/local/nodejs/bin/autolab', 'prefs', 'changeserver',
+    '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changeserver',
     '--host', 'abc', '--port', '5678'];
    await controller.start();
 });
 
 When('I run change server with invalid port', async () => {
   process.argv = [ '/usr/local/nodejs/bin/node',
-    '/usr/local/nodejs/bin/autolab', 'prefs', 'changeserver',
+    '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changeserver',
     '--host', 'abc.com', '--port', '567E'];
    await controller.start();
 });
