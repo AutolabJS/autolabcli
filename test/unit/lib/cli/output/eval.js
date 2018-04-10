@@ -5,87 +5,98 @@ const chalk = require('chalk');
 const Table = require('cli-table');
 const path = require('path');
 
-const prefsOutput = require('../../../../../lib/cli/output/prefs');
+const evalOutput = require('../../../../../lib/cli/output/eval');
 const defaultPrefPath = path.join(__dirname, '../../../../../default-prefs.json');
-const defaultPrefs = JSON.parse(require('fs').readFileSync(defaultPrefPath, 'utf8'));
-const {supportedLanguages} = defaultPrefs;
+const defaultprefs = JSON.parse(require('fs').readFileSync(defaultPrefPath, 'utf8'));
+const {supportedLanguages} = defaultprefs;
 
 chai.use(sinonChai);
 chai.should();
 
-describe('For prefs output', () => {
+describe('For eval output', () => {
 
   const sandbox = sinon.createSandbox();
+  const mockData = {
+    marks: [1,1],
+    comment: ['success', 'success'],
+    status: 0,
+    log: '',
+    penalty: 0
+  }
 
-  it('should send expected output when language is changed', () => {
+  it('should start the spinner when evaluation starts', () => {
     const logStub = sandbox.stub(console, 'log');
+    const mockStdout = sandbox.mock(process.stdout);
 
-    prefsOutput.sendOutput({name: 'lang_changed', details:{lang: 'cpp'}});
-    logStub.should.have.been.calledWith(chalk.green(`Your submission language has been changed to cpp`));
+    mockStdout.expects('write').atLeast(1);
+
+    evalOutput.sendOutput({name: 'eval_started'});
+    evalOutput.sendOutput({name: 'invalid'});
+
+    mockStdout.verify();
 
     sandbox.restore();
   });
 
-  it('should send expected output when server is changed', () => {
+  it('should draw table for scores event and display total score', () => {
     const logStub = sandbox.stub(console, 'log');
 
-    prefsOutput.sendOutput({name: 'server_changed', details:{host: 'abc', port: '8999'}});
-    logStub.should.have.been.calledWith(chalk.green(`Your submission server has been changed to abc at port 8999`));
-
-    sandbox.restore();
-  });
-
-  it('should send expected output when no host is provided', () => {
-    const logStub = sandbox.stub(console, 'log');
-
-    prefsOutput.sendOutput({name: 'invalid_host'});
-    logStub.should.have.been.calledWith(chalk.red(`Please provide a valid host`));
-
-    sandbox.restore();
-  });
-
-  it('should send expected output when invalid port is provided', () => {
-    const logStub = sandbox.stub(console, 'log');
-
-    prefsOutput.sendOutput({name: 'invalid_port'});
-    logStub.should.have.been.calledWith(chalk.red(`Please provide a valid port`));
-
-    sandbox.restore();
-  });
-
-  it('should send expected output when invalid language is provided', () => {
-    const logStub = sandbox.stub(console, 'log');
-
-    prefsOutput.sendOutput({name: 'invalid_lang', details: {supportedLanguages}});
-    logStub.should.have.been.calledWith(chalk.red(`Please provide the a valid language. The supported languages are ${supportedLanguages}`));
-
-    sandbox.restore();
-  });
-
-  it('should draw table for show prefs command', () => {
-    const logStub = sandbox.stub(console, 'log');
-
-    prefsOutput.sendOutput({
-      name: 'show_prefs',
+    evalOutput.sendOutput({
+      name: 'scores',
       details: {
-        lang: 'python2',
-        mainserver_host: 'fdsf@fsd.com',
-        mainserver_port: 5235
+        ...mockData
       }
     });
 
     const table = new Table({
-        head: [chalk.cyan('Preferences'), chalk.cyan('Values')]
-      , colWidths: [15, 25]
+      head: [chalk.cyan('Test Case #'), chalk.cyan('Status'), chalk.cyan('Score')],
+      colWidths: [15,25,15]
     });
     table.push(
-      ['Language', 'python2'],
-      ['Server host', 'fdsf@fsd.com'],
-      ['Server port', 5235]
+      ['1', 'success', '1'],
+      ['2', 'success', '1']
     );
 
+    logStub.should.have.been.calledWith(chalk.green('\nSubmission successful. Retreiving results'));
     logStub.should.have.been.calledWith(table.toString());
+    logStub.should.have.been.calledWith('\n' + chalk.yellow('Log :\n') + new Buffer(mockData.log, 'base64').toString());
+    logStub.should.have.been.calledWith(chalk.yellow('Warning: ') + 'This lab is not active. The result of this evaluation is not added to the scoreboard.');
+    logStub.should.have.been.calledWith(chalk.green('Total Score: ') + '2');
 
+    sandbox.restore();
+  });
+
+  it('should show penalty score when status is not 0', () => {
+    const logStub = sandbox.stub(console, 'log');
+    mockData.status = 1;
+    evalOutput.sendOutput({
+      name: 'scores',
+      details: {
+        ...mockData
+      }
+    });
+
+    logStub.should.have.been.calledWith(chalk.red('Penalty : ') + 0);
+    sandbox.restore();
+  });
+
+  it('should display error message for invalid event', () => {
+    const logStub = sandbox.stub(console, 'log');
+    evalOutput.sendOutput({
+      name: 'invalid',
+    });
+
+    logStub.should.have.been.calledWith(chalk.red('\nAccess Denied. Please try submitting again'));
+    sandbox.restore();
+  });
+
+  it('should display error message for submission_pending event', () => {
+    const logStub = sandbox.stub(console, 'log');
+    evalOutput.sendOutput({
+      name: 'submission_pending',
+    });
+
+    logStub.should.have.been.calledWith(chalk.yellow('\nYou have a pending submission. Please try after some time.'));
     sandbox.restore();
   });
 

@@ -28,7 +28,7 @@ const mockCliPref = {
 chai.use(chaiAsPromised);
 chai.should();
 
-describe.only('for evalModel', () => {
+describe('for evalModel', () => {
   const sandbox = sinon.createSandbox();
 
   afterEach(() => {
