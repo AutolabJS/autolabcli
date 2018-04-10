@@ -19,7 +19,7 @@ describe('For init controller', () => {
     sandbox.restore();
   });
 
-  it('should call the action of program with right arguments', (done) => {
+  it('should call the action of program with right arguments', async () => {
 
     const mockInitInput = sandbox.mock(initInput);
     const mockInitOutput = sandbox.mock(initOutput);
@@ -51,17 +51,14 @@ describe('For init controller', () => {
 
     initController.addTo(program);
 
-    program.exec(['init'], {
+    await program.exec(['init'], {
       u: 'testuser1',
       p: '123'
     });
 
-    setTimeout(() => {
-      mockInitInput.verify();
-      mockInitOutput.verify();
-      mockInitModel.verify();
-      done();
-    }, 0);
+    mockInitInput.verify();
+    mockInitOutput.verify();
+    mockInitModel.verify();
 
   });
 });
