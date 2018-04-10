@@ -23,7 +23,7 @@
     "cli-spinner": "^0.2.5",
     "cli-table": "^0.3.1",
     "figlet": "^1.2.0",
-    "gitlab": "^1.7.1",
+    "gitlab": "^3.0.0",
     "inquirer": "^1.2.3",
     "lodash": "^4.17.2",
     "minimist": "^1.2.0",
