@@ -42,10 +42,10 @@ When('I run init command with {string} as username and {string} as password usin
 let emptyUsernamePrompt, emptyPasswordPrompt;
 When('I give empty input to init command at the prompt', async () => {
   const invalidInputTester = () => {
-    const credentails = promptStub.getCalls()[0].args[0];
+    const credentails = promptStub.getCalls()[1].args[0];
     try {
-      emptyUsernamePrompt = promptStub.getCalls()[0].args[0][0].validate('');
-      emptyPasswordPrompt = promptStub.getCalls()[0].args[0][1].validate('');
+      emptyUsernamePrompt = promptStub.getCalls()[1].args[0][0].validate('');
+      emptyPasswordPrompt = promptStub.getCalls()[1].args[0][1].validate('');
     } catch(e) {}
   }
 

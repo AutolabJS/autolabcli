@@ -28,7 +28,7 @@ describe('Integration test for init command', () => {
   it('should have output as expected when init command is provided with flags', async () => {
     const logstub = sandbox.stub(console, 'log');
     process.argv = ['/usr/local/nodejs/bin/node',
-      '/usr/local/nodejs/bin/autolab', 'init', '-u', 'testuser2', '-p', '123'];
+      '/usr/local/nodejs/bin/autolabjs', 'init', '-u', 'testuser2', '-p', '123'];
 
     await controller.start();
     const outputString = chalk.yellow(figlet.textSync('AutolabJS   CLI', { horizontalLayout: 'default' }));
@@ -41,7 +41,7 @@ describe('Integration test for init command', () => {
   it('should have output as expected when init command is NOT provided with flags', async () => {
     const logstub = sandbox.stub(console, 'log');
     process.argv = ['/usr/local/nodejs/bin/node',
-      '/usr/local/nodejs/bin/autolab', 'init'];
+      '/usr/local/nodejs/bin/autolabjs', 'init'];
     const mockInquirer = sandbox.mock(inquirer);
     mockInquirer.expects('prompt').resolves({ username: 'testuser2', password: '123' });
 

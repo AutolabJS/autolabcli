@@ -16,7 +16,7 @@ describe('Integration test for prefs command', () => {
   it('should be able to change the language', async () => {
     const logSpy = sandbox.stub(console, 'log');
     process.argv = ['/usr/local/nodejs/bin/node',
-      '/usr/local/nodejs/bin/autolab', 'prefs', 'changelang'];
+      '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changelang'];
     const mockInquirer = sandbox.mock(inquirer);
     mockInquirer.expects('prompt').resolves({ lang: 'python3' });
 
@@ -30,7 +30,7 @@ describe('Integration test for prefs command', () => {
   it('should be able to change the main server', async () => {
     const logSpy = sandbox.stub(console, 'log');
     process.argv = ['/usr/local/nodejs/bin/node',
-      '/usr/local/nodejs/bin/autolab', 'prefs', 'changeserver',
+      '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changeserver',
       '--host', 'xyz.com', '--port', '9090'];
 
     await controller.start();
@@ -54,7 +54,7 @@ describe('Integration test for prefs command', () => {
       ['Server port', 9090],
     );
     process.argv = ['/usr/local/nodejs/bin/node',
-      '/usr/local/nodejs/bin/autolab', 'prefs', 'show'];
+      '/usr/local/nodejs/bin/autolabjs', 'prefs', 'show'];
 
     await controller.start();
     logSpy.should.have.been.calledWith(table.toString());

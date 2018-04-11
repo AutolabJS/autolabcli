@@ -6,9 +6,6 @@ const Table = require('cli-table');
 const path = require('path');
 
 const evalOutput = require('../../../../../lib/cli/output/eval');
-const defaultPrefPath = path.join(__dirname, '../../../../../default-prefs.json');
-const defaultprefs = JSON.parse(require('fs').readFileSync(defaultPrefPath, 'utf8'));
-const {supportedLanguages} = defaultprefs;
 
 chai.use(sinonChai);
 chai.should();

@@ -12,7 +12,7 @@ chai.should();
 
 const login = async () => {
   process.argv = ['/usr/local/nodejs/bin/node',
-    '/usr/local/nodejs/bin/autolab', 'init', '-u', 'testuser2', '-p', '123'];
+    '/usr/local/nodejs/bin/autolabjs', 'init', '-u', 'testuser2', '-p', '123'];
 
   await controller.start();
 };
