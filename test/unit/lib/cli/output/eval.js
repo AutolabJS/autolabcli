@@ -11,15 +11,14 @@ chai.use(sinonChai);
 chai.should();
 
 describe('For eval output', () => {
-
   const sandbox = sinon.createSandbox();
   const mockData = {
-    marks: [1,1],
+    marks: [1, 1],
     comment: ['success', 'success'],
     status: 0,
     log: '',
-    penalty: 0
-  }
+    penalty: 0,
+  };
 
   it('should start the spinner when evaluation starts', () => {
     const logStub = sandbox.stub(console, 'log');
@@ -27,8 +26,8 @@ describe('For eval output', () => {
 
     mockStdout.expects('write').atLeast(1);
 
-    evalOutput.sendOutput({name: 'eval_started'});
-    evalOutput.sendOutput({name: 'invalid'});
+    evalOutput.sendOutput({ name: 'eval_started' });
+    evalOutput.sendOutput({ name: 'invalid' });
 
     mockStdout.verify();
 
@@ -41,24 +40,24 @@ describe('For eval output', () => {
     evalOutput.sendOutput({
       name: 'scores',
       details: {
-        ...mockData
-      }
+        ...mockData,
+      },
     });
 
     const table = new Table({
       head: [chalk.cyan('Test Case #'), chalk.cyan('Status'), chalk.cyan('Score')],
-      colWidths: [15,25,15]
+      colWidths: [15, 25, 15],
     });
     table.push(
       ['1', 'success', '1'],
-      ['2', 'success', '1']
+      ['2', 'success', '1'],
     );
 
     logStub.should.have.been.calledWith(chalk.green('\nSubmission successful. Retreiving results'));
     logStub.should.have.been.calledWith(table.toString());
-    logStub.should.have.been.calledWith('\n' + chalk.yellow('Log :\n') + new Buffer(mockData.log, 'base64').toString());
-    logStub.should.have.been.calledWith(chalk.yellow('Warning: ') + 'This lab is not active. The result of this evaluation is not added to the scoreboard.');
-    logStub.should.have.been.calledWith(chalk.green('Total Score: ') + '2');
+    logStub.should.have.been.calledWith(`\n${chalk.yellow('Log :\n')}${new Buffer(mockData.log, 'base64').toString()}`);
+    logStub.should.have.been.calledWith(`${chalk.yellow('Warning: ')}This lab is not active. The result of this evaluation is not added to the scoreboard.`);
+    logStub.should.have.been.calledWith(`${chalk.green('Total Score: ')}2`);
 
     sandbox.restore();
   });
@@ -69,8 +68,8 @@ describe('For eval output', () => {
     evalOutput.sendOutput({
       name: 'scores',
       details: {
-        ...mockData
-      }
+        ...mockData,
+      },
     });
 
     logStub.should.have.been.calledWith(chalk.red('Penalty : ') + 0);
@@ -96,5 +95,4 @@ describe('For eval output', () => {
     logStub.should.have.been.calledWith(chalk.yellow('\nYou have a pending submission. Please try after some time.'));
     sandbox.restore();
   });
-
 });

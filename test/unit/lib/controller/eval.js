@@ -16,11 +16,10 @@ const mockOptions = {
   lab: 'test3',
   lang: 'java',
   idNo: 'testuser',
-  commitHash: ''
+  commitHash: '',
 };
 
 describe('For eval controller', () => {
-
   const sandbox = sinon.createSandbox();
 
   afterEach(() => {
@@ -28,21 +27,20 @@ describe('For eval controller', () => {
   });
 
   it('should call the eval action of program with right arguments when command is valid', async () => {
-
     const mockevalInput = sandbox.mock(evalInput);
     const mockevalOutput = sandbox.mock(evalOutput);
     const mockcommandValidator = sandbox.mock(commandValidator);
-    const mockEvalResult = {name: 'scores'};
+    const mockEvalResult = { name: 'scores' };
 
     mockcommandValidator.expects('validateSession').once().returns(true);
 
-    mockevalInput.expects('getInput').once().withExactArgs(
-      {}, { l: 'test3', lang: 'java', h: undefined, i: undefined}
-    ).resolves(mockOptions);
+    mockevalInput.expects('getInput').once().withExactArgs({}, {
+      l: 'test3', lang: 'java', h: undefined, i: undefined,
+    }).resolves(mockOptions);
     mockevalOutput.expects('sendOutput').withExactArgs({
       name: 'eval_started',
     });
-    const mockEvaluate = sandbox.stub(evalModel, 'evaluate').callsFake(() =>{
+    const mockEvaluate = sandbox.stub(evalModel, 'evaluate').callsFake(() => {
       const cb = mockEvaluate.getCalls()[0].args[1];
       cb(mockEvalResult);
     });
@@ -52,12 +50,11 @@ describe('For eval controller', () => {
 
     await program.exec(['eval'], {
       l: 'test3',
-      lang: 'java'
+      lang: 'java',
     });
 
     mockevalInput.verify();
     mockevalOutput.verify();
-
   });
 
   it('should NOT proceed for invalid session', async () => {
@@ -71,10 +68,9 @@ describe('For eval controller', () => {
 
     await program.exec(['eval'], {
       l: 'test3',
-      lang: 'java'
+      lang: 'java',
     });
 
     mockevalOutput.verify();
-
   });
 });

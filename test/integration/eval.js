@@ -16,22 +16,22 @@ const mockOptions = {
   lab: 'test3',
   lang: 'java',
   idNo: 'testuser',
-  commitHash: ''
+  commitHash: '',
 };
 
 const mockCliPref = {
   main_server: {
     host: 'abc.com',
-    port: '8080'
-  }
+    port: '8080',
+  },
 };
 
 const mockData = {
-  marks: [1,1],
+  marks: [1, 1],
   comment: ['success', 'success'],
   status: 0,
   log: '',
-  penalty: 0
+  penalty: 0,
 };
 
 describe('Integration test for eval command', () => {
@@ -48,8 +48,8 @@ describe('Integration test for eval command', () => {
     const mockSocket = io('http://localhost:8080');
 
     mockcommandValidator.expects('validateSession').once().returns(true);
-    mockPreferenceManager.expects('getPreference').withArgs({name: 'cliPrefs'}).returns(mockCliPref);
-    mockPreferenceManager.expects('getPreference').withArgs({name: 'gitLabPrefs'}).returns({username: 'testuser'});
+    mockPreferenceManager.expects('getPreference').withArgs({ name: 'cliPrefs' }).returns(mockCliPref);
+    mockPreferenceManager.expects('getPreference').withArgs({ name: 'gitLabPrefs' }).returns({ username: 'testuser' });
     mockIo.expects('connect').once().returns(mockSocket);
     const fakeonScores = () => {
       const cb = onScoresStub.getCalls()[0].args[1];
@@ -59,19 +59,19 @@ describe('Integration test for eval command', () => {
     const onScoresStub = sandbox.stub(mockSocket, 'on').withArgs('scores').callsFake(fakeonScores);
     const table = new Table({
       head: [chalk.cyan('Test Case #'), chalk.cyan('Status'), chalk.cyan('Score')],
-      colWidths: [15,25,15]
+      colWidths: [15, 25, 15],
     });
     table.push(
       ['1', 'success', '1'],
-      ['2', 'success', '1']
+      ['2', 'success', '1'],
     );
 
     await controller.start();
     logStub.should.have.been.calledWith(chalk.green('\nSubmission successful. Retreiving results'));
     logStub.should.have.been.calledWith(table.toString());
-    logStub.should.have.been.calledWith('\n' + chalk.yellow('Log :\n') + new Buffer(mockData.log, 'base64').toString());
-    logStub.should.have.been.calledWith(chalk.yellow('Warning: ') + 'This lab is not active. The result of this evaluation is not added to the scoreboard.');
-    logStub.should.have.been.calledWith(chalk.green('Total Score: ') + '2');
+    logStub.should.have.been.calledWith(`\n${chalk.yellow('Log :\n')}${new Buffer(mockData.log, 'base64').toString()}`);
+    logStub.should.have.been.calledWith(`${chalk.yellow('Warning: ')}This lab is not active. The result of this evaluation is not added to the scoreboard.`);
+    logStub.should.have.been.calledWith(`${chalk.green('Total Score: ')}2`);
     mockIo.verify();
     mockPreferenceManager.verify();
     sandbox.restore();
@@ -87,8 +87,8 @@ describe('Integration test for eval command', () => {
     const mockSocket = io('http://localhost:8080');
 
     mockcommandValidator.expects('validateSession').once().returns(true);
-    mockPreferenceManager.expects('getPreference').withArgs({name: 'cliPrefs'}).returns(mockCliPref);
-    mockPreferenceManager.expects('getPreference').withArgs({name: 'gitLabPrefs'}).returns({username: 'testuser'});
+    mockPreferenceManager.expects('getPreference').withArgs({ name: 'cliPrefs' }).returns(mockCliPref);
+    mockPreferenceManager.expects('getPreference').withArgs({ name: 'gitLabPrefs' }).returns({ username: 'testuser' });
     mockIo.expects('connect').once().returns(mockSocket);
     const fakeonScores = () => {
       const cb = onScoresStub.getCalls()[0].args[1];
@@ -117,8 +117,8 @@ describe('Integration test for eval command', () => {
     const mockSocket = io('http://localhost:8080');
 
     mockcommandValidator.expects('validateSession').once().returns(true);
-    mockPreferenceManager.expects('getPreference').withArgs({name: 'cliPrefs'}).returns(mockCliPref);
-    mockPreferenceManager.expects('getPreference').withArgs({name: 'gitLabPrefs'}).returns({username: 'testuser'});
+    mockPreferenceManager.expects('getPreference').withArgs({ name: 'cliPrefs' }).returns(mockCliPref);
+    mockPreferenceManager.expects('getPreference').withArgs({ name: 'gitLabPrefs' }).returns({ username: 'testuser' });
     mockInquirer.expects('prompt').resolves(mockOptions);
     mockIo.expects('connect').once().returns(mockSocket);
     const fakeonScores = () => {
@@ -129,19 +129,19 @@ describe('Integration test for eval command', () => {
     const onScoresStub = sandbox.stub(mockSocket, 'on').withArgs('scores').callsFake(fakeonScores);
     const table = new Table({
       head: [chalk.cyan('Test Case #'), chalk.cyan('Status'), chalk.cyan('Score')],
-      colWidths: [15,25,15]
+      colWidths: [15, 25, 15],
     });
     table.push(
       ['1', 'success', '1'],
-      ['2', 'success', '1']
+      ['2', 'success', '1'],
     );
 
     await controller.start();
     logStub.should.have.been.calledWith(chalk.green('\nSubmission successful. Retreiving results'));
     logStub.should.have.been.calledWith(table.toString());
-    logStub.should.have.been.calledWith('\n' + chalk.yellow('Log :\n') + new Buffer(mockData.log, 'base64').toString());
-    logStub.should.have.been.calledWith(chalk.yellow('Warning: ') + 'This lab is not active. The result of this evaluation is not added to the scoreboard.');
-    logStub.should.have.been.calledWith(chalk.green('Total Score: ') + '2');
+    logStub.should.have.been.calledWith(`\n${chalk.yellow('Log :\n')}${new Buffer(mockData.log, 'base64').toString()}`);
+    logStub.should.have.been.calledWith(`${chalk.yellow('Warning: ')}This lab is not active. The result of this evaluation is not added to the scoreboard.`);
+    logStub.should.have.been.calledWith(`${chalk.green('Total Score: ')}2`);
     mockIo.verify();
     mockPreferenceManager.verify();
     mockInquirer.verify();

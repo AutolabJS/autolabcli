@@ -12,7 +12,6 @@ chai.use(sinonChai);
 chai.should();
 
 describe('For prefs controller', () => {
-
   const sandbox = sinon.createSandbox();
 
   afterEach(() => {
@@ -20,7 +19,6 @@ describe('For prefs controller', () => {
   });
 
   it('should call the prefs action of program with right arguments when command is valid', (done) => {
-
     const mockprefsInput = sandbox.mock(prefsInput);
     const mockprefsOutput = sandbox.mock(prefsOutput);
     const mockprefsModel = sandbox.mock(prefsModel);
@@ -29,12 +27,10 @@ describe('For prefs controller', () => {
       name: 'server_changed',
       details: {
         host: 'abc',
-        port: 8999
-      }
+        port: 8999,
+      },
     };
-    mockprefsInput.expects('getInput').once().withExactArgs(
-      {preference: 'changeserver'}, { host: 'abc', port: '8999', lang: undefined}
-    ).resolves(changedPrefs);
+    mockprefsInput.expects('getInput').once().withExactArgs({ preference: 'changeserver' }, { host: 'abc', port: '8999', lang: undefined }).resolves(changedPrefs);
     mockprefsModel.expects('storePrefs').withExactArgs(changedPrefs).resolves(changedPrefs);
     mockprefsOutput.expects('sendOutput').withExactArgs(changedPrefs);
 
@@ -42,7 +38,7 @@ describe('For prefs controller', () => {
 
     program.exec(['prefs', 'changeserver'], {
       host: 'abc',
-      port: '8999'
+      port: '8999',
     });
 
     setTimeout(() => {
