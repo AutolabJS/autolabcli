@@ -27,9 +27,9 @@ When('I run prefs command with {string} using {string}', async (argument, inputT
     '/usr/local/nodejs/bin/autolabjs', 'prefs', argument];
   if (argument === 'changeserver') {
     if (inputType === 'flags') {
-      process.argv = process.argv.concat(['--host', 'abc.com', '--port', '5678']);
+      process.argv = process.argv.concat(['--host', 'autolab.bits-goa.ac.in', '--port', '9000']);
     } else if (inputType === 'prompt') {
-      global.promptStub.resolves({ host: 'abc.com', port: '5678' });
+      global.promptStub.resolves({ host: 'autolab.bits-goa.ac.in', port: '9000' });
     }
   }
   if (argument === 'changelang') {
@@ -57,14 +57,14 @@ When('I run prefs command with show', async () => {
 When('I run change server with invalid host', async () => {
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changeserver',
-    '--host', 'abc', '--port', '5678'];
+    '--host', 'abc', '--port', '9000'];
   await controller.start();
 });
 
 When('I run change server with invalid port', async () => {
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changeserver',
-    '--host', 'abc.com', '--port', '567E'];
+    '--host', 'autolab.bits-goa.ac.in', '--port', '567E'];
   await controller.start();
 });
 
@@ -74,8 +74,8 @@ Then('I should be able to change the submission language', () => {
 
 Then('I should be able to change the submission server', () => {
   preferenceManager.getPreference({ name: 'cliPrefs' }).main_server.should.deep.equal({
-    host: 'abc.com',
-    port: '5678',
+    host: 'autolab.bits-goa.ac.in',
+    port: '9000',
   });
 });
 
@@ -86,8 +86,8 @@ Then('I should be able to see the preferences', () => {
   });
   table.push(
     ['Language', 'cpp14'],
-    ['Server host', 'abc.com'],
-    ['Server port', 5678],
+    ['Server host', 'autolab.bits-goa.ac.in'],
+    ['Server port', 9000],
   );
 
   global.logSpy.should.have.been.calledWith(table.toString());
