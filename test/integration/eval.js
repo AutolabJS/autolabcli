@@ -37,6 +37,10 @@ const mockData = {
 describe('Integration test for eval command', () => {
   const sandbox = sinon.createSandbox();
 
+  afterEach(() => {
+    sandbox.restore();
+  });
+
   it('should display results on succesful submission', async () => {
     const logStub = sandbox.stub(console, 'log');
     process.argv = ['/usr/local/nodejs/bin/node',
@@ -147,4 +151,47 @@ describe('Integration test for eval command', () => {
     mockInquirer.verify();
     sandbox.restore();
   });
+
+  it('should display message for pending submission', async () => {
+    const logStub = sandbox.stub(console, 'log');
+    process.argv = ['/usr/local/nodejs/bin/node',
+      '/usr/local/nodejs/bin/autolabjs', 'eval', '--lang', 'java', '-l', 'test3'];
+    mockIo = sandbox.mock(io);
+    const mockPreferenceManager = sandbox.mock(preferenceManager);
+    const mockcommandValidator = sandbox.mock(commandValidator);
+    const mockSocket = io('http://localhost:8080');
+
+    mockcommandValidator.expects('validateSession').once().returns(true);
+    mockPreferenceManager.expects('getPreference').withArgs({ name: 'cliPrefs' }).returns(mockCliPref);
+    mockPreferenceManager.expects('getPreference').withArgs({ name: 'gitLabPrefs' }).returns({ username: 'testuser' });
+    mockIo.expects('connect').once().returns(mockSocket);
+    const fakeonScores = () => {
+      const cb = onScoresStub.getCalls()[0].args[1];
+      cb({
+        name: 'submission_pending',
+      });
+    };
+
+    const onScoresStub = sandbox.stub(mockSocket, 'on').withArgs('submission_pending').callsFake(fakeonScores);
+    await controller.start();
+    logStub.should.have.been.calledWith(chalk.yellow('\nYou have a pending submission. Please try after some time.'));
+    mockIo.verify();
+    mockPreferenceManager.verify();
+    sandbox.restore();
+  });
+
+  it('should show error message for expired session', async () => {
+    const logStub = sandbox.stub(console, 'log');
+    process.argv = ['/usr/local/nodejs/bin/node',
+      '/usr/local/nodejs/bin/autolabjs', 'eval', '--lang', 'java', '-l', 'test3'];
+    mockIo = sandbox.mock(io);
+    const mockPreferenceManager = sandbox.mock(preferenceManager);
+    preferenceManager.deleteCredentials();
+
+    await controller.start();
+    logStub.should.have.been.calledWith(chalk.red('Your session has expired. Please run \'autolabjs init\' to login again'));
+    mockPreferenceManager.verify();
+    sandbox.restore();
+  });
+
 });
