@@ -15,11 +15,7 @@ chai.use(sinonChai);
 chai.should();
 
 Given('I have already logged in', async () => {
-  process.argv = ['/usr/local/nodejs/bin/node',
-    '/usr/local/nodejs/bin/autolabjs', 'init',
-    '-u', 'AutolabJS_Tester', '-p', 'autolabjs123'];
-
-  await controller.start();
+  preferenceManager.setPreference({ name: 'gitLabPrefs', values: { username: 'AutolabJS_Tester' }});
 });
 
 When('I run exit command', async () => {

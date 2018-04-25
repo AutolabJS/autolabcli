@@ -12,7 +12,6 @@ const inquirer = require('inquirer');
 const Table = require('cli-table');
 const controller = require('../../../lib/controller');
 const preferenceManager = require('../../../lib/utils/preference-manager');
-const evalModel = require('../../../lib/model/eval');
 const path = require('path');
 
 chai.use(sinonChai);
@@ -79,7 +78,7 @@ Then('I should be able to submit for student with the given id', (done) => {
   setTimeout(() => {
     global.logSpy.should.have.been.calledWith(chalk.green('\nSubmission successful. Retreiving results'));
     done();
-  }, 2000);
+  }, 6500);
 });
 
 Then('I should be displayed an error message for invalid submission', (done) => {
