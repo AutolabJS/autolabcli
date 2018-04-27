@@ -9,7 +9,6 @@ chai.use(sinonChai);
 chai.should();
 
 describe('For application entry point', () => {
-
   const sandbox = sinon.createSandbox();
 
   afterEach(() => {

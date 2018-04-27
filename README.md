@@ -12,6 +12,7 @@ A client command line interface for submissions to [AutolabJS](https://github.co
 * `autolabjs prefs changeserver [--host <host> --port <port>]` - To change the host of the gitlab server
 * `autolabjs prefs changelang [--lang <language>]` - To change the language of the code submission
 * `autolabjs prefs show` - Show the saved preferences
+* `autolabjs eval [-l <lab_name> --lang <language>]` - To submit your code for evaluation
 * `autolabjs help` - Print help manual
 
 ## License ##

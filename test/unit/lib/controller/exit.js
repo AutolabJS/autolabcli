@@ -12,7 +12,6 @@ chai.use(sinonChai);
 chai.should();
 
 describe('For exit controller', () => {
-
   const sandbox = sinon.createSandbox();
 
   afterEach(() => {
@@ -20,7 +19,6 @@ describe('For exit controller', () => {
   });
 
   it('should call the action of program with right arguments', (done) => {
-
     const mockexitOutput = sandbox.mock(exitOutput);
     const mockexitModel = sandbox.mock(exitModel);
     const mockCommandValidator = sandbox.mock(commandValidator);
@@ -28,7 +26,7 @@ describe('For exit controller', () => {
     mockCommandValidator.expects('validateSession').once().returns(true);
     mockexitModel.expects('logout').once();
     mockexitOutput.expects('sendOutput').once().withExactArgs({
-        name: 'logout_success'
+      name: 'logout_success',
     });
 
     exitController.addTo(program);
@@ -41,11 +39,9 @@ describe('For exit controller', () => {
       mockexitModel.verify();
       done();
     }, 0);
-
   });
 
   it('should not execute when already exited', (done) => {
-
     const mockexitOutput = sandbox.mock(exitOutput);
     const mockexitModel = sandbox.mock(exitModel);
     const mockCommandValidator = sandbox.mock(commandValidator);
@@ -62,7 +58,5 @@ describe('For exit controller', () => {
       mockexitModel.verify();
       done();
     }, 0);
-
   });
-
 });

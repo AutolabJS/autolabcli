@@ -12,7 +12,7 @@ chai.should();
 
 const login = async () => {
   process.argv = ['/usr/local/nodejs/bin/node',
-    '/usr/local/nodejs/bin/autolab', 'init', '-u', 'testuser2', '-p', '123'];
+    '/usr/local/nodejs/bin/autolabjs', 'init', '-u', 'testuser2', '-p', '123'];
 
   await controller.start();
 };
@@ -37,7 +37,7 @@ describe('Integration test for exit command', () => {
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolab', 'exit'];
     await controller.start();
-    
+
     preferenceManager.getPreference({ name: 'gitLabPrefs' }).privateToken.should.equal('');
     preferenceManager.getPreference({ name: 'gitLabPrefs' }).storedTime.should.equal(-1);
     sandbox.restore();

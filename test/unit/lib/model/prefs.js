@@ -14,23 +14,22 @@ chai.use(chaiAsPromised);
 chai.should();
 
 describe('for prefsModel', () => {
-
   it('should call change the language', async () => {
     const mockPreferenceManager = sinon.mock(preferenceManager);
     mockPreferenceManager.expects('setPreference').withExactArgs({
       name: 'cliPrefs',
       values: {
         submission: {
-          language: 'python3'
-        }
-      }
+          language: 'python3',
+        },
+      },
     });
 
     prefsModel.storePrefs({
       name: 'lang_changed',
       details: {
-        lang: 'python3'
-      }
+        lang: 'python3',
+      },
     });
 
     mockPreferenceManager.verify();
@@ -43,17 +42,17 @@ describe('for prefsModel', () => {
       values: {
         main_server: {
           host: 'abc',
-          port: 3333
-        }
-      }
+          port: 3333,
+        },
+      },
     });
 
     prefsModel.storePrefs({
       name: 'server_changed',
       details: {
         host: 'abc',
-        port: 3333
-      }
+        port: 3333,
+      },
     });
 
     mockPreferenceManager.verify();
@@ -61,19 +60,18 @@ describe('for prefsModel', () => {
 
   it('should call show server', async () => {
     const mockPreferenceManager = sinon.mock(preferenceManager);
-    mockPreferenceManager.expects('getPreference').withExactArgs({name: 'cliPrefs'}).returns({
+    mockPreferenceManager.expects('getPreference').withExactArgs({ name: 'cliPrefs' }).returns({
       submission: {
-        language: 'java'
+        language: 'java',
       },
       main_server: {
-          host: 'abc',
-          port: 3333
-      }
+        host: 'abc',
+        port: 3333,
+      },
     });
 
-    prefsModel.storePrefs({name: 'show_prefs'});
+    prefsModel.storePrefs({ name: 'show_prefs' });
 
     mockPreferenceManager.verify();
   });
-
 });

@@ -1,4 +1,6 @@
-const { Given, When, Then, Before, After } = require('cucumber');
+const {
+  Given, When, Then, Before, After,
+} = require('cucumber');
 const Preferences = require('preferences');
 const { exec } = require('child_process');
 const chai = require('chai');
@@ -24,13 +26,12 @@ Given('a valid username as {string} and corresponding password as {string}', (us
 });
 
 When('I run init command with {string} as username and {string} as password using {string}', async (username, password, inputType) => {
-  if(inputType === 'flags') {
+  if (inputType === 'flags') {
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'init', '-u', username, '-p', password];
 
     await controller.start();
-  }
-  else if(inputType === 'prompt') {
+  } else if (inputType === 'prompt') {
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'init'];
     global.promptStub.resolves({ username, password });
@@ -39,15 +40,16 @@ When('I run init command with {string} as username and {string} as password usin
   }
 });
 
-let emptyUsernamePrompt, emptyPasswordPrompt;
+let emptyUsernamePrompt,
+  emptyPasswordPrompt;
 When('I give empty input to init command at the prompt', async () => {
   const invalidInputTester = () => {
-    const credentails = promptStub.getCalls()[0].args[0];
+    const credentails = promptStub.getCalls()[1].args[0];
     try {
-      emptyUsernamePrompt = promptStub.getCalls()[0].args[0][0].validate('');
-      emptyPasswordPrompt = promptStub.getCalls()[0].args[0][1].validate('');
-    } catch(e) {}
-  }
+      emptyUsernamePrompt = promptStub.getCalls()[1].args[0][0].validate('');
+      emptyPasswordPrompt = promptStub.getCalls()[1].args[0][1].validate('');
+    } catch (e) {}
+  };
 
   global.promptStub.callsFake(invalidInputTester);
   const ret = await initInput.getInput(null, {});

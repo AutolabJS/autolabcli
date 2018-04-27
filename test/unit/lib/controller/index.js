@@ -10,7 +10,6 @@ chai.use(sinonChai);
 chai.should();
 
 describe('For controller entry point', () => {
-
   const sandbox = sinon.createSandbox();
 
   afterEach(() => {
@@ -25,7 +24,7 @@ describe('For controller entry point', () => {
     mockProgram.expects('parse').once().withExactArgs(process.argv);
 
     controller.start();
-    
+
     mockInitController.verify();
     mockProgram.verify();
   });

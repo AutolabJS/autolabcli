@@ -14,7 +14,6 @@ chai.use(chaiAsPromised);
 chai.should();
 
 describe('for exitModel', () => {
-
   it('should call appropriate methods of preference manager', async () => {
     const mockPreferenceManager = sinon.mock(preferenceManager);
     mockPreferenceManager.expects('deleteCredentials').once();
@@ -23,5 +22,4 @@ describe('for exitModel', () => {
 
     mockPreferenceManager.verify();
   });
-
 });

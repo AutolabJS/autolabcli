@@ -3,7 +3,7 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const chalk = require('chalk');
 const figlet = require('figlet');
-const {Spinner} = require('cli-spinner');
+const { Spinner } = require('cli-spinner');
 
 const initOutput = require('../../../../../lib/cli/output/init');
 
@@ -11,7 +11,6 @@ chai.use(sinonChai);
 chai.should();
 
 describe('For init output', () => {
-
   const sandbox = sinon.createSandbox();
 
 
@@ -22,7 +21,7 @@ describe('For init output', () => {
     mockFiglet.expects('textSync').once().withExactArgs('AutolabJS   CLI', { horizontalLayout: 'default' })
       .returns('Autolab CLI');
 
-    initOutput.sendOutput({name: 'welcome'});
+    initOutput.sendOutput({ name: 'welcome' });
 
     mockFiglet.verify();
     logStub.should.have.been.calledWith(chalk.yellow('Autolab CLI'));
@@ -36,8 +35,8 @@ describe('For init output', () => {
 
     mockStdout.expects('write').atLeast(1);
 
-    initOutput.sendOutput({name: 'authentication_started'});
-    initOutput.sendOutput({name: 'authentication_ended', details: {} });
+    initOutput.sendOutput({ name: 'authentication_started' });
+    initOutput.sendOutput({ name: 'authentication_ended', details: {} });
 
     mockStdout.verify();
 
@@ -47,10 +46,13 @@ describe('For init output', () => {
   it('should display sucess message  for status code as 200', () => {
     const logStub = sandbox.stub(console, 'log');
 
-    initOutput.sendOutput({name: 'authentication_ended', details: {
-      code: 200,
-      name: 'test_user'
-    }});
+    initOutput.sendOutput({
+      name: 'authentication_ended',
+      details: {
+        code: 200,
+        name: 'test_user',
+      },
+    });
 
     logStub.should.have.been.calledWith(chalk.green('\nHi test_user! You have successfully logged into AutolabJS. Run \'autolabjs help\' for help.'));
 
@@ -60,9 +62,12 @@ describe('For init output', () => {
   it('should display error message  for invalid credentials', () => {
     const logStub = sandbox.stub(console, 'log');
 
-    initOutput.sendOutput({name: 'authentication_ended', details: {
-      code: 401
-    }});
+    initOutput.sendOutput({
+      name: 'authentication_ended',
+      details: {
+        code: 401,
+      },
+    });
 
     logStub.should.have.been.calledWith(chalk.red('\nInvalid Username or Password'));
 
@@ -72,13 +77,15 @@ describe('For init output', () => {
   it('should display appropriate error message  for no connection', () => {
     const logStub = sandbox.stub(console, 'log');
 
-    initOutput.sendOutput({name: 'authentication_ended', details: {
-      code: 4
-    }});
+    initOutput.sendOutput({
+      name: 'authentication_ended',
+      details: {
+        code: 4,
+      },
+    });
 
     logStub.should.have.been.calledWith(chalk.red('\nPlease check your network connection'));
 
     sandbox.restore();
   });
-
 });

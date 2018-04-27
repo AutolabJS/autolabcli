@@ -1,4 +1,6 @@
-const { Given, When, Then, Before, After } = require('cucumber');
+const {
+  Given, When, Then, Before, After,
+} = require('cucumber');
 const Preferences = require('preferences');
 const { exec } = require('child_process');
 const chai = require('chai');
@@ -13,22 +15,18 @@ chai.use(sinonChai);
 chai.should();
 
 Given('I have already logged in', async () => {
-  process.argv = ['/usr/local/nodejs/bin/node',
-    '/usr/local/nodejs/bin/autolabjs', 'init',
-    '-u', 'AutolabJS_Tester', '-p', 'autolabjs123'];
-
-  await controller.start();
+  preferenceManager.setPreference({ name: 'gitLabPrefs', values: { username: 'AutolabJS_Tester' }});
 });
 
 When('I run exit command', async () => {
-  process.argv = [ '/usr/local/nodejs/bin/node',
-    '/usr/local/nodejs/bin/autolabjs', 'exit' ];
+  process.argv = ['/usr/local/nodejs/bin/node',
+    '/usr/local/nodejs/bin/autolabjs', 'exit'];
   await controller.start();
 });
 
 Then('My login credentials should be removed', () => {
-  preferenceManager.getPreference({name: 'gitLabPrefs'}).privateToken.should.equal('');
-  preferenceManager.getPreference({name: 'gitLabPrefs'}).storedTime.should.equal(-1);
+  preferenceManager.getPreference({ name: 'gitLabPrefs' }).privateToken.should.equal('');
+  preferenceManager.getPreference({ name: 'gitLabPrefs' }).storedTime.should.equal(-1);
 });
 
 Given('I am NOT logged in', () => {
@@ -36,5 +34,5 @@ Given('I am NOT logged in', () => {
 });
 
 Then('I should receive a warning message for invalid exit', () => {
-  global.logSpy.should.have.been.calledWith(chalk.red(`Your session has expired. Please run 'autolabjs init' to login again`));
+  global.logSpy.should.have.been.calledWith(chalk.red('Your session has expired. Please run \'autolabjs init\' to login again'));
 });
