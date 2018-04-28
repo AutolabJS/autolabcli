@@ -31,7 +31,7 @@ Given('I have NOT logged in', () => {
 });
 
 Given('I have logged in as root', () => {
-  preferenceManager.setPreference({ name: 'gitLabPrefs', values: { username: 'root' }});
+  preferenceManager.setPreference({ name: 'gitLabPrefs', values: { username: 'root' } });
 });
 
 When('I run eval command with using {string}', async (inputType) => {

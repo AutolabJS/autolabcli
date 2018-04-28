@@ -14,7 +14,7 @@ chai.use(chaiAsPromised);
 chai.should();
 
 describe('for prefsModel', () => {
-  it('should call change the language', async () => {
+  it('should change the language', async () => {
     const mockPreferenceManager = sinon.mock(preferenceManager);
     mockPreferenceManager.expects('setPreference').withExactArgs({
       name: 'cliPrefs',
@@ -35,7 +35,29 @@ describe('for prefsModel', () => {
     mockPreferenceManager.verify();
   });
 
-  it('should call change the server', async () => {
+  it('should change the gitlab server', async () => {
+    const mockPreferenceManager = sinon.mock(preferenceManager);
+    mockPreferenceManager.expects('setPreference').withExactArgs({
+      name: 'cliPrefs',
+      values: {
+        gitlab: {
+          host: 'abc.com',
+        },
+      },
+    });
+
+    prefsModel.storePrefs({
+      name: 'server_changed',
+      details: {
+        type: 'gitlab',
+        host: 'abc.com',
+      },
+    });
+
+    mockPreferenceManager.verify();
+  });
+
+  it('should change the main server', async () => {
     const mockPreferenceManager = sinon.mock(preferenceManager);
     mockPreferenceManager.expects('setPreference').withExactArgs({
       name: 'cliPrefs',
@@ -50,6 +72,7 @@ describe('for prefsModel', () => {
     prefsModel.storePrefs({
       name: 'server_changed',
       details: {
+        type: 'ms',
         host: 'abc',
         port: 3333,
       },
@@ -58,7 +81,7 @@ describe('for prefsModel', () => {
     mockPreferenceManager.verify();
   });
 
-  it('should call show server', async () => {
+  it('should send the stored preferences on show', async () => {
     const mockPreferenceManager = sinon.mock(preferenceManager);
     mockPreferenceManager.expects('getPreference').withExactArgs({ name: 'cliPrefs' }).returns({
       submission: {
@@ -67,6 +90,9 @@ describe('for prefsModel', () => {
       main_server: {
         host: 'abc',
         port: 3333,
+      },
+      gitlab: {
+        host: 'bcd.com',
       },
     });
 

@@ -27,11 +27,20 @@ describe('For prefs output', () => {
     sandbox.restore();
   });
 
-  it('should send expected output when server is changed', () => {
+  it('should send expected output when main server is changed', () => {
     const logStub = sandbox.stub(console, 'log');
 
-    prefsOutput.sendOutput({ name: 'server_changed', details: { host: 'abc', port: '8999' } });
-    logStub.should.have.been.calledWith(chalk.green('Your submission server has been changed to abc at port 8999'));
+    prefsOutput.sendOutput({ name: 'server_changed', details: { type: 'ms', host: 'abc', port: '8999' } });
+    logStub.should.have.been.calledWith(chalk.green('Your main server has been changed to abc at port 8999'));
+
+    sandbox.restore();
+  });
+
+  it('should send expected output when gitlab server is changed', () => {
+    const logStub = sandbox.stub(console, 'log');
+
+    prefsOutput.sendOutput({ name: 'server_changed', details: { type: 'gitlab', host: 'abc.com' } });
+    logStub.should.have.been.calledWith(chalk.green('Your gitlab server has been changed to abc.com'));
 
     sandbox.restore();
   });
@@ -69,7 +78,7 @@ describe('For prefs output', () => {
     prefsOutput.sendOutput({
       name: 'show_prefs',
       details: {
-        lang: 'python2',
+        gitlab_host: 'xyz.com',
         mainserver_host: 'fdsf@fsd.com',
         mainserver_port: 5235,
       },
@@ -77,12 +86,12 @@ describe('For prefs output', () => {
 
     const table = new Table({
       head: [chalk.cyan('Preferences'), chalk.cyan('Values')],
-      colWidths: [15, 25],
+      colWidths: [20, 25],
     });
     table.push(
-      ['Language', 'python2'],
-      ['Server host', 'fdsf@fsd.com'],
-      ['Server port', 5235],
+      ['Gitlab host', 'xyz.com'],
+      ['Main Server host', 'fdsf@fsd.com'],
+      ['Main Server port', 5235],
     );
 
     logStub.should.have.been.calledWith(table.toString());
