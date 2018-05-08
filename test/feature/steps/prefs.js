@@ -45,6 +45,7 @@ When('I run prefs command with changeserver using {string} for {string}', async 
     typePromptGenerator.addProperty('type', 'list');
     typePromptGenerator.addProperty('message', 'Choose the server type:');
     typePromptGenerator.addProperty('choices', ['gitlab', 'ms']);
+    typePromptGenerator.addProperty('validate', undefined);
     const typePrompt = typePromptGenerator.getPrompt();
     global.promptStub.withArgs(typePrompt).resolves({ type: serverType });
   }

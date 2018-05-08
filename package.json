@@ -8,7 +8,7 @@
     "post-unit": "nyc report --reporter=lcov > coverage.lcov && codecov -F unit && rm -rf ~/.autolabjs",
     "integration": "nyc --reporter=lcov --reporter=text-lcov -s --all mocha 'test/integration/**/*.js'",
     "post-integration": "nyc report --reporter=lcov > coverage.lcov && codecov -F integration && rm -rf ~/.autolabjs",
-    "feature": "rm -rf ~/.autolabjs && nyc --reporter=lcov --reporter=text-lcov -s --all cucumber-js 'test/feature/features' -r 'test/feature/steps'",
+    "feature": "nyc --reporter=lcov --reporter=text-lcov -s --all cucumber-js 'test/feature/features' -r 'test/feature/steps'",
     "post-feature": "nyc report --reporter=lcov > coverage.lcov && codecov -F feature"
   },
   "bin": {
