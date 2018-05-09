@@ -10,13 +10,18 @@ const inquirer = require('inquirer');
 const controller = require('../../lib/controller');
 const preferenceManager = require('../../lib/utils/preference-manager');
 
+let host = 'autolab.bits-goa.ac.in';
+if (preferenceManager.getPreference({ name: 'cliPrefs' }).gitlab) {
+  host = preferenceManager.getPreference({ name: 'cliPrefs' }).gitlab.host;
+}
+
 chai.use(sinonChai);
 chai.should();
 
 describe('Integration test for init command', () => {
   const sandbox = sinon.createSandbox();
   beforeEach(() => {
-    const fakeServer = nock('https://autolab.bits-goa.ac.in')
+    const fakeServer = nock(`https://${host}`)
       .post('/api/v4/session?login=testuser2&password=123');
     fakeServer.reply(200, {
       ok: true,

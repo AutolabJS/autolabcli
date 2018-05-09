@@ -193,5 +193,4 @@ describe('Integration test for eval command', () => {
     mockPreferenceManager.verify();
     sandbox.restore();
   });
-
 });

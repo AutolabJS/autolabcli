@@ -15,7 +15,7 @@ chai.use(sinonChai);
 chai.should();
 
 Given('I have already logged in', async () => {
-  preferenceManager.setPreference({ name: 'gitLabPrefs', values: { username: 'AutolabJS_Tester' }});
+  preferenceManager.setPreference({ name: 'gitLabPrefs', values: { username: 'AutolabJS_Tester' } });
 });
 
 When('I run exit command', async () => {

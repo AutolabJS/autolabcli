@@ -12,6 +12,7 @@ const inquirer = require('inquirer');
 const Table = require('cli-table');
 const controller = require('../../../lib/controller');
 const preferenceManager = require('../../../lib/utils/preference-manager');
+const PromptGenerator = require('../../../lib/utils/PromptGenerator');
 const path = require('path');
 
 const defaultPrefPath = path.join(__dirname, '../../../default-prefs.json');
@@ -22,21 +23,43 @@ const { supportedLanguages } = defaultPrefs;
 chai.use(sinonChai);
 chai.should();
 
-When('I run prefs command with {string} using {string}', async (argument, inputType) => {
+When('I run prefs command with changelang using {string}', async (inputType) => {
   process.argv = ['/usr/local/nodejs/bin/node',
-    '/usr/local/nodejs/bin/autolabjs', 'prefs', argument];
-  if (argument === 'changeserver') {
+    '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changelang'];
+
+  if (inputType === 'flags') {
+    process.argv = process.argv.concat(['--lang', 'cpp14']);
+  } else if (inputType === 'prompt') {
+    global.promptStub.resolves({ lang: 'cpp14' });
+  }
+
+  await controller.start();
+});
+
+When('I run prefs command with changeserver using {string} for {string}', async (inputType, serverType) => {
+  process.argv = ['/usr/local/nodejs/bin/node',
+    '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changeserver'];
+  if (inputType === 'prompt') {
+    const typePromptGenerator = new PromptGenerator();
+    typePromptGenerator.addProperty('name', 'type');
+    typePromptGenerator.addProperty('type', 'list');
+    typePromptGenerator.addProperty('message', 'Choose the server type:');
+    typePromptGenerator.addProperty('choices', ['gitlab', 'ms']);
+    typePromptGenerator.addProperty('validate', undefined);
+    const typePrompt = typePromptGenerator.getPrompt();
+    global.promptStub.withArgs(typePrompt).resolves({ type: serverType });
+  }
+  if (serverType === 'ms') {
     if (inputType === 'flags') {
-      process.argv = process.argv.concat(['--host', 'autolab.bits-goa.ac.in', '--port', '9000']);
+      process.argv = process.argv.concat(['--type', 'ms', '--host', 'autolab.bits-goa.ac.in', '--port', '9000']);
     } else if (inputType === 'prompt') {
       global.promptStub.resolves({ host: 'autolab.bits-goa.ac.in', port: '9000' });
     }
-  }
-  if (argument === 'changelang') {
+  } else if (serverType === 'gitlab') {
     if (inputType === 'flags') {
-      process.argv = process.argv.concat(['--lang', 'cpp14']);
+      process.argv = process.argv.concat(['--type', 'gitlab', '--host', 'autolab.bits-goa.ac.in']);
     } else if (inputType === 'prompt') {
-      global.promptStub.resolves({ lang: 'cpp14' });
+      global.promptStub.resolves({ host: 'autolab.bits-goa.ac.in' });
     }
   }
   await controller.start();
@@ -54,17 +77,17 @@ When('I run prefs command with show', async () => {
   await controller.start();
 });
 
-When('I run change server with invalid host', async () => {
+When('I run change server with invalid host for {string}', async (serverType) => {
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changeserver',
-    '--host', 'abc', '--port', '9000'];
+    '--type', serverType, '--host', 'abc', '--port', '9000'];
   await controller.start();
 });
 
 When('I run change server with invalid port', async () => {
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changeserver',
-    '--host', 'autolab.bits-goa.ac.in', '--port', '567E'];
+    '--type', 'ms', '--host', 'autolab.bits-goa.ac.in', '--port', '567E'];
   await controller.start();
 });
 
@@ -72,22 +95,28 @@ Then('I should be able to change the submission language', () => {
   preferenceManager.getPreference({ name: 'cliPrefs' }).submission.language.should.equal('cpp14');
 });
 
-Then('I should be able to change the submission server', () => {
+Then('I should be able to change the main server', () => {
   preferenceManager.getPreference({ name: 'cliPrefs' }).main_server.should.deep.equal({
     host: 'autolab.bits-goa.ac.in',
     port: '9000',
   });
 });
 
+Then('I should be able to change the gitlab server', () => {
+  preferenceManager.getPreference({ name: 'cliPrefs' }).gitlab.should.deep.equal({
+    host: 'autolab.bits-goa.ac.in',
+  });
+});
+
 Then('I should be able to see the preferences', () => {
   const table = new Table({
     head: [chalk.cyan('Preferences'), chalk.cyan('Values')],
-    colWidths: [15, 25],
+    colWidths: [20, 25],
   });
   table.push(
-    ['Language', 'cpp14'],
-    ['Server host', 'autolab.bits-goa.ac.in'],
-    ['Server port', 9000],
+    ['Gitlab host', 'autolab.bits-goa.ac.in'],
+    ['Main Server host', 'autolab.bits-goa.ac.in'],
+    ['Main Server port', 9000],
   );
 
   global.logSpy.should.have.been.calledWith(table.toString());

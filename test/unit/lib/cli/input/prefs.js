@@ -58,43 +58,105 @@ describe('for prefs input', () => {
     });
   });
 
-  it('should send the right event when server is changed', async () => {
+  it('should prompt when type of the server is not provided', async () => {
+    mockInquirer = sandbox.mock(inquirer);
+    mockInquirer.expects('prompt').resolves({ type: 'ms' });
+    const ret = await prefsInput.getInput({
+      preference: 'changeserver',
+    }, { host: 'abc.com', port: '5555' });
+    ret.should.deep.equal({
+      name: 'server_changed',
+      details: {
+        type: 'ms',
+        host: 'abc.com',
+        port: '5555',
+      },
+    });
+  });
+
+  it('should send the right event when main server is changed', async () => {
     const ret = await prefsInput.getInput({
       preference: 'changeserver',
     }, {
+      type: 'ms',
       host: 'abc.com',
       port: '5555',
     });
     ret.should.deep.equal({
       name: 'server_changed',
       details: {
+        type: 'ms',
         host: 'abc.com',
         port: '5555',
       },
     });
   });
 
-  it('should prompt when host is not given', async () => {
+  it('should send the right event when gitlab server is changed', async () => {
+    const ret = await prefsInput.getInput({
+      preference: 'changeserver',
+    }, {
+      type: 'gitlab',
+      host: 'abc.com',
+    });
+    ret.should.deep.equal({
+      name: 'server_changed',
+      details: {
+        type: 'gitlab',
+        host: 'abc.com',
+      },
+    });
+  });
+
+  it('should prompt when host is not given for changing main server', async () => {
     mockInquirer = sandbox.mock(inquirer);
     mockInquirer.expects('prompt').resolves({ host: 'abc.com', port: '5555' });
     const ret = await prefsInput.getInput({
       preference: 'changeserver',
-    }, { port: '5555' });
+    }, { type: 'ms', port: '5555' });
     ret.should.deep.equal({
       name: 'server_changed',
       details: {
+        type: 'ms',
         host: 'abc.com',
         port: '5555',
       },
     });
   });
 
-  it('should send the appropriate message when invalid host is given', async () => {
+  it('should prompt when host is not given for changing gitlab server', async () => {
+    mockInquirer = sandbox.mock(inquirer);
+    mockInquirer.expects('prompt').resolves({ host: 'abc.com' });
+    const ret = await prefsInput.getInput({
+      preference: 'changeserver',
+    }, { type: 'gitlab' });
+    ret.should.deep.equal({
+      name: 'server_changed',
+      details: {
+        type: 'gitlab',
+        host: 'abc.com',
+      },
+    });
+  });
+
+  it('should send the appropriate message when invalid host is given for main server', async () => {
     const ret = await prefsInput.getInput({
       preference: 'changeserver',
     }, {
+      type: 'ms',
       host: 'abc',
       port: '555',
+    });
+    ret.should.deep.equal({
+      name: 'invalid_host',
+    });
+  });
+  it('should send the appropriate message when invalid host is given for gitlab server', async () => {
+    const ret = await prefsInput.getInput({
+      preference: 'changeserver',
+    }, {
+      type: 'gitlab',
+      host: 'abc',
     });
     ret.should.deep.equal({
       name: 'invalid_host',
@@ -105,6 +167,7 @@ describe('for prefs input', () => {
     const ret = await prefsInput.getInput({
       preference: 'changeserver',
     }, {
+      type: 'ms',
       host: 'abc.com',
       port: '555a',
     });

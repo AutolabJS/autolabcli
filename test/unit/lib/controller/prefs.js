@@ -26,17 +26,21 @@ describe('For prefs controller', () => {
     const changedPrefs = {
       name: 'server_changed',
       details: {
+        type: 'ms',
         host: 'abc',
         port: 8999,
       },
     };
-    mockprefsInput.expects('getInput').once().withExactArgs({ preference: 'changeserver' }, { host: 'abc', port: '8999', lang: undefined }).resolves(changedPrefs);
+    mockprefsInput.expects('getInput').once().withExactArgs({ preference: 'changeserver' }, {
+      type: 'ms', host: 'abc', port: '8999', lang: undefined,
+    }).resolves(changedPrefs);
     mockprefsModel.expects('storePrefs').withExactArgs(changedPrefs).resolves(changedPrefs);
     mockprefsOutput.expects('sendOutput').withExactArgs(changedPrefs);
 
     prefsController.addTo(program);
 
     program.exec(['prefs', 'changeserver'], {
+      type: 'ms',
       host: 'abc',
       port: '8999',
     });
