@@ -3,6 +3,7 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const program = require('caporal');
 
+const { logger } = require('../../../../lib/utils/logger');
 const exitOutput = require('../../../../lib/cli/output/exit');
 const exitModel = require('../../../../lib/model/exit');
 const exitController = require('../../../../lib/controller/exit');
@@ -13,6 +14,11 @@ chai.should();
 
 describe('For exit controller', () => {
   const sandbox = sinon.createSandbox();
+
+  beforeEach(() => {
+    const mocklogger = sandbox.stub(logger);
+    program.logger(mocklogger);
+  });
 
   afterEach(() => {
     sandbox.restore();

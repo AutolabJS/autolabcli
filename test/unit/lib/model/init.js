@@ -10,6 +10,7 @@ chai.should();
 
 const preferenceManager = require('../../../../lib/utils/preference-manager');
 const initModel = require('../../../../lib/model/init');
+const { logger } = require('../../lib/utils/logger');
 
 let host = 'autolab.bits-goa.ac.in';
 if (preferenceManager.getPreference({ name: 'cliPrefs' }).gitlab) {
@@ -20,7 +21,14 @@ chai.use(chaiAsPromised);
 chai.should();
 
 describe('for initModel', () => {
+  const sandbox = sinon.createSandbox();
+
+  afterEach(() => {
+    sandbox.restore();
+  });
+
   it('should return status code 200 after successful login', async () => {
+    const mocklogger = sandbox.stub(logger);
     const fakeServer = nock(`https://${host}`)
       .post('/api/v4/session?login=testuser3&password=123');
     fakeServer.reply(200, {
@@ -28,7 +36,6 @@ describe('for initModel', () => {
       name: 'test_user3',
       private_token: 'zxcvbnb',
     });
-
     const status = await initModel.authenticate({
       username: 'testuser3',
       password: '123',
@@ -39,6 +46,7 @@ describe('for initModel', () => {
   });
 
   it('should return status code of 401 when invalid login provided', async () => {
+    const mocklogger = sandbox.stub(logger);
     const fakeServer = nock(`https://${host}`)
       .post('/api/v4/session?login=testuser&password=123');
     fakeServer.reply(401);
@@ -50,6 +58,7 @@ describe('for initModel', () => {
   });
 
   it('should return code 4 if unkown error occurs', async () => {
+    const mocklogger = sandbox.stub(logger);
     const status = await initModel.authenticate({
       username: 'testuser',
       password: '123',

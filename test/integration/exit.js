@@ -6,6 +6,7 @@ const chalk = require('chalk');
 const nock = require('nock');
 const controller = require('../../lib/controller');
 const preferenceManager = require('../../lib/utils/preference-manager');
+const { logger } = require('../../lib/utils/logger');
 
 chai.use(sinonChai);
 chai.should();
@@ -32,6 +33,7 @@ describe('Integration test for exit command', () => {
 
   it('should remove the stored credentials', async () => {
     const logSpy = sandbox.stub(console, 'log');
+    const loggerStub = sandbox.stub(logger);
     await login();
 
     process.argv = ['/usr/local/nodejs/bin/node',

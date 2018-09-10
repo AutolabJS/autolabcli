@@ -27,7 +27,7 @@ describe('for prefs input', () => {
   });
 
   it('should send the right event when language is changed using prompt', async () => {
-    mockInquirer = sandbox.mock(inquirer);
+    const mockInquirer = sandbox.mock(inquirer);
     mockInquirer.expects('prompt').resolves({ lang: 'cpp14' });
     const ret = await prefsInput.getInput({ preference: 'changelang' }, { lang: null });
     ret.should.deep.equal({

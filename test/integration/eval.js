@@ -5,6 +5,7 @@ const chalk = require('chalk');
 const inquirer = require('inquirer');
 const Table = require('cli-table');
 const io = require('socket.io-client');
+const { logger } = require('../../lib/utils/logger');
 const controller = require('../../lib/controller');
 const preferenceManager = require('../../lib/utils/preference-manager');
 const commandValidator = require('../../lib/utils/command-validator');
@@ -43,6 +44,7 @@ describe('Integration test for eval command', () => {
 
   it('should display results on succesful submission', async () => {
     const logStub = sandbox.stub(console, 'log');
+    const loggerStub = sandbox.stub(logger);
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'eval', '--lang', 'java', '-l', 'test3'];
     const mockIo = sandbox.mock(io);
@@ -83,6 +85,7 @@ describe('Integration test for eval command', () => {
 
   it('should display error message on invalid event', async () => {
     const logStub = sandbox.stub(console, 'log');
+    const loggerStub = sandbox.stub(logger);
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'eval', '--lang', 'java', '-l', 'test3'];
     mockIo = sandbox.mock(io);
@@ -112,6 +115,7 @@ describe('Integration test for eval command', () => {
 
   it('should display results on succesful submission with prompt input', async () => {
     const logStub = sandbox.stub(console, 'log');
+    const loggerStub = sandbox.stub(logger);
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'eval'];
     mockIo = sandbox.mock(io);
@@ -154,6 +158,7 @@ describe('Integration test for eval command', () => {
 
   it('should display message for pending submission', async () => {
     const logStub = sandbox.stub(console, 'log');
+    const loggerStub = sandbox.stub(logger);
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'eval', '--lang', 'java', '-l', 'test3'];
     mockIo = sandbox.mock(io);
@@ -182,6 +187,7 @@ describe('Integration test for eval command', () => {
 
   it('should show error message for expired session', async () => {
     const logStub = sandbox.stub(console, 'log');
+    const loggerStub = sandbox.stub(logger);
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'eval', '--lang', 'java', '-l', 'test3'];
     mockIo = sandbox.mock(io);

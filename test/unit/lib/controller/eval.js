@@ -3,6 +3,7 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const program = require('caporal');
 
+const { logger } = require('../../../../lib/utils/logger');
 const evalInput = require('../../../../lib/cli/input/eval');
 const evalOutput = require('../../../../lib/cli/output/eval');
 const evalModel = require('../../../../lib/model/eval');
@@ -22,6 +23,11 @@ const mockOptions = {
 describe('For eval controller', () => {
   const sandbox = sinon.createSandbox();
 
+  beforeEach(() => {
+    const mocklogger = sandbox.stub(logger);
+    program.logger(mocklogger);
+  });
+
   afterEach(() => {
     sandbox.restore();
   });
@@ -35,7 +41,7 @@ describe('For eval controller', () => {
     mockcommandValidator.expects('validateSession').once().returns(true);
 
     mockevalInput.expects('getInput').once().withExactArgs({}, {
-      l: 'test3', lang: 'java', h: undefined, i: undefined,
+      l: 'test3', lang: 'java', hash: undefined, i: undefined,
     }).resolves(mockOptions);
     mockevalOutput.expects('sendOutput').withExactArgs({
       name: 'eval_started',

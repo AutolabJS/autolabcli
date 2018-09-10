@@ -9,6 +9,7 @@ const nock = require('nock');
 const inquirer = require('inquirer');
 const controller = require('../../lib/controller');
 const preferenceManager = require('../../lib/utils/preference-manager');
+const { logger } = require('../../lib/utils/logger');
 
 let host = 'autolab.bits-goa.ac.in';
 if (preferenceManager.getPreference({ name: 'cliPrefs' }).gitlab) {
@@ -32,6 +33,7 @@ describe('Integration test for init command', () => {
 
   it('should have output as expected when init command is provided with flags', async () => {
     const logstub = sandbox.stub(console, 'log');
+    const loggerStub = sandbox.stub(logger);
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'init', '-u', 'testuser2', '-p', '123'];
 
@@ -45,6 +47,7 @@ describe('Integration test for init command', () => {
 
   it('should have output as expected when init command is NOT provided with flags', async () => {
     const logstub = sandbox.stub(console, 'log');
+    const loggerStub = sandbox.stub(logger);
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'init'];
     const mockInquirer = sandbox.mock(inquirer);
