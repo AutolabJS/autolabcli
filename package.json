@@ -1,7 +1,7 @@
 {
-  "name": "autolabjs",
+  "name": "@autolabjs/autolabcli",
   "version": "1.0.0",
-  "description": "Codebase for backward incompatible revision of autolabcli v0.1.1.",
+  "description": "autolabcli for autolabjs.",
   "main": "index.js",
   "scripts": {
     "unit": "nyc --reporter=lcov --reporter=text-lcov -s --all mocha 'test/unit/**/*.js'",
