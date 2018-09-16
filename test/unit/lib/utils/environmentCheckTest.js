@@ -1,5 +1,5 @@
 const chai = require('chai');
-const envCheck = require('../../../../lib/utils/environmet-check');
+const envCheck = require('../../../../lib/utils/environment-check');
 
 chai.should();
 process.env.validFile = './package.json';
