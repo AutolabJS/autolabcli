@@ -21,6 +21,10 @@ const login = async () => {
 describe('Integration test for exit command', () => {
   const sandbox = sinon.createSandbox();
 
+  before(() => {
+    logger.transports.forEach((t) => { t.silent = true; });
+  });
+
   beforeEach(() => {
     const fakeServer = nock('https://autolab.bits-goa.ac.in')
       .post('/api/v4/session?login=testuser2&password=123');
@@ -33,7 +37,6 @@ describe('Integration test for exit command', () => {
 
   it('should remove the stored credentials', async () => {
     const logSpy = sandbox.stub(console, 'log');
-    const loggerStub = sandbox.stub(logger);
     await login();
 
     process.argv = ['/usr/local/nodejs/bin/node',

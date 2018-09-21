@@ -2,9 +2,6 @@ language: node_js
 node_js:
   - "8"
 
-env:
-  - LOGGERCONFIG=$PWD/config/logger.json
-
 install:
   - npm install
 

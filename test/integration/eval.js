@@ -38,13 +38,16 @@ const mockData = {
 describe('Integration test for eval command', () => {
   const sandbox = sinon.createSandbox();
 
+  before(() => {
+    logger.transports.forEach((t) => { t.silent = true; });
+  });
+
   afterEach(() => {
     sandbox.restore();
   });
 
   it('should display results on succesful submission', async () => {
     const logStub = sandbox.stub(console, 'log');
-    const loggerStub = sandbox.stub(logger);
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'eval', '--lang', 'java', '-l', 'test3'];
     const mockIo = sandbox.mock(io);
@@ -85,7 +88,7 @@ describe('Integration test for eval command', () => {
 
   it('should display error message on invalid event', async () => {
     const logStub = sandbox.stub(console, 'log');
-    const loggerStub = sandbox.stub(logger);
+    // const loggerStub = sandbox.stub(logger);
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'eval', '--lang', 'java', '-l', 'test3'];
     mockIo = sandbox.mock(io);
@@ -115,7 +118,7 @@ describe('Integration test for eval command', () => {
 
   it('should display results on succesful submission with prompt input', async () => {
     const logStub = sandbox.stub(console, 'log');
-    const loggerStub = sandbox.stub(logger);
+    // const loggerStub = sandbox.stub(logger);
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'eval'];
     mockIo = sandbox.mock(io);
@@ -158,7 +161,7 @@ describe('Integration test for eval command', () => {
 
   it('should display message for pending submission', async () => {
     const logStub = sandbox.stub(console, 'log');
-    const loggerStub = sandbox.stub(logger);
+    // const loggerStub = sandbox.stub(logger);
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'eval', '--lang', 'java', '-l', 'test3'];
     mockIo = sandbox.mock(io);
@@ -187,7 +190,7 @@ describe('Integration test for eval command', () => {
 
   it('should show error message for expired session', async () => {
     const logStub = sandbox.stub(console, 'log');
-    const loggerStub = sandbox.stub(logger);
+    // const loggerStub = sandbox.stub(logger);
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'eval', '--lang', 'java', '-l', 'test3'];
     mockIo = sandbox.mock(io);

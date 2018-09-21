@@ -21,6 +21,11 @@ chai.should();
 
 describe('Integration test for init command', () => {
   const sandbox = sinon.createSandbox();
+
+  before(() => {
+    logger.transports.forEach((t) => { t.silent = true; });
+  });
+
   beforeEach(() => {
     const fakeServer = nock(`https://${host}`)
       .post('/api/v4/session?login=testuser2&password=123');
@@ -33,7 +38,6 @@ describe('Integration test for init command', () => {
 
   it('should have output as expected when init command is provided with flags', async () => {
     const logstub = sandbox.stub(console, 'log');
-    const loggerStub = sandbox.stub(logger);
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'init', '-u', 'testuser2', '-p', '123'];
 
@@ -47,7 +51,6 @@ describe('Integration test for init command', () => {
 
   it('should have output as expected when init command is NOT provided with flags', async () => {
     const logstub = sandbox.stub(console, 'log');
-    const loggerStub = sandbox.stub(logger);
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'init'];
     const mockInquirer = sandbox.mock(inquirer);

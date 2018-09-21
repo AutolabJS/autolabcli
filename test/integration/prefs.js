@@ -20,13 +20,16 @@ chai.should();
 describe('Integration test for prefs command', () => {
   const sandbox = sinon.createSandbox();
 
+  before(() => {
+    logger.transports.forEach((t) => { t.silent = true; });
+  });
+
   afterEach(() => {
     sandbox.restore();
   });
 
   it('should be able to change the language', async () => {
     const logSpy = sandbox.stub(console, 'log');
-    const loggerStub = sandbox.stub(logger);
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changelang'];
     const mockInquirer = sandbox.mock(inquirer);
@@ -41,7 +44,6 @@ describe('Integration test for prefs command', () => {
 
   it('should be able to change the main server', async () => {
     const logSpy = sandbox.stub(console, 'log');
-    const loggerStub = sandbox.stub(logger);
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changeserver',
       '--type', 'ms', '--host', 'xyz.com', '--port', '9090'];
@@ -57,7 +59,6 @@ describe('Integration test for prefs command', () => {
 
   it('should be able to change the gitlab server', async () => {
     const logSpy = sandbox.stub(console, 'log');
-    const loggerStub = sandbox.stub(logger);
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changeserver',
       '--host', 'abc.com'];
@@ -74,7 +75,6 @@ describe('Integration test for prefs command', () => {
 
   it('should show the prefs', async () => {
     const logSpy = sandbox.stub(console, 'log');
-    const loggerStub = sandbox.stub(logger);
     const table = new Table({
       head: [chalk.cyan('Preferences'), chalk.cyan('Values')],
       colWidths: [20, 25],
@@ -94,7 +94,6 @@ describe('Integration test for prefs command', () => {
 
   it('should display error message for invalid host', async () => {
     const logSpy = sandbox.stub(console, 'log');
-    const loggerStub = sandbox.stub(logger);
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changeserver',
       '--type', 'ms', '--host', 'xyz', '--port', '9090'];
@@ -106,7 +105,6 @@ describe('Integration test for prefs command', () => {
 
   it('should display error message for invalid port', async () => {
     const logSpy = sandbox.stub(console, 'log');
-    const loggerStub = sandbox.stub(logger);
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changeserver',
       '--type', 'ms', '--host', 'xyz.com', '--port', '909A'];
@@ -118,7 +116,6 @@ describe('Integration test for prefs command', () => {
 
   it('should display error message for invalid lang', async () => {
     const logSpy = sandbox.stub(console, 'log');
-    const loggerStub = sandbox.stub(logger);
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changelang',
       '--lang', 'cpp15'];
@@ -130,7 +127,6 @@ describe('Integration test for prefs command', () => {
 
   it('should change lang using flags', async () => {
     const logSpy = sandbox.stub(console, 'log');
-    const loggerStub = sandbox.stub(logger);
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changelang',
       '--lang', 'cpp14'];
@@ -142,7 +138,6 @@ describe('Integration test for prefs command', () => {
 
   it('should be able to change the gitlab server using prompt', async () => {
     const logSpy = sandbox.stub(console, 'log');
-    const loggerStub = sandbox.stub(logger);
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changeserver', '--type', 'gitlab'];
     const mockInquirer = sandbox.mock(inquirer);
@@ -156,7 +151,6 @@ describe('Integration test for prefs command', () => {
 
   it('should be able to change the main server using prompt', async () => {
     const logSpy = sandbox.stub(console, 'log');
-    const loggerStub = sandbox.stub(logger);
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changeserver', '--type', 'ms'];
     const mockInquirer = sandbox.mock(inquirer);
