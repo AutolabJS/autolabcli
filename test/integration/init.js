@@ -49,6 +49,22 @@ describe('Integration test for init command', () => {
     sandbox.restore();
   });
 
+  it('should have output as expected when network fails', async () => {
+    const faultServer = nock(`https://${host}`)
+      .post('/api/v4/session?login=testuser3&password=123');
+    faultServer.reply(4, { });
+
+    const logstub = sandbox.stub(console, 'log');
+    process.argv = ['/usr/local/nodejs/bin/node',
+      '/usr/local/nodejs/bin/autolabjs', 'init', '-u', 'testuser3', '-p', '123'];
+
+    await controller.start();
+    const outputString = chalk.yellow(figlet.textSync('AutolabJS   CLI', { horizontalLayout: 'default' }));
+    logstub.should.have.been.calledWith(outputString);
+    logstub.should.to.have.been.calledWith(chalk.red('\nPlease check your network connection'));
+    sandbox.restore();
+  });
+
   it('should have output as expected when init command is NOT provided with flags', async () => {
     const logstub = sandbox.stub(console, 'log');
     process.argv = ['/usr/local/nodejs/bin/node',

@@ -23,8 +23,8 @@
 
   "logger" : {
     "maxSize": 5242880,
-    "logDirectory": "/.autolabjs",
+    "logDirectory": ".autolabjs",
     "logLocation" : "cli.log",
-    "blacklist" : ["log", "password"]
+    "blacklist" : ["log", "password", "privateToken"]
   }
 }

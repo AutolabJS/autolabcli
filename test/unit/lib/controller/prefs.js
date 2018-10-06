@@ -38,7 +38,7 @@ describe('For prefs controller', () => {
       },
     };
     mockprefsInput.expects('getInput').once().withExactArgs({ preference: 'changeserver' }, {
-      type: 'ms', host: 'abc', port: '8999', lang: undefined,
+      type: 'ms', host: 'abc', port: '8999', lang: undefined, maxsize: undefined, blacklist: undefined,
     }).resolves(changedPrefs);
     mockprefsModel.expects('storePrefs').withExactArgs(changedPrefs).resolves(changedPrefs);
     mockprefsOutput.expects('sendOutput').withExactArgs(changedPrefs);

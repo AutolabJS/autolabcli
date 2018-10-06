@@ -81,6 +81,54 @@ describe('for prefsModel', () => {
     mockPreferenceManager.verify();
   });
 
+  it('should change the logger file size', async () => {
+    const mockPreferenceManager = sinon.mock(preferenceManager);
+    mockPreferenceManager.expects('setPreference').withExactArgs({
+      name: 'loggerPrefs',
+      values: {
+        logger: {
+          blacklist: {
+            keyword: undefined,
+          },
+          maxSize: 72000,
+        },
+      },
+    });
+
+    prefsModel.storePrefs({
+      name: 'logger_pref_changed',
+      details: {
+        maxSize: 72000,
+      },
+    });
+
+    mockPreferenceManager.verify();
+  });
+
+  it('should change the logger blacklists', async () => {
+    const mockPreferenceManager = sinon.mock(preferenceManager);
+    mockPreferenceManager.expects('setPreference').withExactArgs({
+      name: 'loggerPrefs',
+      values: {
+        logger: {
+          blacklist: {
+            keyword: 'xyz',
+          },
+          maxSize: NaN,
+        }
+      },
+    });
+
+    prefsModel.storePrefs({
+      name: 'logger_pref_changed',
+      details: {
+        keyword: 'xyz',
+      },
+    });
+
+    mockPreferenceManager.verify();
+  });
+
   it('should send the stored preferences on show', async () => {
     const mockPreferenceManager = sinon.mock(preferenceManager);
     mockPreferenceManager.expects('getPreference').withExactArgs({ name: 'cliPrefs' }).returns({
@@ -93,6 +141,12 @@ describe('for prefsModel', () => {
       },
       gitlab: {
         host: 'bcd.com',
+      },
+      logger: {
+        maxSize: 52457,
+        logDirectory: '.xys',
+        logLocation: 'all.log',
+        blacklist: ['log'],
       },
     });
 
