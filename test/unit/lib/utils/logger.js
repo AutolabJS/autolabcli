@@ -70,5 +70,18 @@ describe('for logger', () => {
       });
       done();
     });
+
+    it('should call log as MAIN', (done) => {
+      const stubConsole = sandbox.stub(process.stdout, 'write');
+      const testTransport = new winston.transports.Console();
+      logger.add(testTransport);
+
+      logger.moduleLog('error', undefined, 'Main module warning');
+      stubConsole.should.have.been.calledWithMatch('[error] MAIN: Main module warning');
+
+      logger.remove(testTransport);
+
+      done();
+    });
   });
 });
