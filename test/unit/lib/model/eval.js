@@ -92,8 +92,9 @@ describe('for evalModel', () => {
   it('should work as expected on submission_pending event ', (done) => {
     let onScoresStub,
       stub;
-    mockIo = sandbox.mock(io);
-    mockSocket = io('http://localhost:8080');
+    const mockIo = sandbox.mock(io);
+    const mockSocket = io('http://localhost:8080');
+    const mocklogger = sandbox.stub(logger);
     const mockPreferenceManager = sandbox.mock(preferenceManager);
     mockPreferenceManager.expects('getPreference').returns(mockCliPref);
     mockIo.expects('connect').once().returns(mockSocket);
