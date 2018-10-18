@@ -6,6 +6,7 @@ const chalk = require('chalk');
 const nock = require('nock');
 const controller = require('../../lib/controller');
 const preferenceManager = require('../../lib/utils/preference-manager');
+const { logger } = require('../../lib/utils/logger');
 
 chai.use(sinonChai);
 chai.should();
@@ -19,6 +20,10 @@ const login = async () => {
 
 describe('Integration test for exit command', () => {
   const sandbox = sinon.createSandbox();
+
+  before(() => {
+    logger.transports.forEach((t) => { t.silent = true; });
+  });
 
   beforeEach(() => {
     const fakeServer = nock('https://autolab.bits-goa.ac.in')

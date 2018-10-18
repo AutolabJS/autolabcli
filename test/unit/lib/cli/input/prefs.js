@@ -9,6 +9,7 @@ chai.use(sinonChai);
 chai.should();
 
 const prefsInput = require('../../../../../lib/cli/input/prefs');
+const preferenceManager = require('../../../../../lib/utils/preference-manager');
 
 const defaultPrefPath = path.join(__dirname, '../../../../../default-prefs.json');
 const defaultPrefs = JSON.parse(require('fs').readFileSync(defaultPrefPath, 'utf8'));
@@ -27,7 +28,7 @@ describe('for prefs input', () => {
   });
 
   it('should send the right event when language is changed using prompt', async () => {
-    mockInquirer = sandbox.mock(inquirer);
+    const mockInquirer = sandbox.mock(inquirer);
     mockInquirer.expects('prompt').resolves({ lang: 'cpp14' });
     const ret = await prefsInput.getInput({ preference: 'changelang' }, { lang: null });
     ret.should.deep.equal({
@@ -173,6 +174,71 @@ describe('for prefs input', () => {
     });
     ret.should.deep.equal({
       name: 'invalid_port',
+    });
+  });
+
+  it('should send the right event when logger prefs are changed', async () => {
+    const ret = await prefsInput.getInput({
+      preference: 'logger',
+    }, {
+      blacklist: 'adder',
+      maxsize: 65759,
+    });
+    ret.should.deep.equal({
+      name: 'logger_pref_changed',
+      details: {
+        keyword: 'adder',
+        maxSize: 65759,
+      },
+    });
+  });
+
+  it('should prompt when logger prefs are not given, blacklist', async () => {
+    const mockInquirer = sandbox.stub(inquirer, 'prompt');
+    mockInquirer.onCall(0).returns({ type: 'blacklist' });
+    mockInquirer.onCall(1).returns({ keyword: 'abc' });
+
+    const ret = await prefsInput.getInput({
+      preference: 'logger',
+    }, { });
+    ret.should.deep.equal({
+      name: 'logger_pref_changed',
+      details: {
+        keyword: 'abc',
+      },
+    });
+  });
+
+  it('should prompt when logger prefs are not given, maxsize', async () => {
+    const mockInquirer = sandbox.stub(inquirer, 'prompt');
+    mockInquirer.onCall(0).returns({ type: 'maxsize' });
+    mockInquirer.onCall(1).returns({ maxsize: 723000 });
+
+    const ret = await prefsInput.getInput({
+      preference: 'logger',
+    }, { });
+    ret.should.deep.equal({
+      name: 'logger_pref_changed',
+      details: {
+        maxSize: 723000,
+      },
+    });
+  });
+
+  it('should send the appropriate message when invalid keyword is given', async () => {
+    const mockpreferenceManager = sandbox.mock(preferenceManager);
+    mockpreferenceManager.expects('getPreference').withExactArgs({ name: 'cliPrefs' }).returns({
+      logger: {
+        blacklist: ['xyz'],
+      },
+    });
+    const ret = await prefsInput.getInput({
+      preference: 'logger',
+    }, {
+      blacklist: 'xyz',
+    });
+    ret.should.deep.equal({
+      name: 'invalid_logger_prefs',
     });
   });
 

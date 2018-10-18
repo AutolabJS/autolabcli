@@ -1,0 +1,9 @@
+version: "2"
+checks:
+  similar-code:
+    config:
+      threshold: 60
+plugins: 
+  eslint:
+    enabled: true
+    channel: "eslint-5"

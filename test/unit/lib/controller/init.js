@@ -3,6 +3,7 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const program = require('caporal');
 
+const { logger } = require('../../../../lib/utils/logger');
 const initInput = require('../../../../lib/cli/input/init');
 const initOutput = require('../../../../lib/cli/output/init');
 const initModel = require('../../../../lib/model/init');
@@ -13,6 +14,11 @@ chai.should();
 
 describe('For init controller', () => {
   const sandbox = sinon.createSandbox();
+
+  beforeEach(() => {
+    const mocklogger = sandbox.stub(logger);
+    program.logger(mocklogger);
+  });
 
   afterEach(() => {
     sandbox.restore();

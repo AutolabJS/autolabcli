@@ -8,6 +8,7 @@ const io = require('socket.io-client');
 chai.use(sinonChai);
 chai.should();
 
+const { logger } = require('../../../../lib/utils/logger');
 const preferenceManager = require('../../../../lib/utils/preference-manager');
 const evalModel = require('../../../../lib/model/eval');
 
@@ -38,7 +39,8 @@ describe('for evalModel', () => {
   it('should work as expected on scores event ', (done) => {
     let onScoresStub,
       stub;
-    mockIo = sandbox.mock(io);
+    const mockIo = sandbox.mock(io);
+    const mocklogger = sandbox.stub(logger);
     const mockPreferenceManager = sandbox.mock(preferenceManager);
     mockPreferenceManager.expects('getPreference').returns(mockCliPref);
     const mockSocket = io('http://localhost:8080');
@@ -65,8 +67,9 @@ describe('for evalModel', () => {
   it('should work as expected on invalid event ', (done) => {
     let onScoresStub,
       stub;
-    mockIo = sandbox.mock(io);
-    mockSocket = io('http://localhost:8080');
+    const mockIo = sandbox.mock(io);
+    const mockSocket = io('http://localhost:8080');
+    const mocklogger = sandbox.stub(logger);
     const mockPreferenceManager = sandbox.mock(preferenceManager);
     mockPreferenceManager.expects('getPreference').returns(mockCliPref);
     mockIo.expects('connect').once().returns(mockSocket);
@@ -89,8 +92,9 @@ describe('for evalModel', () => {
   it('should work as expected on submission_pending event ', (done) => {
     let onScoresStub,
       stub;
-    mockIo = sandbox.mock(io);
-    mockSocket = io('http://localhost:8080');
+    const mockIo = sandbox.mock(io);
+    const mockSocket = io('http://localhost:8080');
+    const mocklogger = sandbox.stub(logger);
     const mockPreferenceManager = sandbox.mock(preferenceManager);
     mockPreferenceManager.expects('getPreference').returns(mockCliPref);
     mockIo.expects('connect').once().returns(mockSocket);

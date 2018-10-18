@@ -1,0 +1,6 @@
+{
+    "maxSize": 5242880,
+    "logDirectory": "/.autolabjs",
+    "logLocation" : "cli.log",
+    "blacklist" : ["log", "password"]
+  }

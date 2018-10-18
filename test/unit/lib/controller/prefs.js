@@ -3,6 +3,7 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const program = require('caporal');
 
+const { logger } = require('../../../../lib/utils/logger');
 const prefsInput = require('../../../../lib/cli/input/prefs');
 const prefsOutput = require('../../../../lib/cli/output/prefs');
 const prefsModel = require('../../../../lib/model/prefs');
@@ -13,6 +14,11 @@ chai.should();
 
 describe('For prefs controller', () => {
   const sandbox = sinon.createSandbox();
+
+  beforeEach(() => {
+    const mocklogger = sandbox.stub(logger);
+    program.logger(mocklogger);
+  });
 
   afterEach(() => {
     sandbox.restore();
@@ -32,7 +38,7 @@ describe('For prefs controller', () => {
       },
     };
     mockprefsInput.expects('getInput').once().withExactArgs({ preference: 'changeserver' }, {
-      type: 'ms', host: 'abc', port: '8999', lang: undefined,
+      type: 'ms', host: 'abc', port: '8999', lang: undefined, maxsize: undefined, blacklist: undefined,
     }).resolves(changedPrefs);
     mockprefsModel.expects('storePrefs').withExactArgs(changedPrefs).resolves(changedPrefs);
     mockprefsOutput.expects('sendOutput').withExactArgs(changedPrefs);

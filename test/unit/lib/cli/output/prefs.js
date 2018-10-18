@@ -45,6 +45,15 @@ describe('For prefs output', () => {
     sandbox.restore();
   });
 
+  it('should send expected output when logger preferences are changed', () => {
+    const logStub = sandbox.stub(console, 'log');
+
+    prefsOutput.sendOutput({ name: 'logger_pref_changed', details: { keyword: 'gitlab' } });
+    logStub.should.have.been.calledWith(chalk.green('Your logger preferences have been updated.'));
+
+    sandbox.restore();
+  });
+
   it('should send expected output when no host is provided', () => {
     const logStub = sandbox.stub(console, 'log');
 
@@ -72,6 +81,15 @@ describe('For prefs output', () => {
     sandbox.restore();
   });
 
+  it('should send expected output when invalid blacklist keyword is provided', () => {
+    const logStub = sandbox.stub(console, 'log');
+
+    prefsOutput.sendOutput({ name: 'invalid_logger_prefs' });
+    logStub.should.have.been.calledWith(chalk.red('Keyword already exixts, please provide valid blacklist keyword'));
+
+    sandbox.restore();
+  });
+
   it('should draw table for show prefs command', () => {
     const logStub = sandbox.stub(console, 'log');
 
@@ -81,17 +99,25 @@ describe('For prefs output', () => {
         gitlab_host: 'xyz.com',
         mainserver_host: 'fdsf@fsd.com',
         mainserver_port: 5235,
+        logger_size: 77222,
+        logger_dir: '.autograder',
+        logger_location: 'all.log',
+        logger_blacklist: ['username', 'id'],
       },
     });
 
     const table = new Table({
       head: [chalk.cyan('Preferences'), chalk.cyan('Values')],
-      colWidths: [20, 25],
+      colWidths: [25, 27],
     });
     table.push(
       ['Gitlab host', 'xyz.com'],
       ['Main Server host', 'fdsf@fsd.com'],
       ['Main Server port', 5235],
+      ['Logger file MaxSize', 77222],
+      ['Log file Directory', '.autograder'],
+      ['Log file name', 'all.log'],
+      ['Logger blacklist keys', ['username', 'id']],
     );
 
     logStub.should.have.been.calledWith(table.toString());

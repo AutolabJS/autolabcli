@@ -1,0 +1,18 @@
+2018-09-21 11:52:41 [info] INIT: Init command invoked.
+2018-09-21 11:52:45 [debug] INIT: Login request from test. Authenticating...
+2018-09-21 11:52:45 [debug] INIT MODEL: POST request to https://autolab.bits-goa.ac.in/api/v4/session?login=test&password=test1234
+2018-09-21 11:52:45 [debug] INIT MODEL: Authenticated test user.
+2018-09-21 11:52:45 [debug] PREFERENCE MANAGER: Gitlab preferences updated.
+2018-09-21 11:52:45 [debug] PREFERENCE MANAGER: {"username":"test","password":"<removed>","privateToken":"J8PGNAs1ss8W6WMs8zsd"}
+2018-09-21 11:58:27 [info] EVAL: Eval command invoked.
+2018-09-21 11:58:34 [debug] EVAL INPUT: Fetching id to submit.
+2018-09-21 11:58:34 [debug] EVAL: Evaluate request for
+2018-09-21 11:58:34 [debug] EVAL: {"lab":"Lab0","lang":"java","commitHash":"","idNo":"test"}
+2018-09-21 11:58:34 [debug] EVAL MODEL: Opening a socket connection to http://autolab.bits-goa.ac.in:9000
+2018-09-21 11:58:36 [debug] EVAL MODEL: Sucessfully Sumbitted.
+2018-09-21 11:58:36 [debug] EVAL MODEL: Evaluated results
+2018-09-21 11:58:36 [debug] EVAL MODEL: {"marks":["1"],"comment":["Accepted"],"id_no":"TEST","Lab_No":"Lab0","commit":"","time":"2018-09-21 06:29:01","status":0,"penalty":0,"socket":"3RWXXXDHABv3mfx-AAwK","log":"<removed>"}
+2018-09-21 11:58:37 [debug] EVAL OUTPUT: Evaluation logs: NO LOGS FOR THIS EVALUATION.
+2018-09-21 11:59:09 [info] EXIT: Exit command invoked.
+2018-09-21 11:59:09 [debug] EXIT: Valid session! Logging out.
+2018-09-21 11:59:09 [debug] PREFERENCE MANAGER: Crednetials deleted.
