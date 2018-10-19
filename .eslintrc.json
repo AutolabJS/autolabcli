@@ -1,5 +1,9 @@
 {
     "extends": "airbnb-base",
+    "env" : {
+        "node": true,
+        "mocha": true
+    },
     "rules": {
         "max-lines-per-function" : ["error", 30]
     }
