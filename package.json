@@ -10,7 +10,7 @@
     "post-integration": "nyc report --reporter=lcov > coverage.lcov && codecov -F integration && rm -rf ~/.autolabjs",
     "feature": "nyc --reporter=lcov --reporter=text-lcov -s --all cucumber-js 'test/feature/features' -r 'test/feature/steps'",
     "post-feature": "nyc report --reporter=lcov > coverage.lcov && codecov -F feature",
-    "quality" : "eslint . & jsinspect . & buddy ."
+    "quality": "eslint . & jsinspect . & buddy ."
   },
   "bin": {
     "autolabjs": "./index.js"
