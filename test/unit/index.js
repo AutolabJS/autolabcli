@@ -18,7 +18,7 @@ describe('For application entry point', () => {
   it('should start the controller', () => {
     const mockController = sandbox.mock(controller);
     mockController.expects('start').once();
-    exec('npm link;autolabjs', (err, stdout, stderr) => {
+    exec('npm link;autolabjs', () => {
       mockController.verify();
     });
   });

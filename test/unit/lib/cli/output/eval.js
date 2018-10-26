@@ -3,10 +3,12 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const chalk = require('chalk');
 const Table = require('cli-table');
-const path = require('path');
 
-const { logger } = require('../../../../../lib/utils/logger');
 const evalOutput = require('../../../../../lib/cli/output/eval');
+
+const testCaseColWidth = 15;
+const statusColWidth = 25;
+const scoreColWidth = 15;
 
 chai.use(sinonChai);
 chai.should();
@@ -22,9 +24,7 @@ describe('For eval output', () => {
   };
 
   it('should start the spinner when evaluation starts', () => {
-    const logStub = sandbox.stub(console, 'log');
     const mockStdout = sandbox.mock(process.stdout);
-    const mocklogger = sandbox.stub(logger);
 
     mockStdout.expects('write').atLeast(1);
 
@@ -32,14 +32,11 @@ describe('For eval output', () => {
     evalOutput.sendOutput({ name: 'invalid' });
 
     mockStdout.verify();
-
     sandbox.restore();
   });
 
   it('should draw table for scores event and display total score', () => {
     const logStub = sandbox.stub(console, 'log');
-    const mocklogger = sandbox.stub(logger);
-
     evalOutput.sendOutput({
       name: 'scores',
       details: {
@@ -49,7 +46,7 @@ describe('For eval output', () => {
 
     const table = new Table({
       head: [chalk.cyan('Test Case #'), chalk.cyan('Status'), chalk.cyan('Score')],
-      colWidths: [15, 25, 15],
+      colWidths: [testCaseColWidth, statusColWidth, scoreColWidth],
     });
     table.push(
       ['1', 'success', '1'],
@@ -58,7 +55,7 @@ describe('For eval output', () => {
 
     logStub.should.have.been.calledWith(chalk.green('\nSubmission successful. Retreiving results'));
     logStub.should.have.been.calledWith(table.toString());
-    logStub.should.have.been.calledWith(`\n${chalk.yellow('Log :\n')}${new Buffer(mockData.log, 'base64').toString()}`);
+    logStub.should.have.been.calledWith(`\n${chalk.yellow('Log :\n')}${Buffer.from(mockData.log, 'base64').toString()}`);
     logStub.should.have.been.calledWith(`${chalk.yellow('Warning: ')}This lab is not active. The result of this evaluation is not added to the scoreboard.`);
     logStub.should.have.been.calledWith(`${chalk.green('Total Score: ')}2`);
 
@@ -67,7 +64,6 @@ describe('For eval output', () => {
 
   it('should show penalty score when status is not 0', () => {
     const logStub = sandbox.stub(console, 'log');
-    const mocklogger = sandbox.stub(logger);
 
     mockData.status = 1;
     evalOutput.sendOutput({
@@ -83,8 +79,6 @@ describe('For eval output', () => {
 
   it('should display error message for invalid event', () => {
     const logStub = sandbox.stub(console, 'log');
-    const mocklogger = sandbox.stub(logger);
-
     evalOutput.sendOutput({
       name: 'invalid',
     });
@@ -95,7 +89,6 @@ describe('For eval output', () => {
 
   it('should display error message for submission_pending event', () => {
     const logStub = sandbox.stub(console, 'log');
-    const mocklogger = sandbox.stub(logger);
 
     evalOutput.sendOutput({
       name: 'submission_pending',

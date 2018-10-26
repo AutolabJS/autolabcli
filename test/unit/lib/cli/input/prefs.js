@@ -4,6 +4,7 @@ const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const path = require('path');
+const fs = require('fs');
 
 chai.use(sinonChai);
 chai.should();
@@ -12,7 +13,7 @@ const prefsInput = require('../../../../../lib/cli/input/prefs');
 const preferenceManager = require('../../../../../lib/utils/preference-manager');
 
 const defaultPrefPath = path.join(__dirname, '../../../../../default-prefs.json');
-const defaultPrefs = JSON.parse(require('fs').readFileSync(defaultPrefPath, 'utf8'));
+const defaultPrefs = JSON.parse(fs.readFileSync(defaultPrefPath, 'utf8'));
 
 const { supportedLanguages } = defaultPrefs;
 
@@ -60,7 +61,7 @@ describe('for prefs input', () => {
   });
 
   it('should prompt when type of the server is not provided', async () => {
-    mockInquirer = sandbox.mock(inquirer);
+    const mockInquirer = sandbox.mock(inquirer);
     mockInquirer.expects('prompt').resolves({ type: 'ms' });
     const ret = await prefsInput.getInput({
       preference: 'changeserver',
@@ -110,7 +111,7 @@ describe('for prefs input', () => {
   });
 
   it('should prompt when host is not given for changing main server', async () => {
-    mockInquirer = sandbox.mock(inquirer);
+    const mockInquirer = sandbox.mock(inquirer);
     mockInquirer.expects('prompt').resolves({ host: 'abc.com', port: '5555' });
     const ret = await prefsInput.getInput({
       preference: 'changeserver',
@@ -126,7 +127,7 @@ describe('for prefs input', () => {
   });
 
   it('should prompt when host is not given for changing gitlab server', async () => {
-    mockInquirer = sandbox.mock(inquirer);
+    const mockInquirer = sandbox.mock(inquirer);
     mockInquirer.expects('prompt').resolves({ host: 'abc.com' });
     const ret = await prefsInput.getInput({
       preference: 'changeserver',

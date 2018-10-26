@@ -1,5 +1,5 @@
 {
-  "threshold":     6,
+  "threshold":     30,
   "identifiers":   true,
   "literals":      true,
   "color":         true,

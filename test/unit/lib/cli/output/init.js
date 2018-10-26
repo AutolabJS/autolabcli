@@ -3,7 +3,6 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const chalk = require('chalk');
 const figlet = require('figlet');
-const { Spinner } = require('cli-spinner');
 
 const initOutput = require('../../../../../lib/cli/output/init');
 
@@ -30,7 +29,6 @@ describe('For init output', () => {
   });
 
   it('should start the spinner when authentication starts', () => {
-    const logStub = sandbox.stub(console, 'log');
     const mockStdout = sandbox.mock(process.stdout);
 
     mockStdout.expects('write').atLeast(1);

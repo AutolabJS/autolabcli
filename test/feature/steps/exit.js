@@ -1,12 +1,8 @@
 const {
   Given, When, Then, Before, After,
 } = require('cucumber');
-const Preferences = require('preferences');
-const { exec } = require('child_process');
 const chai = require('chai');
-const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
-const fs = require('fs');
 const chalk = require('chalk');
 const controller = require('../../../lib/controller');
 const preferenceManager = require('../../../lib/utils/preference-manager');

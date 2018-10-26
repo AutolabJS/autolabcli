@@ -4,11 +4,12 @@ const sinonChai = require('sinon-chai');
 const chalk = require('chalk');
 const Table = require('cli-table');
 const path = require('path');
+const fs = require('fs');
 
 const prefsOutput = require('../../../../../lib/cli/output/prefs');
 
 const defaultPrefPath = path.join(__dirname, '../../../../../default-prefs.json');
-const defaultPrefs = JSON.parse(require('fs').readFileSync(defaultPrefPath, 'utf8'));
+const defaultPrefs = JSON.parse(fs.readFileSync(defaultPrefPath, 'utf8'));
 
 const { supportedLanguages } = defaultPrefs;
 
@@ -93,28 +94,36 @@ describe('For prefs output', () => {
   it('should draw table for show prefs command', () => {
     const logStub = sandbox.stub(console, 'log');
 
+    const testMSPort = 5235;
+    const testSize = 77222;
+
     prefsOutput.sendOutput({
       name: 'show_prefs',
       details: {
         gitlab_host: 'xyz.com',
         mainserver_host: 'fdsf@fsd.com',
-        mainserver_port: 5235,
-        logger_size: 77222,
+        mainserver_port: testMSPort,
+        logger_size: testSize,
         logger_dir: '.autograder',
         logger_location: 'all.log',
         logger_blacklist: ['username', 'id'],
       },
     });
 
+    const prefsColWidth = 25;
+    const valuesColWidth = 27;
+
     const table = new Table({
       head: [chalk.cyan('Preferences'), chalk.cyan('Values')],
-      colWidths: [25, 27],
+      colWidths: [prefsColWidth, valuesColWidth],
     });
+
+
     table.push(
       ['Gitlab host', 'xyz.com'],
       ['Main Server host', 'fdsf@fsd.com'],
-      ['Main Server port', 5235],
-      ['Logger file MaxSize', 77222],
+      ['Main Server port', testMSPort],
+      ['Logger file MaxSize', testSize],
       ['Log file Directory', '.autograder'],
       ['Log file name', 'all.log'],
       ['Logger blacklist keys', ['username', 'id']],

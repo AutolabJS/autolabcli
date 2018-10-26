@@ -4,13 +4,14 @@ const sinonChai = require('sinon-chai');
 const chalk = require('chalk');
 const inquirer = require('inquirer');
 const Table = require('cli-table');
+const path = require('path');
+const fs = require('fs');
 const controller = require('../../lib/controller');
 const preferenceManager = require('../../lib/utils/preference-manager');
 const { logger } = require('../../lib/utils/logger');
-const path = require('path');
 
 const defaultPrefPath = path.join(__dirname, '../../default-prefs.json');
-const defaultPrefs = JSON.parse(require('fs').readFileSync(defaultPrefPath, 'utf8'));
+const defaultPrefs = JSON.parse(fs.readFileSync(defaultPrefPath, 'utf8'));
 
 const { supportedLanguages } = defaultPrefs;
 
@@ -21,7 +22,7 @@ describe('Integration test for prefs command', () => {
   const sandbox = sinon.createSandbox();
 
   before(() => {
-    logger.transports.forEach((t) => { t.silent = true; });
+    logger.transports.forEach((t) => { t.silent = true; }); // eslint-disable-line no-param-reassign
   });
 
   afterEach(() => {
@@ -109,15 +110,23 @@ describe('Integration test for prefs command', () => {
 
   it('should show the prefs', async () => {
     const logSpy = sandbox.stub(console, 'log');
+
+    const prefsColWidth = 25;
+    const valuesColWidth = 27;
+
     const table = new Table({
       head: [chalk.cyan('Preferences'), chalk.cyan('Values')],
-      colWidths: [25, 27],
+      colWidths: [prefsColWidth, valuesColWidth],
     });
+
+    const testMSPort = 9090;
+    const testSize = 786770;
+
     table.push(
       ['Gitlab host', 'abc.com'],
       ['Main Server host', 'xyz.com'],
-      ['Main Server port', 9090],
-      ['Logger file MaxSize', 786770],
+      ['Main Server port', testMSPort],
+      ['Logger file MaxSize', testSize],
       ['Log file Directory', '.autolabjs'],
       ['Log file name', 'cli.log'],
       ['Logger blacklist keys', ['log', 'password', 'privateToken', 'usrname']],

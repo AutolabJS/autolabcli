@@ -1,8 +1,6 @@
 const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
-const { exec } = require('child_process');
-const path = require('path');
 const figlet = require('figlet');
 const chalk = require('chalk');
 const nock = require('nock');
@@ -13,7 +11,7 @@ const { logger } = require('../../lib/utils/logger');
 
 let host = 'autolab.bits-goa.ac.in';
 if (preferenceManager.getPreference({ name: 'cliPrefs' }).gitlab) {
-  host = preferenceManager.getPreference({ name: 'cliPrefs' }).gitlab.host;
+  ({ host } = preferenceManager.getPreference({ name: 'cliPrefs' }).gitlab);
 }
 
 chai.use(sinonChai);
@@ -23,13 +21,16 @@ describe('Integration test for init command', () => {
   const sandbox = sinon.createSandbox();
 
   before(() => {
-    logger.transports.forEach((t) => { t.silent = true; });
+    logger.transports.forEach((t) => { t.silent = true; }); // eslint-disable-line no-param-reassign
   });
 
   beforeEach(() => {
     const fakeServer = nock(`https://${host}`)
       .post('/api/v4/session?login=testuser2&password=123');
-    fakeServer.reply(200, {
+
+    const httpOK = 200;
+
+    fakeServer.reply(httpOK, {
       ok: true,
       name: 'test_user2',
       private_token: 'zxcvbnb',
@@ -52,7 +53,9 @@ describe('Integration test for init command', () => {
   it('should have output as expected when network fails', async () => {
     const faultServer = nock(`https://${host}`)
       .post('/api/v4/session?login=testuser3&password=123');
-    faultServer.reply(4, { });
+
+    const httpFailure = 4;
+    faultServer.reply(httpFailure, { });
 
     const logstub = sandbox.stub(console, 'log');
     process.argv = ['/usr/local/nodejs/bin/node',

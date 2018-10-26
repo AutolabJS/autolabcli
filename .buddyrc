@@ -1,0 +1,6 @@
+{
+  "detectObjects": false,
+  "enforceConst":  false,
+  "ignore":        [0, 1, 2, 3], 
+  "reporter":      "detailed"
+}

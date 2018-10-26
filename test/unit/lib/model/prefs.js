@@ -1,6 +1,5 @@
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
-const chalk = require('chalk');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 
@@ -115,7 +114,7 @@ describe('for prefsModel', () => {
             keyword: 'xyz',
           },
           maxSize: NaN,
-        }
+        },
       },
     });
 
