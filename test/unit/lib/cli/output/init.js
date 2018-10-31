@@ -43,11 +43,11 @@ describe('For init output', () => {
 
   it('should display sucess message  for status code as 200', () => {
     const logStub = sandbox.stub(console, 'log');
-
+    const httpOK = 200;
     initOutput.sendOutput({
       name: 'authentication_ended',
       details: {
-        code: 200,
+        code: httpOK,
         name: 'test_user',
       },
     });
@@ -59,11 +59,11 @@ describe('For init output', () => {
 
   it('should display error message  for invalid credentials', () => {
     const logStub = sandbox.stub(console, 'log');
-
+    const httpUnauth = 401;
     initOutput.sendOutput({
       name: 'authentication_ended',
       details: {
-        code: 401,
+        code: httpUnauth,
       },
     });
 
@@ -74,11 +74,11 @@ describe('For init output', () => {
 
   it('should display appropriate error message  for no connection', () => {
     const logStub = sandbox.stub(console, 'log');
-
+    const httpFailure = 4;
     initOutput.sendOutput({
       name: 'authentication_ended',
       details: {
-        code: 4,
+        code: httpFailure,
       },
     });
 

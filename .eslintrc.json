@@ -7,6 +7,7 @@
     "rules": {
         "max-lines-per-function" : ["error", 30],
         "no-plusplus" : ["error", { "allowForLoopAfterthoughts": true }],
+        "no-console" : ["off"],
         "no-unused-vars": [
             "error",
             {

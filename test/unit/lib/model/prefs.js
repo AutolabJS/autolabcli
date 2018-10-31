@@ -58,12 +58,13 @@ describe('for prefsModel', () => {
 
   it('should change the main server', async () => {
     const mockPreferenceManager = sinon.mock(preferenceManager);
+    const testMsPort = 3333;
     mockPreferenceManager.expects('setPreference').withExactArgs({
       name: 'cliPrefs',
       values: {
         main_server: {
           host: 'abc',
-          port: 3333,
+          port: testMsPort,
         },
       },
     });
@@ -73,7 +74,7 @@ describe('for prefsModel', () => {
       details: {
         type: 'ms',
         host: 'abc',
-        port: 3333,
+        port: testMsPort,
       },
     });
 
@@ -82,6 +83,7 @@ describe('for prefsModel', () => {
 
   it('should change the logger file size', async () => {
     const mockPreferenceManager = sinon.mock(preferenceManager);
+    const testSize = 72000;
     mockPreferenceManager.expects('setPreference').withExactArgs({
       name: 'loggerPrefs',
       values: {
@@ -89,7 +91,7 @@ describe('for prefsModel', () => {
           blacklist: {
             keyword: undefined,
           },
-          maxSize: 72000,
+          maxSize: testSize,
         },
       },
     });
@@ -97,7 +99,7 @@ describe('for prefsModel', () => {
     prefsModel.storePrefs({
       name: 'logger_pref_changed',
       details: {
-        maxSize: 72000,
+        maxSize: testSize,
       },
     });
 
@@ -130,19 +132,21 @@ describe('for prefsModel', () => {
 
   it('should send the stored preferences on show', async () => {
     const mockPreferenceManager = sinon.mock(preferenceManager);
+    const testSize = 52457;
+    const testMsPort = 3333;
     mockPreferenceManager.expects('getPreference').withExactArgs({ name: 'cliPrefs' }).returns({
       submission: {
         language: 'java',
       },
       main_server: {
         host: 'abc',
-        port: 3333,
+        port: testMsPort,
       },
       gitlab: {
         host: 'bcd.com',
       },
       logger: {
-        maxSize: 52457,
+        maxSize: testSize,
         logDirectory: '.xys',
         logLocation: 'all.log',
         blacklist: ['log'],

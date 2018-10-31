@@ -179,17 +179,18 @@ describe('for prefs input', () => {
   });
 
   it('should send the right event when logger prefs are changed', async () => {
+    const testSize = 65759;
     const ret = await prefsInput.getInput({
       preference: 'logger',
     }, {
       blacklist: 'adder',
-      maxsize: 65759,
+      maxsize: testSize,
     });
     ret.should.deep.equal({
       name: 'logger_pref_changed',
       details: {
         keyword: 'adder',
-        maxSize: 65759,
+        maxSize: testSize,
       },
     });
   });
@@ -212,8 +213,9 @@ describe('for prefs input', () => {
 
   it('should prompt when logger prefs are not given, maxsize', async () => {
     const mockInquirer = sandbox.stub(inquirer, 'prompt');
+    const testSize = 723000;
     mockInquirer.onCall(0).returns({ type: 'maxsize' });
-    mockInquirer.onCall(1).returns({ maxsize: 723000 });
+    mockInquirer.onCall(1).returns({ maxsize: testSize });
 
     const ret = await prefsInput.getInput({
       preference: 'logger',
@@ -221,7 +223,7 @@ describe('for prefs input', () => {
     ret.should.deep.equal({
       name: 'logger_pref_changed',
       details: {
-        maxSize: 723000,
+        maxSize: testSize,
       },
     });
   });
