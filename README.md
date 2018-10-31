@@ -12,9 +12,11 @@ A client command line interface for submissions to [AutolabJS](https://github.co
 * `autolabjs exit` - Logout off AutolabJS
 * `autolabjs prefs changeserver [ --type ms --host <host> --port <port>]` - To change the host for main server.
 * `autolabjs prefs changeserver [ --type gitlab --host <host>]` - To change the host for gitlab server.
+* `autolabjs prefs logger [--maxsize <size> --blacklist <keyword>]` - To change logger file's maxsize and add keyword to log blacklist
 * `autolabjs prefs show` - Show the saved preferences
 * `autolabjs eval [-l <lab_name> --lang <language>]` - To submit your code for evaluation
 * `autolabjs help` - Print help manual
+* `autolabjs <command> [options] -v` - To print debug/error log messages to log file (Default location `~/.autolabjs/cli.log`)
 
 ## License ##
 GNU General Public License

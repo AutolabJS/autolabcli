@@ -1,9 +1,9 @@
-const evalInput = require('../../../../../lib/cli/input/eval');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const inquirer = require('inquirer');
+const evalInput = require('../../../../../lib/cli/input/eval');
 const preferenceManager = require('../../../../../lib/utils/preference-manager');
 
 chai.use(chaiAsPromised);
@@ -53,7 +53,7 @@ describe('for eval getInput', () => {
     };
 
     promptStub = sandbox.stub(inquirer, 'prompt').callsFake(invalidInputTester);
-    const ret = await evalInput.getInput(null, {});
+    await evalInput.getInput(null, {});
   });
 
   it('should return id provided in options for root user', async () => {

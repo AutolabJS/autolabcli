@@ -39,7 +39,7 @@ describe('Integration test for eval command', () => {
   const sandbox = sinon.createSandbox();
 
   before(() => {
-    logger.transports.forEach((t) => { t.silent = true; });
+    logger.transports.forEach((t) => { t.silent = true; }); // eslint-disable-line no-param-reassign
   });
 
   afterEach(() => {
@@ -53,22 +53,24 @@ describe('Integration test for eval command', () => {
     const mockIo = sandbox.mock(io);
     const mockPreferenceManager = sandbox.mock(preferenceManager);
     const mockcommandValidator = sandbox.mock(commandValidator);
-    const mockInquirer = sandbox.mock(inquirer);
     const mockSocket = io('http://localhost:8080');
 
     mockcommandValidator.expects('validateSession').once().returns(true);
     mockPreferenceManager.expects('getPreference').withArgs({ name: 'cliPrefs' }).returns(mockCliPref);
     mockPreferenceManager.expects('getPreference').withArgs({ name: 'gitLabPrefs' }).returns({ username: 'testuser' });
     mockIo.expects('connect').once().returns(mockSocket);
-    const fakeonScores = () => {
+
+    const testCaseColWidth = 15;
+    const statusColWidth = 25;
+    const scoreColWidth = 15;
+
+    const onScoresStub = sandbox.stub(mockSocket, 'on').withArgs('scores').callsFake(() => {
       const cb = onScoresStub.getCalls()[0].args[1];
       cb(mockData);
-    };
-
-    const onScoresStub = sandbox.stub(mockSocket, 'on').withArgs('scores').callsFake(fakeonScores);
+    });
     const table = new Table({
       head: [chalk.cyan('Test Case #'), chalk.cyan('Status'), chalk.cyan('Score')],
-      colWidths: [15, 25, 15],
+      colWidths: [testCaseColWidth, statusColWidth, scoreColWidth],
     });
     table.push(
       ['1', 'success', '1'],
@@ -78,7 +80,7 @@ describe('Integration test for eval command', () => {
     await controller.start();
     logStub.should.have.been.calledWith(chalk.green('\nSubmission successful. Retreiving results'));
     logStub.should.have.been.calledWith(table.toString());
-    logStub.should.have.been.calledWith(`\n${chalk.yellow('Log :\n')}${new Buffer(mockData.log, 'base64').toString()}`);
+    logStub.should.have.been.calledWith(`\n${chalk.yellow('Log :\n')}${Buffer.from(mockData.log, 'base64').toString()}`);
     logStub.should.have.been.calledWith(`${chalk.yellow('Warning: ')}This lab is not active. The result of this evaluation is not added to the scoreboard.`);
     logStub.should.have.been.calledWith(`${chalk.green('Total Score: ')}2`);
     mockIo.verify();
@@ -88,10 +90,9 @@ describe('Integration test for eval command', () => {
 
   it('should display error message on invalid event', async () => {
     const logStub = sandbox.stub(console, 'log');
-    // const loggerStub = sandbox.stub(logger);
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'eval', '--lang', 'java', '-l', 'test3'];
-    mockIo = sandbox.mock(io);
+    const mockIo = sandbox.mock(io);
     const mockPreferenceManager = sandbox.mock(preferenceManager);
     const mockcommandValidator = sandbox.mock(commandValidator);
     const mockSocket = io('http://localhost:8080');
@@ -100,14 +101,13 @@ describe('Integration test for eval command', () => {
     mockPreferenceManager.expects('getPreference').withArgs({ name: 'cliPrefs' }).returns(mockCliPref);
     mockPreferenceManager.expects('getPreference').withArgs({ name: 'gitLabPrefs' }).returns({ username: 'testuser' });
     mockIo.expects('connect').once().returns(mockSocket);
-    const fakeonScores = () => {
+
+    const onScoresStub = sandbox.stub(mockSocket, 'on').withArgs('invalid').callsFake(() => {
       const cb = onScoresStub.getCalls()[0].args[1];
       cb({
         name: 'invalid',
       });
-    };
-
-    const onScoresStub = sandbox.stub(mockSocket, 'on').withArgs('invalid').callsFake(fakeonScores);
+    });
 
     await controller.start();
     logStub.should.have.been.calledWith(chalk.red('\nAccess Denied. Please try submitting again'));
@@ -118,10 +118,9 @@ describe('Integration test for eval command', () => {
 
   it('should display results on succesful submission with prompt input', async () => {
     const logStub = sandbox.stub(console, 'log');
-    // const loggerStub = sandbox.stub(logger);
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'eval'];
-    mockIo = sandbox.mock(io);
+    const mockIo = sandbox.mock(io);
     const mockPreferenceManager = sandbox.mock(preferenceManager);
     const mockcommandValidator = sandbox.mock(commandValidator);
     const mockInquirer = sandbox.mock(inquirer);
@@ -132,15 +131,18 @@ describe('Integration test for eval command', () => {
     mockPreferenceManager.expects('getPreference').withArgs({ name: 'gitLabPrefs' }).returns({ username: 'testuser' });
     mockInquirer.expects('prompt').resolves(mockOptions);
     mockIo.expects('connect').once().returns(mockSocket);
-    const fakeonScores = () => {
+
+    const testCaseColWidth = 15;
+    const statusColWidth = 25;
+    const scoreColWidth = 15;
+
+    const onScoresStub = sandbox.stub(mockSocket, 'on').withArgs('scores').callsFake(() => {
       const cb = onScoresStub.getCalls()[0].args[1];
       cb(mockData);
-    };
-
-    const onScoresStub = sandbox.stub(mockSocket, 'on').withArgs('scores').callsFake(fakeonScores);
+    });
     const table = new Table({
       head: [chalk.cyan('Test Case #'), chalk.cyan('Status'), chalk.cyan('Score')],
-      colWidths: [15, 25, 15],
+      colWidths: [testCaseColWidth, statusColWidth, scoreColWidth],
     });
     table.push(
       ['1', 'success', '1'],
@@ -150,7 +152,7 @@ describe('Integration test for eval command', () => {
     await controller.start();
     logStub.should.have.been.calledWith(chalk.green('\nSubmission successful. Retreiving results'));
     logStub.should.have.been.calledWith(table.toString());
-    logStub.should.have.been.calledWith(`\n${chalk.yellow('Log :\n')}${new Buffer(mockData.log, 'base64').toString()}`);
+    logStub.should.have.been.calledWith(`\n${chalk.yellow('Log :\n')}${Buffer.from(mockData.log, 'base64').toString()}`);
     logStub.should.have.been.calledWith(`${chalk.yellow('Warning: ')}This lab is not active. The result of this evaluation is not added to the scoreboard.`);
     logStub.should.have.been.calledWith(`${chalk.green('Total Score: ')}2`);
     mockIo.verify();
@@ -161,10 +163,9 @@ describe('Integration test for eval command', () => {
 
   it('should display message for pending submission', async () => {
     const logStub = sandbox.stub(console, 'log');
-    // const loggerStub = sandbox.stub(logger);
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'eval', '--lang', 'java', '-l', 'test3'];
-    mockIo = sandbox.mock(io);
+    const mockIo = sandbox.mock(io);
     const mockPreferenceManager = sandbox.mock(preferenceManager);
     const mockcommandValidator = sandbox.mock(commandValidator);
     const mockSocket = io('http://localhost:8080');
@@ -173,14 +174,13 @@ describe('Integration test for eval command', () => {
     mockPreferenceManager.expects('getPreference').withArgs({ name: 'cliPrefs' }).returns(mockCliPref);
     mockPreferenceManager.expects('getPreference').withArgs({ name: 'gitLabPrefs' }).returns({ username: 'testuser' });
     mockIo.expects('connect').once().returns(mockSocket);
-    const fakeonScores = () => {
+
+    const onScoresStub = sandbox.stub(mockSocket, 'on').withArgs('submission_pending').callsFake(() => {
       const cb = onScoresStub.getCalls()[0].args[1];
       cb({
         name: 'submission_pending',
       });
-    };
-
-    const onScoresStub = sandbox.stub(mockSocket, 'on').withArgs('submission_pending').callsFake(fakeonScores);
+    });
     await controller.start();
     logStub.should.have.been.calledWith(chalk.yellow('\nYou have a pending submission. Please try after some time.'));
     mockIo.verify();
@@ -190,10 +190,8 @@ describe('Integration test for eval command', () => {
 
   it('should show error message for expired session', async () => {
     const logStub = sandbox.stub(console, 'log');
-    // const loggerStub = sandbox.stub(logger);
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'eval', '--lang', 'java', '-l', 'test3'];
-    mockIo = sandbox.mock(io);
     const mockPreferenceManager = sandbox.mock(preferenceManager);
     preferenceManager.deleteCredentials();
 

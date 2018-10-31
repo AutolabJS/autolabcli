@@ -1,0 +1,9 @@
+{
+  "threshold":     30,
+  "identifiers":   true,
+  "literals":      true,
+  "color":         true,
+  "ignore":        "coverage",
+  "minInstances":  2,
+  "truncate":      100
+}

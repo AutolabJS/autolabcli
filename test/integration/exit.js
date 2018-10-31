@@ -1,8 +1,6 @@
 const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
-const { exec } = require('child_process');
-const chalk = require('chalk');
 const nock = require('nock');
 const controller = require('../../lib/controller');
 const preferenceManager = require('../../lib/utils/preference-manager');
@@ -22,13 +20,15 @@ describe('Integration test for exit command', () => {
   const sandbox = sinon.createSandbox();
 
   before(() => {
-    logger.transports.forEach((t) => { t.silent = true; });
+    logger.transports.forEach((t) => { t.silent = true; }); // eslint-disable-line no-param-reassign
   });
 
   beforeEach(() => {
     const fakeServer = nock('https://autolab.bits-goa.ac.in')
       .post('/api/v4/session?login=testuser2&password=123');
-    fakeServer.reply(200, {
+
+    const httpOK = 200;
+    fakeServer.reply(httpOK, {
       ok: true,
       name: 'test_user2',
       private_token: 'zxcvbnb',
@@ -45,6 +45,7 @@ describe('Integration test for exit command', () => {
 
     preferenceManager.getPreference({ name: 'gitLabPrefs' }).privateToken.should.equal('');
     preferenceManager.getPreference({ name: 'gitLabPrefs' }).storedTime.should.equal(-1);
+    logSpy.callCount.should.be.greaterThan(0);
     sandbox.restore();
   });
 });

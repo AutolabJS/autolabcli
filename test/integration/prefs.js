@@ -4,13 +4,14 @@ const sinonChai = require('sinon-chai');
 const chalk = require('chalk');
 const inquirer = require('inquirer');
 const Table = require('cli-table');
+const path = require('path');
+const fs = require('fs');
 const controller = require('../../lib/controller');
 const preferenceManager = require('../../lib/utils/preference-manager');
 const { logger } = require('../../lib/utils/logger');
-const path = require('path');
 
 const defaultPrefPath = path.join(__dirname, '../../default-prefs.json');
-const defaultPrefs = JSON.parse(require('fs').readFileSync(defaultPrefPath, 'utf8'));
+const defaultPrefs = JSON.parse(fs.readFileSync(defaultPrefPath, 'utf8'));
 
 const { supportedLanguages } = defaultPrefs;
 
@@ -21,7 +22,7 @@ describe('Integration test for prefs command', () => {
   const sandbox = sinon.createSandbox();
 
   before(() => {
-    logger.transports.forEach((t) => { t.silent = true; });
+    logger.transports.forEach((t) => { t.silent = true; }); // eslint-disable-line no-param-reassign
   });
 
   afterEach(() => {
@@ -75,49 +76,61 @@ describe('Integration test for prefs command', () => {
 
   it('should be able to change the logger file size', async () => {
     const logSpy = sandbox.stub(console, 'log');
-    process.argv = ['/usr/local/nodejs/bin/node',
-      '/usr/local/nodejs/bin/autolabjs', 'prefs', 'logger',
-      '--maxsize', '786770'];
-
-    await controller.start();
-    preferenceManager.getPreference({ name: 'cliPrefs' }).logger.should.deep.equal({
-      maxSize: 786770,
+    const testSize = 786770;
+    const testOutput = {
+      maxSize: testSize,
       logDirectory: '.autolabjs',
       logLocation: 'cli.log',
       blacklist: ['log', 'password', 'privateToken'],
-    });
+    };
+    process.argv = ['/usr/local/nodejs/bin/node',
+      '/usr/local/nodejs/bin/autolabjs', 'prefs', 'logger',
+      '--maxsize', testSize.toString()];
+
+    await controller.start();
+    preferenceManager.getPreference({ name: 'cliPrefs' }).logger.should.deep.equal(testOutput);
     logSpy.should.have.been.calledWith(chalk.green('Your logger preferences have been updated.'));
     sandbox.restore();
   });
 
   it('should be able to add to logger blacklist', async () => {
     const logSpy = sandbox.stub(console, 'log');
+    const testSize = 786770;
+    const testOutput = {
+      maxSize: testSize,
+      logDirectory: '.autolabjs',
+      logLocation: 'cli.log',
+      blacklist: ['log', 'password', 'privateToken', 'usrname'],
+    };
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'prefs', 'logger',
       '--blacklist', 'usrname'];
 
     await controller.start();
-    preferenceManager.getPreference({ name: 'cliPrefs' }).logger.should.deep.equal({
-      maxSize: 786770,
-      logDirectory: '.autolabjs',
-      logLocation: 'cli.log',
-      blacklist: ['log', 'password', 'privateToken', 'usrname'],
-    });
+    preferenceManager.getPreference({ name: 'cliPrefs' }).logger.should.deep.equal(testOutput);
     logSpy.should.have.been.calledWith(chalk.green('Your logger preferences have been updated.'));
     sandbox.restore();
   });
 
   it('should show the prefs', async () => {
     const logSpy = sandbox.stub(console, 'log');
+
+    const prefsColWidth = 25;
+    const valuesColWidth = 27;
+
     const table = new Table({
       head: [chalk.cyan('Preferences'), chalk.cyan('Values')],
-      colWidths: [25, 27],
+      colWidths: [prefsColWidth, valuesColWidth],
     });
+
+    const testMSPort = 9090;
+    const testSize = 786770;
+
     table.push(
       ['Gitlab host', 'abc.com'],
       ['Main Server host', 'xyz.com'],
-      ['Main Server port', 9090],
-      ['Logger file MaxSize', 786770],
+      ['Main Server port', testMSPort],
+      ['Logger file MaxSize', testSize],
       ['Log file Directory', '.autolabjs'],
       ['Log file name', 'cli.log'],
       ['Logger blacklist keys', ['log', 'password', 'privateToken', 'usrname']],
@@ -203,7 +216,8 @@ describe('Integration test for prefs command', () => {
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changeserver', '--type', 'ms'];
     const mockInquirer = sandbox.mock(inquirer);
-    mockInquirer.expects('prompt').resolves({ host: 'abc.com', port: 5687 });
+    const testPort = 5687;
+    mockInquirer.expects('prompt').resolves({ host: 'abc.com', port: testPort });
 
     await controller.start();
     logSpy.should.have.been.calledWith(chalk.green('Your main server has been changed to abc.com at port 5687'));
@@ -226,12 +240,13 @@ describe('Integration test for prefs command', () => {
   });
   it('should be able to add to log file size using prompt', async () => {
     const logSpy = sandbox.stub(console, 'log');
+    const testSize = 797291;
     process.argv = ['/usr/local/nodejs/bin/node',
       '/usr/local/nodejs/bin/autolabjs', 'prefs', 'logger'];
 
     const mockInquirer = sandbox.stub(inquirer, 'prompt');
     mockInquirer.onCall(0).returns({ type: 'maxsize' });
-    mockInquirer.onCall(1).returns({ maxSize: '797291' });
+    mockInquirer.onCall(1).returns({ maxSize: testSize.toString() });
 
     await controller.start();
     logSpy.should.have.been.calledWith(chalk.green('Your logger preferences have been updated.'));

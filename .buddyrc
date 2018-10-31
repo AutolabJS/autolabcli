@@ -1,0 +1,5 @@
+{
+  "detectObjects": true,
+  "enforceConst":  true,
+  "reporter":  "detailed"
+}

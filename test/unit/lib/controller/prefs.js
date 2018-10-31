@@ -29,12 +29,14 @@ describe('For prefs controller', () => {
     const mockprefsOutput = sandbox.mock(prefsOutput);
     const mockprefsModel = sandbox.mock(prefsModel);
 
+    const testMsPort = 8999;
+
     const changedPrefs = {
       name: 'server_changed',
       details: {
         type: 'ms',
         host: 'abc',
-        port: 8999,
+        port: testMsPort,
       },
     };
     mockprefsInput.expects('getInput').once().withExactArgs({ preference: 'changeserver' }, {

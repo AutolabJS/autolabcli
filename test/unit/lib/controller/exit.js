@@ -54,6 +54,7 @@ describe('For exit controller', () => {
 
     mockCommandValidator.expects('validateSession').once().returns(false);
     mockexitModel.expects('logout').never();
+    mockexitOutput.expects('sendOutput').once();
 
     exitController.addTo(program);
 

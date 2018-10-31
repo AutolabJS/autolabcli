@@ -1,15 +1,15 @@
-const initInput = require('../../../../../lib/cli/input/init');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const inquirer = require('inquirer');
+const initInput = require('../../../../../lib/cli/input/init');
 
 chai.use(chaiAsPromised);
 chai.use(sinonChai);
 chai.should();
 
-mockUser = { u: 'testuser', p: '123' };
+const mockUser = { u: 'testuser', p: '123' };
 
 describe('for init getInput', () => {
   const sandbox = sinon.createSandbox();
@@ -39,18 +39,18 @@ describe('for init getInput', () => {
   it('should not accept empty getInput', async (done) => {
     let promptStub;
     const invalidInputTester = () => {
-      const credentails = promptStub.getCalls()[0].args[0];
       try {
         const emptyUsernamePrompt = promptStub.getCalls()[0].args[0][0].validate('');
         const emptyPasswordPrompt = promptStub.getCalls()[0].args[0][1].validate('');
         promptStub.getCalls()[0].args[0][0].validate('testuser2').should.equal(true);
         emptyUsernamePrompt.should.equal('Please enter your username');
         emptyPasswordPrompt.should.equal('Please enter your password');
-      } catch (e) {}
-      done();
+      } finally {
+        done();
+      }
     };
 
     promptStub = sandbox.stub(inquirer, 'prompt').callsFake(invalidInputTester);
-    const ret = await initInput.getInput(null, {});
+    await initInput.getInput(null, {});
   });
 });

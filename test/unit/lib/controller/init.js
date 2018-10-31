@@ -29,6 +29,8 @@ describe('For init controller', () => {
     const mockInitOutput = sandbox.mock(initOutput);
     const mockInitModel = sandbox.mock(initModel);
 
+    const httpOK = 200;
+
     mockInitOutput.expects('sendOutput').withExactArgs({
       name: 'welcome',
     });
@@ -41,13 +43,13 @@ describe('For init controller', () => {
       password: '123',
     }).resolves({
       name: 'test_user1',
-      code: 200,
+      code: httpOK,
     });
     mockInitOutput.expects('sendOutput').withExactArgs({
       name: 'authentication_ended',
       details: {
         name: 'test_user1',
-        code: 200,
+        code: httpOK,
       },
     });
 

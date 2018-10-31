@@ -10,10 +10,10 @@ const fs = require('fs');
 const chalk = require('chalk');
 const inquirer = require('inquirer');
 const Table = require('cli-table');
+const path = require('path');
 const controller = require('../../../lib/controller');
 const preferenceManager = require('../../../lib/utils/preference-manager');
 const PromptGenerator = require('../../../lib/utils/PromptGenerator');
-const path = require('path');
 
 const defaultPrefPath = path.join(__dirname, '../../../default-prefs.json');
 const defaultPrefs = JSON.parse(require('fs').readFileSync(defaultPrefPath, 'utf8'));
@@ -109,14 +109,20 @@ Then('I should be able to change the gitlab server', () => {
 });
 
 Then('I should be able to see the preferences', () => {
+  const prefsColWidth = 25;
+  const valuesColWidth = 27;
+
   const table = new Table({
     head: [chalk.cyan('Preferences'), chalk.cyan('Values')],
-    colWidths: [20, 25],
+    colWidths: [prefsColWidth, valuesColWidth],
   });
+
+  const mainServerPort = 9000;
+
   table.push(
     ['Gitlab host', 'autolab.bits-goa.ac.in'],
     ['Main Server host', 'autolab.bits-goa.ac.in'],
-    ['Main Server port', 9000],
+    ['Main Server port', mainServerPort],
   );
 
   global.logSpy.should.have.been.calledWith(table.toString());

@@ -9,7 +9,9 @@
     "integration": "nyc --reporter=lcov --reporter=text-lcov -s --all mocha 'test/integration/**/*.js'",
     "post-integration": "nyc report --reporter=lcov > coverage.lcov && codecov -F integration && rm -rf ~/.autolabjs",
     "feature": "nyc --reporter=lcov --reporter=text-lcov -s --all cucumber-js 'test/feature/features' -r 'test/feature/steps'",
-    "post-feature": "nyc report --reporter=lcov > coverage.lcov && codecov -F feature"
+    "post-feature": "nyc report --reporter=lcov > coverage.lcov && codecov -F feature",
+    "quality": "eslint ./lib/ ./test/ index.js && jsinspect ./lib ./test/ index.js && buddy ./lib ./test/ index.js;",
+    "module-depencency": "madge --image module-depencency.svg ./lib/ index.js"
   },
   "bin": {
     "autolabjs": "./index.js"
@@ -40,6 +42,7 @@
     "winston": "^3.0.0"
   },
   "devDependencies": {
+    "buddy.js": "^0.9.3",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "codeclimate-test-reporter": "^0.5.0",
@@ -49,6 +52,8 @@
     "eslint": "^5.7.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
+    "jsinspect": "^0.12.7",
+    "madge": "^3.3.0",
     "mocha": "^4.1.0",
     "mock-stdin": "^0.3.1",
     "nock": "^9.2.3",

@@ -1,0 +1,12 @@
+{
+	"fontSize": "10px",
+    "backgroundColor" : "#ffffff",
+    "nodeColor": "#000000",
+    "edgeColor" : "#000000",
+    "noDependencyColor" : "#7f7f7f",
+	"graphVizOptions": {
+		"G": {
+			"rankdir": "LR"
+		}
+	}
+}

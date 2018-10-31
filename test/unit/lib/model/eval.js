@@ -1,6 +1,5 @@
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
-const chalk = require('chalk');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const io = require('socket.io-client');
@@ -37,10 +36,12 @@ describe('for evalModel', () => {
   });
 
   it('should work as expected on scores event ', (done) => {
-    let onScoresStub,
-      stub;
+    let onScoresStub;
+
+
+    let stub;
     const mockIo = sandbox.mock(io);
-    const mocklogger = sandbox.stub(logger);
+    const mocklogger = sandbox.stub(logger, 'log');
     const mockPreferenceManager = sandbox.mock(preferenceManager);
     mockPreferenceManager.expects('getPreference').returns(mockCliPref);
     const mockSocket = io('http://localhost:8080');
@@ -62,14 +63,17 @@ describe('for evalModel', () => {
     evalModel.evaluate(mockOptions, stub);
     mockIo.verify();
     mockPreferenceManager.verify();
+    mocklogger.called.should.equal(true);
   });
 
   it('should work as expected on invalid event ', (done) => {
-    let onScoresStub,
-      stub;
+    let onScoresStub;
+
+
+    let stub;
     const mockIo = sandbox.mock(io);
     const mockSocket = io('http://localhost:8080');
-    const mocklogger = sandbox.stub(logger);
+    const mocklogger = sandbox.stub(logger, 'log');
     const mockPreferenceManager = sandbox.mock(preferenceManager);
     mockPreferenceManager.expects('getPreference').returns(mockCliPref);
     mockIo.expects('connect').once().returns(mockSocket);
@@ -87,14 +91,17 @@ describe('for evalModel', () => {
     evalModel.evaluate(mockOptions, stub);
     mockIo.verify();
     mockPreferenceManager.verify();
+    mocklogger.called.should.equal(true);
   });
 
   it('should work as expected on submission_pending event ', (done) => {
-    let onScoresStub,
-      stub;
+    let onScoresStub;
+
+
+    let stub;
     const mockIo = sandbox.mock(io);
     const mockSocket = io('http://localhost:8080');
-    const mocklogger = sandbox.stub(logger);
+    const mocklogger = sandbox.stub(logger, 'log');
     const mockPreferenceManager = sandbox.mock(preferenceManager);
     mockPreferenceManager.expects('getPreference').returns(mockCliPref);
     mockIo.expects('connect').once().returns(mockSocket);
@@ -112,5 +119,6 @@ describe('for evalModel', () => {
     evalModel.evaluate(mockOptions, stub);
     mockIo.verify();
     mockPreferenceManager.verify();
+    mocklogger.called.should.equal(true);
   });
 });
