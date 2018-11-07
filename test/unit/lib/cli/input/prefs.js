@@ -173,6 +173,20 @@ const testInvalidPort = async () => {
   });
 };
 
+const testInvalidServer = async () => {
+  const ret = await prefsInput.getInput({
+    preference: 'changeserver',
+  }, {
+    type: 'github',
+  });
+  ret.should.deep.equal({
+    name: 'invalid_server',
+    details: {
+      supportedServers: ['ms', 'gitlab'],
+    },
+  });
+};
+
 const testLoggerPrefs = async () => {
   const testSize = 65759;
   const ret = await prefsInput.getInput({
@@ -236,7 +250,7 @@ const testInvalidKeyword = async () => {
     blacklist: 'xyz',
   });
   ret.should.deep.equal({
-    name: 'invalid_logger_prefs',
+    name: 'invalid_blacklist_keyword',
   });
 };
 
@@ -246,6 +260,15 @@ const testShowPrefs = async () => {
   });
   ret.should.deep.equal({
     name: 'show_prefs',
+  });
+};
+
+const testInvalidCommand = async () => {
+  const ret = await prefsInput.getInput({
+    preference: 'modifyprefs',
+  });
+  ret.should.deep.equal({
+    name: 'invalid_command',
   });
 };
 
@@ -265,9 +288,11 @@ describe('for prefs input', () => {
   it('should send the appropriate message when invalid host is given for main server', testMSInvalidHost);
   it('should send the appropriate message when invalid host is given for gitlab server', testGitlabInvalidHost);
   it('should send the appropriate message when invalid port is given', testInvalidPort);
+  it('should send the appropriate message when invalid server is given', testInvalidServer);
   it('should send the right event when logger prefs are changed', testLoggerPrefs);
   it('should prompt when logger prefs are not given, blacklist', testLoggerBlacklistPrompt);
   it('should prompt when logger prefs are not given, maxsize', testLoggerMaxsizePrompt);
   it('should send the appropriate message when invalid keyword is given', testInvalidKeyword);
   it('should send the appropriate message  for show argument', testShowPrefs);
+  it('should send the appropriate message for invalid prefs commmand', testInvalidCommand);
 });

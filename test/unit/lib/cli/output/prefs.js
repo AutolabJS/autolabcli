@@ -84,8 +84,31 @@ const testInvalidLang = () => {
 const testInvalidBlacklist = () => {
   const logStub = sandbox.stub(console, 'log');
 
-  prefsOutput.sendOutput({ name: 'invalid_logger_prefs' });
+  prefsOutput.sendOutput({ name: 'invalid_blacklist_keyword' });
   logStub.should.have.been.calledWith(chalk.red('Keyword already exixts, please provide valid blacklist keyword'));
+
+  sandbox.restore();
+};
+
+const testInvalidServer = () => {
+  const logStub = sandbox.stub(console, 'log');
+  const supportedServers = ['ms', 'gitlab'];
+  prefsOutput.sendOutput({
+    name: 'invalid_server',
+    details: {
+      supportedServers,
+    },
+  });
+  logStub.should.have.been.calledWith(chalk.red(`Please provide a valid server for config. The valid servers are ${supportedServers}`));
+
+  sandbox.restore();
+};
+
+const testInvalidCommand = () => {
+  const logStub = sandbox.stub(console, 'log');
+
+  prefsOutput.sendOutput({ name: 'invalid_command' });
+  logStub.should.have.been.calledWith(chalk.red('Please provide a valid command'));
 
   sandbox.restore();
 };
@@ -134,6 +157,17 @@ const testShowPrefs = () => {
   sandbox.restore();
 };
 
+const testInvalidEvent = () => {
+  const logStub = sandbox.stub(console, 'log');
+
+  prefsOutput.sendOutput({
+    name: 'invalid_event',
+  });
+
+  logStub.should.have.been.calledWith(chalk.red('\nInvalid Event'));
+  sandbox.restore();
+};
+
 describe('For prefs output', () => {
   it('should send expected output when language is changed', testLangChanged);
   it('should send expected output when main server is changed', testMSChanged);
@@ -143,5 +177,8 @@ describe('For prefs output', () => {
   it('should send expected output when invalid port is provided', testInvalidPort);
   it('should send expected output when invalid language is provided', testInvalidLang);
   it('should send expected output when invalid blacklist keyword is provided', testInvalidBlacklist);
+  it('should send expected output when invalid server is provides', testInvalidServer);
+  it('should send expected output when invalid command is provides', testInvalidCommand);
   it('should draw table for show prefs command', testShowPrefs);
+  it('should display error message for invalid event', testInvalidEvent);
 });

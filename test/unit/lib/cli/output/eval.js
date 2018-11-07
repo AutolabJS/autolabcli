@@ -78,7 +78,7 @@ const testPenalityScore = () => {
   sandbox.restore();
 };
 
-const testInvalidEvent = () => {
+const testInvalidRequest = () => {
   const logStub = sandbox.stub(console, 'log');
   evalOutput.sendOutput({
     name: 'invalid',
@@ -99,10 +99,22 @@ const testSubmissionPending = () => {
   sandbox.restore();
 };
 
+const testInvalidEvent = () => {
+  const logStub = sandbox.stub(console, 'log');
+
+  evalOutput.sendOutput({
+    name: 'invalid_event',
+  });
+
+  logStub.should.have.been.calledWith(chalk.red('\nInvalid Event'));
+  sandbox.restore();
+};
+
 describe('For eval output', () => {
   it('should start the spinner when evaluation starts', testSpinnerOnEval);
   it('should draw table for scores event and display total score', testDrawTableOnScores);
   it('should show penalty score when status is not 0', testPenalityScore);
-  it('should display error message for invalid event', testInvalidEvent);
+  it('should display error message for invalid request', testInvalidRequest);
   it('should display error message for submission_pending event', testSubmissionPending);
+  it('should display error message for invalid event', testInvalidEvent);
 });

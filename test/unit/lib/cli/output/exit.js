@@ -19,6 +19,19 @@ const testSuccessfulLogout = (done) => {
   done();
 };
 
+const testInvalidEvent = (done) => {
+  const logStub = sandbox.stub(console, 'log');
+
+  exitOutput.sendOutput({
+    name: 'invalid_event',
+  });
+
+  logStub.should.have.been.calledWith(chalk.red('\nInvalid Event'));
+  sandbox.restore();
+  done();
+};
+
 describe('For exit output', () => {
   it('should send logout message on succesful logout', testSuccessfulLogout);
+  it('should display error message for invalid event', testInvalidEvent);
 });

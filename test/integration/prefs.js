@@ -156,6 +156,18 @@ const testInvalidPort = async () => {
   sandbox.restore();
 };
 
+const testInvalidServer = async () => {
+  const logSpy = sandbox.stub(console, 'log');
+  process.argv = ['/usr/local/nodejs/bin/node',
+    '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changeserver', '--type', 'github'];
+
+  const supportedServers = ['ms', 'gitlab'];
+
+  await controller.start();
+  logSpy.should.have.been.calledWith(chalk.red(`Please provide a valid server for config. The valid servers are ${supportedServers}`));
+  sandbox.restore();
+};
+
 const testInvalidLang = async () => {
   const logSpy = sandbox.stub(console, 'log');
   process.argv = ['/usr/local/nodejs/bin/node',
@@ -245,6 +257,16 @@ const testChangeLoggerFileSizePrompt = async () => {
   sandbox.restore();
 };
 
+const testInvalidCommand = async () => {
+  const logSpy = sandbox.stub(console, 'log');
+  process.argv = ['/usr/local/nodejs/bin/node',
+    '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changeall'];
+
+  await controller.start();
+  logSpy.should.have.been.calledWith(chalk.red('Please provide a valid command'));
+  sandbox.restore();
+};
+
 describe('Integration test for prefs command', () => {
   before(() => {
     logger.transports.forEach((t) => { t.silent = true; }); // eslint-disable-line no-param-reassign
@@ -262,6 +284,7 @@ describe('Integration test for prefs command', () => {
   it('should show the prefs', testShowPrefs);
   it('should display error message for invalid host', testInvalidHost);
   it('should display error message for invalid port', testInvalidPort);
+  it('should display error message for invalid server', testInvalidServer);
   it('should display error message for invalid lang', testInvalidLang);
   it('should display error message for invalid keyword', testInvalidKeyword);
   it('should change lang using flags', testChangeLangFlags);
@@ -269,4 +292,5 @@ describe('Integration test for prefs command', () => {
   it('should be able to change the main server using prompt', testChangeMSPrompt);
   it('should be able to add to logger blacklist using prompt', testChangeLoggerBlacklistPrompt);
   it('should be able to add to log file size using prompt', testChangeLoggerFileSizePrompt);
+  it('should display error message for invalid command', testInvalidCommand);
 });
