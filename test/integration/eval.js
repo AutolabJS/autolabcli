@@ -43,6 +43,7 @@ const testSucessfulSubmission = async () => {
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'eval', '--lang', 'java', '-l', 'test3'];
   const mockIo = sandbox.mock(io);
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   const mockPreferenceManager = sandbox.mock(preferenceManager);
   const mockcommandValidator = sandbox.mock(commandValidator);
   const mockSocket = io('http://localhost:8080');
@@ -77,6 +78,8 @@ const testSucessfulSubmission = async () => {
   logStub.should.have.been.calledWith(`${chalk.green('Total Score: ')}2`);
   mockIo.verify();
   mockPreferenceManager.verify();
+  mocklogger.verify();
+  mockSocket.close();
   sandbox.restore();
 };
 
@@ -88,6 +91,7 @@ const testInvalidEvent = async () => {
   const mockPreferenceManager = sandbox.mock(preferenceManager);
   const mockcommandValidator = sandbox.mock(commandValidator);
   const mockSocket = io('http://localhost:8080');
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
 
   mockcommandValidator.expects('validateSession').once().returns(true);
   mockPreferenceManager.expects('getPreference').withArgs({ name: 'cliPrefs' }).returns(mockCliPref);
@@ -105,6 +109,8 @@ const testInvalidEvent = async () => {
   logStub.should.have.been.calledWith(chalk.red('\nAccess Denied. Please try submitting again'));
   mockIo.verify();
   mockPreferenceManager.verify();
+  mocklogger.verify();
+  mockSocket.close();
   sandbox.restore();
 };
 
@@ -118,6 +124,7 @@ const testSucessfulSubmissionPrompt = async () => {
   const mockcommandValidator = sandbox.mock(commandValidator);
   const mockInquirer = sandbox.mock(inquirer);
   const mockSocket = io('http://localhost:8080');
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
 
   mockcommandValidator.expects('validateSession').once().returns(true);
   mockPreferenceManager.expects('getPreference').withArgs({ name: 'cliPrefs' }).returns(mockCliPref);
@@ -151,6 +158,8 @@ const testSucessfulSubmissionPrompt = async () => {
   mockIo.verify();
   mockPreferenceManager.verify();
   mockInquirer.verify();
+  mocklogger.verify();
+  mockSocket.close();
   sandbox.restore();
 };
 
@@ -162,6 +171,7 @@ const testSubmissionPending = async () => {
   const mockPreferenceManager = sandbox.mock(preferenceManager);
   const mockcommandValidator = sandbox.mock(commandValidator);
   const mockSocket = io('http://localhost:8080');
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
 
   mockcommandValidator.expects('validateSession').once().returns(true);
   mockPreferenceManager.expects('getPreference').withArgs({ name: 'cliPrefs' }).returns(mockCliPref);
@@ -178,6 +188,8 @@ const testSubmissionPending = async () => {
   logStub.should.have.been.calledWith(chalk.yellow('\nYou have a pending submission. Please try after some time.'));
   mockIo.verify();
   mockPreferenceManager.verify();
+  mocklogger.verify();
+  mockSocket.close();
   sandbox.restore();
 };
 
@@ -187,18 +199,16 @@ const testExpiredSession = async () => {
     '/usr/local/nodejs/bin/autolabjs', 'eval', '--lang', 'java', '-l', 'test3'];
   const mockPreferenceManager = sandbox.mock(preferenceManager);
   preferenceManager.deleteCredentials();
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
 
   await controller.start();
   logStub.should.have.been.calledWith(chalk.red('Your session has expired. Please run \'autolabjs init\' to login again'));
   mockPreferenceManager.verify();
+  mocklogger.verify();
   sandbox.restore();
 };
 
 describe('Integration test for eval command', () => {
-  before(() => {
-    logger.transports.forEach((t) => { t.silent = true; }); // eslint-disable-line no-param-reassign
-  });
-
   afterEach(() => {
     sandbox.restore();
   });

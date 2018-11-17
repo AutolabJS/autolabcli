@@ -20,6 +20,7 @@ const sandbox = sinon.createSandbox();
 
 const testCredentialsDeleted = async () => {
   const logSpy = sandbox.stub(console, 'log');
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   await login();
 
   process.argv = ['/usr/local/nodejs/bin/node',
@@ -29,14 +30,11 @@ const testCredentialsDeleted = async () => {
   preferenceManager.getPreference({ name: 'gitLabPrefs' }).privateToken.should.equal('');
   preferenceManager.getPreference({ name: 'gitLabPrefs' }).storedTime.should.equal(-1);
   logSpy.callCount.should.be.greaterThan(0);
+  mocklogger.verify();
   sandbox.restore();
 };
 
 describe('Integration test for exit command', () => {
-  before(() => {
-    logger.transports.forEach((t) => { t.silent = true; }); // eslint-disable-line no-param-reassign
-  });
-
   beforeEach(() => {
     const fakeServer = nock('https://autolab.bits-goa.ac.in')
       .post('/api/v4/session?login=testuser2&password=123');

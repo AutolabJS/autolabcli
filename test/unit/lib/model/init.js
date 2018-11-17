@@ -22,7 +22,7 @@ chai.should();
 const sandbox = sinon.createSandbox();
 
 const testSucessfulLogin = async () => {
-  const mocklogger = sandbox.stub(logger, 'log');
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   const fakeServer = nock(`https://${host}`)
     .post('/api/v4/session?login=testuser3&password=123');
 
@@ -40,11 +40,11 @@ const testSucessfulLogin = async () => {
   status.code.should.equal(httpOK);
   status.name.should.equal('test_user3');
   preferenceManager.getPreference({ name: 'gitLabPrefs' }).privateToken.should.equal('zxcvbnb');
-  mocklogger.called.should.equal(true);
+  mocklogger.verify();
 };
 
 const testInvalidLogin = async () => {
-  const mocklogger = sandbox.stub(logger, 'log');
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   const fakeServer = nock(`https://${host}`)
     .post('/api/v4/session?login=testuser&password=123');
 
@@ -55,18 +55,18 @@ const testInvalidLogin = async () => {
     password: '123',
   });
   status.code.should.equal(httpUnauth);
-  mocklogger.called.should.equal(true);
+  mocklogger.verify();
 };
 
 const testNetworkError = async () => {
-  const mocklogger = sandbox.stub(logger, 'log');
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   const httpFailure = 4;
   const status = await initModel.authenticate({
     username: 'testuser',
     password: '123',
   });
   status.code.should.equal(httpFailure);
-  mocklogger.called.should.equal(true);
+  mocklogger.verify();
 };
 
 describe('for initModel', () => {

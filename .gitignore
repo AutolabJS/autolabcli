@@ -3,3 +3,6 @@ node_modules/
 coverage/
 coverage.lcov
 module-depencency.svg
+.vscode/
+.idea/
+crash_0509/

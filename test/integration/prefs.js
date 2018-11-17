@@ -22,6 +22,7 @@ const sandbox = sinon.createSandbox();
 
 const testChangeLang = async () => {
   const logSpy = sandbox.stub(console, 'log');
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changelang'];
   const mockInquirer = sandbox.mock(inquirer);
@@ -31,11 +32,13 @@ const testChangeLang = async () => {
   preferenceManager.getPreference({ name: 'cliPrefs' }).submission.language.should.equal('python3');
   logSpy.should.have.been.calledWith(chalk.green('Your submission language has been changed to python3'));
   mockInquirer.verify();
+  mocklogger.verify();
   sandbox.restore();
 };
 
 const testChangeMS = async () => {
   const logSpy = sandbox.stub(console, 'log');
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changeserver',
     '--type', 'ms', '--host', 'xyz.com', '--port', '9090'];
@@ -46,11 +49,13 @@ const testChangeMS = async () => {
     port: '9090',
   });
   logSpy.should.have.been.calledWith(chalk.green('Your main server has been changed to xyz.com at port 9090'));
+  mocklogger.verify();
   sandbox.restore();
 };
 
 const testChangeGitlab = async () => {
   const logSpy = sandbox.stub(console, 'log');
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changeserver',
     '--host', 'abc.com'];
@@ -62,11 +67,14 @@ const testChangeGitlab = async () => {
     host: 'abc.com',
   });
   logSpy.should.have.been.calledWith(chalk.green('Your gitlab server has been changed to abc.com'));
+  mocklogger.verify();
   sandbox.restore();
 };
 
 const testChangeLoggerFileSize = async () => {
   const logSpy = sandbox.stub(console, 'log');
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
+
   const testSize = 786770;
   const testOutput = {
     maxSize: testSize,
@@ -81,11 +89,14 @@ const testChangeLoggerFileSize = async () => {
   await controller.start();
   preferenceManager.getPreference({ name: 'cliPrefs' }).logger.should.deep.equal(testOutput);
   logSpy.should.have.been.calledWith(chalk.green('Your logger preferences have been updated.'));
+  mocklogger.verify();
   sandbox.restore();
 };
 
 const testChangeLoggerBlacklist = async () => {
   const logSpy = sandbox.stub(console, 'log');
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
+
   const testSize = 786770;
   const testOutput = {
     maxSize: testSize,
@@ -100,11 +111,14 @@ const testChangeLoggerBlacklist = async () => {
   await controller.start();
   preferenceManager.getPreference({ name: 'cliPrefs' }).logger.should.deep.equal(testOutput);
   logSpy.should.have.been.calledWith(chalk.green('Your logger preferences have been updated.'));
+  mocklogger.verify();
   sandbox.restore();
 };
 
+// eslint-disable-next-line max-lines-per-function
 const testShowPrefs = async () => {
   const logSpy = sandbox.stub(console, 'log');
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
 
   const prefsColWidth = 25;
   const valuesColWidth = 27;
@@ -131,33 +145,39 @@ const testShowPrefs = async () => {
 
   await controller.start();
   logSpy.should.have.been.calledWith(table.toString());
+  mocklogger.verify();
   sandbox.restore();
 };
 
 const testInvalidHost = async () => {
   const logSpy = sandbox.stub(console, 'log');
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changeserver',
     '--type', 'ms', '--host', 'xyz', '--port', '9090'];
 
   await controller.start();
   logSpy.should.have.been.calledWith(chalk.red('Please provide a valid host'));
+  mocklogger.verify();
   sandbox.restore();
 };
 
 const testInvalidPort = async () => {
   const logSpy = sandbox.stub(console, 'log');
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changeserver',
     '--type', 'ms', '--host', 'xyz.com', '--port', '909A'];
 
   await controller.start();
   logSpy.should.have.been.calledWith(chalk.red('Please provide a valid port'));
+  mocklogger.verify();
   sandbox.restore();
 };
 
 const testInvalidServer = async () => {
   const logSpy = sandbox.stub(console, 'log');
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changeserver', '--type', 'github'];
 
@@ -165,44 +185,52 @@ const testInvalidServer = async () => {
 
   await controller.start();
   logSpy.should.have.been.calledWith(chalk.red(`Please provide a valid server for config. The valid servers are ${supportedServers}`));
+  mocklogger.verify();
   sandbox.restore();
 };
 
 const testInvalidLang = async () => {
   const logSpy = sandbox.stub(console, 'log');
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changelang',
     '--lang', 'cpp15'];
 
   await controller.start();
   logSpy.should.have.been.calledWith(chalk.red(`Please provide the a valid language. The supported languages are ${supportedLanguages}`));
+  mocklogger.verify();
   sandbox.restore();
 };
 
 const testInvalidKeyword = async () => {
   const logSpy = sandbox.stub(console, 'log');
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'prefs', 'logger',
     '--blacklist', 'usrname'];
 
   await controller.start();
   logSpy.should.have.been.calledWith(chalk.red('Keyword already exixts, please provide valid blacklist keyword'));
+  mocklogger.verify();
   sandbox.restore();
 };
 
 const testChangeLangFlags = async () => {
   const logSpy = sandbox.stub(console, 'log');
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changelang',
     '--lang', 'cpp14'];
 
   await controller.start();
   logSpy.should.have.been.calledWith(chalk.green('Your submission language has been changed to cpp14'));
+  mocklogger.verify();
   sandbox.restore();
 };
 
 const testChangeGitlabPrompt = async () => {
   const logSpy = sandbox.stub(console, 'log');
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changeserver', '--type', 'gitlab'];
   const mockInquirer = sandbox.mock(inquirer);
@@ -211,11 +239,13 @@ const testChangeGitlabPrompt = async () => {
   await controller.start();
   logSpy.should.have.been.calledWith(chalk.green('Your gitlab server has been changed to abc.com'));
   mockInquirer.verify();
+  mocklogger.verify();
   sandbox.restore();
 };
 
 const testChangeMSPrompt = async () => {
   const logSpy = sandbox.stub(console, 'log');
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changeserver', '--type', 'ms'];
   const mockInquirer = sandbox.mock(inquirer);
@@ -225,11 +255,13 @@ const testChangeMSPrompt = async () => {
   await controller.start();
   logSpy.should.have.been.calledWith(chalk.green('Your main server has been changed to abc.com at port 5687'));
   mockInquirer.verify();
+  mocklogger.verify();
   sandbox.restore();
 };
 
 const testChangeLoggerBlacklistPrompt = async () => {
   const logSpy = sandbox.stub(console, 'log');
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'prefs', 'logger'];
 
@@ -239,11 +271,13 @@ const testChangeLoggerBlacklistPrompt = async () => {
 
   await controller.start();
   logSpy.should.have.been.calledWith(chalk.green('Your logger preferences have been updated.'));
+  mocklogger.verify();
   sandbox.restore();
 };
 
 const testChangeLoggerFileSizePrompt = async () => {
   const logSpy = sandbox.stub(console, 'log');
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   const testSize = 797291;
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'prefs', 'logger'];
@@ -254,24 +288,23 @@ const testChangeLoggerFileSizePrompt = async () => {
 
   await controller.start();
   logSpy.should.have.been.calledWith(chalk.green('Your logger preferences have been updated.'));
+  mocklogger.verify();
   sandbox.restore();
 };
 
 const testInvalidCommand = async () => {
   const logSpy = sandbox.stub(console, 'log');
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changeall'];
 
   await controller.start();
   logSpy.should.have.been.calledWith(chalk.red('Please provide a valid command'));
+  mocklogger.verify();
   sandbox.restore();
 };
 
 describe('Integration test for prefs command', () => {
-  before(() => {
-    logger.transports.forEach((t) => { t.silent = true; }); // eslint-disable-line no-param-reassign
-  });
-
   afterEach(() => {
     sandbox.restore();
   });

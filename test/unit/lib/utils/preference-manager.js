@@ -99,7 +99,6 @@ describe('for preference manager', () => {
   it('should send an instance of Preferences on cliPrefs', testGetCliPrefs);
   it('should send an instance of Preferences on gitLabPrefs', testGetGitlabPrefs);
   it('should not send an instance of Preferences on any other', testInvalidPref);
-  it('should not send an instance of Preferences on any other', testInvalidPref);
   it('should update cliPrefs', testSetCliPrefs);
   it('should update gitLabPrefs', testSetGitlabPrefs);
   it('should update loggerPrefs; maxSize', testSetLoggerMaxSizePrefs);

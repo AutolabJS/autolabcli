@@ -4,6 +4,7 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const io = require('socket.io-client');
 
+chai.use(chaiAsPromised);
 chai.use(sinonChai);
 chai.should();
 
@@ -24,9 +25,6 @@ const mockCliPref = {
     port: '8080',
   },
 };
-
-chai.use(chaiAsPromised);
-chai.should();
 
 const sandbox = sinon.createSandbox();
 
@@ -49,7 +47,6 @@ const testScoresEvent = (done) => {
         status: 1,
       },
     });
-    done();
   };
 
   onScoresStub = sandbox.stub(mockSocket, 'on').withArgs('scores').callsFake(fakeonScores);
@@ -58,6 +55,8 @@ const testScoresEvent = (done) => {
   mockIo.verify();
   mockPreferenceManager.verify();
   mocklogger.called.should.equal(true);
+  mockSocket.close();
+  done();
 };
 
 const testInvalidEvent = (done) => {
@@ -67,7 +66,7 @@ const testInvalidEvent = (done) => {
   let stub;
   const mockIo = sandbox.mock(io);
   const mockSocket = io('http://localhost:8080');
-  const mocklogger = sandbox.stub(logger, 'log');
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   const mockPreferenceManager = sandbox.mock(preferenceManager);
   mockPreferenceManager.expects('getPreference').returns(mockCliPref);
   mockIo.expects('connect').once().returns(mockSocket);
@@ -77,15 +76,16 @@ const testInvalidEvent = (done) => {
     stub.should.have.been.calledWith({
       name: 'invalid',
     });
-    done();
   };
 
   onScoresStub = sandbox.stub(mockSocket, 'on').withArgs('invalid').callsFake(fakeonScores);
   stub = sandbox.stub();
   evalModel.evaluate(mockOptions, stub);
+  mocklogger.verify();
   mockIo.verify();
   mockPreferenceManager.verify();
-  mocklogger.called.should.equal(true);
+  mockSocket.close();
+  done();
 };
 
 const testSubmissionPendingEvent = (done) => {
@@ -93,7 +93,7 @@ const testSubmissionPendingEvent = (done) => {
   let stub;
   const mockIo = sandbox.mock(io);
   const mockSocket = io('http://localhost:8080');
-  const mocklogger = sandbox.stub(logger, 'log');
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   const mockPreferenceManager = sandbox.mock(preferenceManager);
   mockPreferenceManager.expects('getPreference').returns(mockCliPref);
   mockIo.expects('connect').once().returns(mockSocket);
@@ -103,15 +103,42 @@ const testSubmissionPendingEvent = (done) => {
     stub.should.have.been.calledWith({
       name: 'submission_pending',
     });
-    done();
   };
 
   onScoresStub = sandbox.stub(mockSocket, 'on').withArgs('submission_pending').callsFake(fakeonScores);
   stub = sandbox.stub();
   evalModel.evaluate(mockOptions, stub);
+  mocklogger.verify();
   mockIo.verify();
   mockPreferenceManager.verify();
-  mocklogger.called.should.equal(true);
+  mockSocket.close();
+  done();
+};
+
+const testDefaultEvent = (done) => {
+  let onScoresStub;
+  let stub;
+
+  const mockIo = sandbox.mock(io);
+  const mockSocket = io('http://localhost:8080');
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
+  const mockPreferenceManager = sandbox.mock(preferenceManager);
+  mockPreferenceManager.expects('getPreference').returns(mockCliPref);
+  mockIo.expects('connect').once().returns(mockSocket);
+  const fakeonScores = () => {
+    const cb = onScoresStub.getCalls()[0].args[1];
+    cb({ status: 1 });
+    stub.should.have.callCount(0);
+  };
+
+  onScoresStub = sandbox.stub(mockSocket, 'on').withArgs('default').callsFake(fakeonScores);
+  stub = sandbox.stub();
+  evalModel.evaluate(mockOptions, stub);
+  mocklogger.verify();
+  mockIo.verify();
+  mockPreferenceManager.verify();
+  mockSocket.close();
+  done();
 };
 
 describe('for evalModel', () => {
@@ -122,4 +149,5 @@ describe('for evalModel', () => {
   it('should work as expected on scores event ', testScoresEvent);
   it('should work as expected on invalid event ', testInvalidEvent);
   it('should work as expected on submission_pending event ', testSubmissionPendingEvent);
+  it('should work as expected on default event ', testDefaultEvent);
 });

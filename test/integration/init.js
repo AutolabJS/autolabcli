@@ -21,6 +21,7 @@ const sandbox = sinon.createSandbox();
 
 const testInitFlags = async () => {
   const logstub = sandbox.stub(console, 'log');
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'init', '-u', 'testuser2', '-p', '123'];
 
@@ -29,6 +30,7 @@ const testInitFlags = async () => {
   logstub.should.have.been.calledWith(outputString);
   logstub.should.to.have.been.calledWith(chalk.green('\nHi test_user2! You have successfully logged into AutolabJS. Run \'autolabjs help\' for help.'));
   preferenceManager.getPreference({ name: 'gitLabPrefs' }).privateToken.should.equal('zxcvbnb');
+  mocklogger.verify();
   sandbox.restore();
 };
 
@@ -40,6 +42,7 @@ const testNetworkFailure = async () => {
   faultServer.reply(httpFailure, { });
 
   const logstub = sandbox.stub(console, 'log');
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'init', '-u', 'testuser3', '-p', '123'];
 
@@ -47,11 +50,13 @@ const testNetworkFailure = async () => {
   const outputString = chalk.yellow(figlet.textSync('AutolabJS   CLI', { horizontalLayout: 'default' }));
   logstub.should.have.been.calledWith(outputString);
   logstub.should.to.have.been.calledWith(chalk.red('\nPlease check your network connection'));
+  mocklogger.verify();
   sandbox.restore();
 };
 
 const testInitNoFlags = async () => {
   const logstub = sandbox.stub(console, 'log');
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'init'];
   const mockInquirer = sandbox.mock(inquirer);
@@ -63,14 +68,11 @@ const testInitNoFlags = async () => {
   logstub.should.to.have.been.calledWith(chalk.green('\nHi test_user2! You have successfully logged into AutolabJS. Run \'autolabjs help\' for help.'));
   preferenceManager.getPreference({ name: 'gitLabPrefs' }).privateToken.should.equal('zxcvbnb');
   mockInquirer.verify();
+  mocklogger.verify();
   sandbox.restore();
 };
 
 describe('Integration test for init command', () => {
-  before(() => {
-    logger.transports.forEach((t) => { t.silent = true; }); // eslint-disable-line no-param-reassign
-  });
-
   beforeEach(() => {
     const fakeServer = nock(`https://${host}`)
       .post('/api/v4/session?login=testuser2&password=123');
