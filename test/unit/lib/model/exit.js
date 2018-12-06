@@ -12,15 +12,15 @@ const exitModel = require('../../../../lib/model/exit');
 chai.use(chaiAsPromised);
 chai.should();
 
-const testPreferenceManagerCall = async () => {
+describe('for exitModel', function () {
+  it('should call appropriate methods of preference manager', testPreferenceManagerCall);
+});
+
+async function testPreferenceManagerCall() {
   const mockPreferenceManager = sinon.mock(preferenceManager);
   mockPreferenceManager.expects('deleteCredentials').once();
 
   exitModel.logout();
 
   mockPreferenceManager.verify();
-};
-
-describe('for exitModel', () => {
-  it('should call appropriate methods of preference manager', testPreferenceManagerCall);
-});
+}

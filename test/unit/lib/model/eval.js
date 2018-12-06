@@ -28,7 +28,18 @@ const mockCliPref = {
 
 const sandbox = sinon.createSandbox();
 
-const testScoresEvent = (done) => {
+describe('for evalModel', function () {
+  afterEach(function () {
+    sandbox.restore();
+  });
+
+  it('should work as expected on scores event ', testScoresEvent);
+  it('should work as expected on invalid event ', testInvalidEvent);
+  it('should work as expected on submission_pending event ', testSubmissionPendingEvent);
+  it('should work as expected on default event ', testDefaultEvent);
+});
+
+function testScoresEvent(done) {
   let onScoresStub;
   let stub;
 
@@ -38,7 +49,7 @@ const testScoresEvent = (done) => {
   mockPreferenceManager.expects('getPreference').returns(mockCliPref);
   const mockSocket = io('http://localhost:8080');
   mockIo.expects('connect').once().returns(mockSocket);
-  const fakeonScores = () => {
+  function fakeonScores() {
     const cb = onScoresStub.getCalls()[0].args[1];
     cb({ status: 1 });
     stub.should.have.been.calledWith({
@@ -47,7 +58,7 @@ const testScoresEvent = (done) => {
         status: 1,
       },
     });
-  };
+  }
 
   onScoresStub = sandbox.stub(mockSocket, 'on').withArgs('scores').callsFake(fakeonScores);
   stub = sandbox.stub();
@@ -57,9 +68,9 @@ const testScoresEvent = (done) => {
   mocklogger.called.should.equal(true);
   mockSocket.close();
   done();
-};
+}
 
-const testInvalidEvent = (done) => {
+function testInvalidEvent(done) {
   let onScoresStub;
 
 
@@ -70,13 +81,13 @@ const testInvalidEvent = (done) => {
   const mockPreferenceManager = sandbox.mock(preferenceManager);
   mockPreferenceManager.expects('getPreference').returns(mockCliPref);
   mockIo.expects('connect').once().returns(mockSocket);
-  const fakeonScores = () => {
+  function fakeonScores() {
     const cb = onScoresStub.getCalls()[0].args[1];
     cb({ status: 1 });
     stub.should.have.been.calledWith({
       name: 'invalid',
     });
-  };
+  }
 
   onScoresStub = sandbox.stub(mockSocket, 'on').withArgs('invalid').callsFake(fakeonScores);
   stub = sandbox.stub();
@@ -86,9 +97,9 @@ const testInvalidEvent = (done) => {
   mockPreferenceManager.verify();
   mockSocket.close();
   done();
-};
+}
 
-const testSubmissionPendingEvent = (done) => {
+function testSubmissionPendingEvent(done) {
   let onScoresStub;
   let stub;
   const mockIo = sandbox.mock(io);
@@ -97,13 +108,13 @@ const testSubmissionPendingEvent = (done) => {
   const mockPreferenceManager = sandbox.mock(preferenceManager);
   mockPreferenceManager.expects('getPreference').returns(mockCliPref);
   mockIo.expects('connect').once().returns(mockSocket);
-  const fakeonScores = () => {
+  function fakeonScores() {
     const cb = onScoresStub.getCalls()[0].args[1];
     cb({ status: 1 });
     stub.should.have.been.calledWith({
       name: 'submission_pending',
     });
-  };
+  }
 
   onScoresStub = sandbox.stub(mockSocket, 'on').withArgs('submission_pending').callsFake(fakeonScores);
   stub = sandbox.stub();
@@ -113,9 +124,9 @@ const testSubmissionPendingEvent = (done) => {
   mockPreferenceManager.verify();
   mockSocket.close();
   done();
-};
+}
 
-const testDefaultEvent = (done) => {
+function testDefaultEvent(done) {
   let onScoresStub;
   let stub;
 
@@ -125,11 +136,11 @@ const testDefaultEvent = (done) => {
   const mockPreferenceManager = sandbox.mock(preferenceManager);
   mockPreferenceManager.expects('getPreference').returns(mockCliPref);
   mockIo.expects('connect').once().returns(mockSocket);
-  const fakeonScores = () => {
+  function fakeonScores() {
     const cb = onScoresStub.getCalls()[0].args[1];
     cb({ status: 1 });
     stub.should.have.callCount(0);
-  };
+  }
 
   onScoresStub = sandbox.stub(mockSocket, 'on').withArgs('default').callsFake(fakeonScores);
   stub = sandbox.stub();
@@ -139,15 +150,4 @@ const testDefaultEvent = (done) => {
   mockPreferenceManager.verify();
   mockSocket.close();
   done();
-};
-
-describe('for evalModel', () => {
-  afterEach(() => {
-    sandbox.restore();
-  });
-
-  it('should work as expected on scores event ', testScoresEvent);
-  it('should work as expected on invalid event ', testInvalidEvent);
-  it('should work as expected on submission_pending event ', testSubmissionPendingEvent);
-  it('should work as expected on default event ', testDefaultEvent);
-});
+}

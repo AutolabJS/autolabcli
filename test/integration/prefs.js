@@ -20,7 +20,31 @@ chai.should();
 
 const sandbox = sinon.createSandbox();
 
-const testChangeLang = async () => {
+describe('Integration test for prefs command', function () {
+  afterEach(function () {
+    sandbox.restore();
+  });
+
+  it('should be able to change the language', testChangeLang);
+  it('should be able to change the main server', testChangeMS);
+  it('should be able to change the gitlab server', testChangeGitlab);
+  it('should be able to change the logger file size', testChangeLoggerFileSize);
+  it('should be able to add to logger blacklist', testChangeLoggerBlacklist);
+  it('should show the prefs', testShowPrefs);
+  it('should display error message for invalid host', testInvalidHost);
+  it('should display error message for invalid port', testInvalidPort);
+  it('should display error message for invalid server', testInvalidServer);
+  it('should display error message for invalid lang', testInvalidLang);
+  it('should display error message for invalid keyword', testInvalidKeyword);
+  it('should change lang using flags', testChangeLangFlags);
+  it('should be able to change the gitlab server using prompt', testChangeGitlabPrompt);
+  it('should be able to change the main server using prompt', testChangeMSPrompt);
+  it('should be able to add to logger blacklist using prompt', testChangeLoggerBlacklistPrompt);
+  it('should be able to add to log file size using prompt', testChangeLoggerFileSizePrompt);
+  it('should display error message for invalid command', testInvalidCommand);
+});
+
+async function testChangeLang() {
   const logSpy = sandbox.stub(console, 'log');
   const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   process.argv = ['/usr/local/nodejs/bin/node',
@@ -34,9 +58,9 @@ const testChangeLang = async () => {
   mockInquirer.verify();
   mocklogger.verify();
   sandbox.restore();
-};
+}
 
-const testChangeMS = async () => {
+async function testChangeMS() {
   const logSpy = sandbox.stub(console, 'log');
   const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   process.argv = ['/usr/local/nodejs/bin/node',
@@ -51,9 +75,9 @@ const testChangeMS = async () => {
   logSpy.should.have.been.calledWith(chalk.green('Your main server has been changed to xyz.com at port 9090'));
   mocklogger.verify();
   sandbox.restore();
-};
+}
 
-const testChangeGitlab = async () => {
+async function testChangeGitlab() {
   const logSpy = sandbox.stub(console, 'log');
   const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   process.argv = ['/usr/local/nodejs/bin/node',
@@ -69,9 +93,9 @@ const testChangeGitlab = async () => {
   logSpy.should.have.been.calledWith(chalk.green('Your gitlab server has been changed to abc.com'));
   mocklogger.verify();
   sandbox.restore();
-};
+}
 
-const testChangeLoggerFileSize = async () => {
+async function testChangeLoggerFileSize() {
   const logSpy = sandbox.stub(console, 'log');
   const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
 
@@ -91,9 +115,9 @@ const testChangeLoggerFileSize = async () => {
   logSpy.should.have.been.calledWith(chalk.green('Your logger preferences have been updated.'));
   mocklogger.verify();
   sandbox.restore();
-};
+}
 
-const testChangeLoggerBlacklist = async () => {
+async function testChangeLoggerBlacklist() {
   const logSpy = sandbox.stub(console, 'log');
   const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
 
@@ -113,10 +137,10 @@ const testChangeLoggerBlacklist = async () => {
   logSpy.should.have.been.calledWith(chalk.green('Your logger preferences have been updated.'));
   mocklogger.verify();
   sandbox.restore();
-};
+}
 
 // eslint-disable-next-line max-lines-per-function
-const testShowPrefs = async () => {
+async function testShowPrefs() {
   const logSpy = sandbox.stub(console, 'log');
   const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
 
@@ -147,9 +171,9 @@ const testShowPrefs = async () => {
   logSpy.should.have.been.calledWith(table.toString());
   mocklogger.verify();
   sandbox.restore();
-};
+}
 
-const testInvalidHost = async () => {
+async function testInvalidHost() {
   const logSpy = sandbox.stub(console, 'log');
   const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   process.argv = ['/usr/local/nodejs/bin/node',
@@ -160,9 +184,9 @@ const testInvalidHost = async () => {
   logSpy.should.have.been.calledWith(chalk.red('Please provide a valid host'));
   mocklogger.verify();
   sandbox.restore();
-};
+}
 
-const testInvalidPort = async () => {
+async function testInvalidPort() {
   const logSpy = sandbox.stub(console, 'log');
   const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   process.argv = ['/usr/local/nodejs/bin/node',
@@ -173,9 +197,9 @@ const testInvalidPort = async () => {
   logSpy.should.have.been.calledWith(chalk.red('Please provide a valid port'));
   mocklogger.verify();
   sandbox.restore();
-};
+}
 
-const testInvalidServer = async () => {
+async function testInvalidServer() {
   const logSpy = sandbox.stub(console, 'log');
   const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   process.argv = ['/usr/local/nodejs/bin/node',
@@ -187,9 +211,9 @@ const testInvalidServer = async () => {
   logSpy.should.have.been.calledWith(chalk.red(`Please provide a valid server for config. The valid servers are ${supportedServers}`));
   mocklogger.verify();
   sandbox.restore();
-};
+}
 
-const testInvalidLang = async () => {
+async function testInvalidLang() {
   const logSpy = sandbox.stub(console, 'log');
   const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   process.argv = ['/usr/local/nodejs/bin/node',
@@ -200,9 +224,9 @@ const testInvalidLang = async () => {
   logSpy.should.have.been.calledWith(chalk.red(`Please provide the a valid language. The supported languages are ${supportedLanguages}`));
   mocklogger.verify();
   sandbox.restore();
-};
+}
 
-const testInvalidKeyword = async () => {
+async function testInvalidKeyword() {
   const logSpy = sandbox.stub(console, 'log');
   const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   process.argv = ['/usr/local/nodejs/bin/node',
@@ -213,9 +237,9 @@ const testInvalidKeyword = async () => {
   logSpy.should.have.been.calledWith(chalk.red('Keyword already exixts, please provide valid blacklist keyword'));
   mocklogger.verify();
   sandbox.restore();
-};
+}
 
-const testChangeLangFlags = async () => {
+async function testChangeLangFlags() {
   const logSpy = sandbox.stub(console, 'log');
   const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   process.argv = ['/usr/local/nodejs/bin/node',
@@ -226,9 +250,9 @@ const testChangeLangFlags = async () => {
   logSpy.should.have.been.calledWith(chalk.green('Your submission language has been changed to cpp14'));
   mocklogger.verify();
   sandbox.restore();
-};
+}
 
-const testChangeGitlabPrompt = async () => {
+async function testChangeGitlabPrompt() {
   const logSpy = sandbox.stub(console, 'log');
   const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   process.argv = ['/usr/local/nodejs/bin/node',
@@ -241,9 +265,9 @@ const testChangeGitlabPrompt = async () => {
   mockInquirer.verify();
   mocklogger.verify();
   sandbox.restore();
-};
+}
 
-const testChangeMSPrompt = async () => {
+async function testChangeMSPrompt() {
   const logSpy = sandbox.stub(console, 'log');
   const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   process.argv = ['/usr/local/nodejs/bin/node',
@@ -257,9 +281,9 @@ const testChangeMSPrompt = async () => {
   mockInquirer.verify();
   mocklogger.verify();
   sandbox.restore();
-};
+}
 
-const testChangeLoggerBlacklistPrompt = async () => {
+async function testChangeLoggerBlacklistPrompt() {
   const logSpy = sandbox.stub(console, 'log');
   const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   process.argv = ['/usr/local/nodejs/bin/node',
@@ -273,9 +297,9 @@ const testChangeLoggerBlacklistPrompt = async () => {
   logSpy.should.have.been.calledWith(chalk.green('Your logger preferences have been updated.'));
   mocklogger.verify();
   sandbox.restore();
-};
+}
 
-const testChangeLoggerFileSizePrompt = async () => {
+async function testChangeLoggerFileSizePrompt() {
   const logSpy = sandbox.stub(console, 'log');
   const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   const testSize = 797291;
@@ -290,9 +314,9 @@ const testChangeLoggerFileSizePrompt = async () => {
   logSpy.should.have.been.calledWith(chalk.green('Your logger preferences have been updated.'));
   mocklogger.verify();
   sandbox.restore();
-};
+}
 
-const testInvalidCommand = async () => {
+async function testInvalidCommand() {
   const logSpy = sandbox.stub(console, 'log');
   const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   process.argv = ['/usr/local/nodejs/bin/node',
@@ -302,28 +326,4 @@ const testInvalidCommand = async () => {
   logSpy.should.have.been.calledWith(chalk.red('Please provide a valid command'));
   mocklogger.verify();
   sandbox.restore();
-};
-
-describe('Integration test for prefs command', () => {
-  afterEach(() => {
-    sandbox.restore();
-  });
-
-  it('should be able to change the language', testChangeLang);
-  it('should be able to change the main server', testChangeMS);
-  it('should be able to change the gitlab server', testChangeGitlab);
-  it('should be able to change the logger file size', testChangeLoggerFileSize);
-  it('should be able to add to logger blacklist', testChangeLoggerBlacklist);
-  it('should show the prefs', testShowPrefs);
-  it('should display error message for invalid host', testInvalidHost);
-  it('should display error message for invalid port', testInvalidPort);
-  it('should display error message for invalid server', testInvalidServer);
-  it('should display error message for invalid lang', testInvalidLang);
-  it('should display error message for invalid keyword', testInvalidKeyword);
-  it('should change lang using flags', testChangeLangFlags);
-  it('should be able to change the gitlab server using prompt', testChangeGitlabPrompt);
-  it('should be able to change the main server using prompt', testChangeMSPrompt);
-  it('should be able to add to logger blacklist using prompt', testChangeLoggerBlacklistPrompt);
-  it('should be able to add to log file size using prompt', testChangeLoggerFileSizePrompt);
-  it('should display error message for invalid command', testInvalidCommand);
-});
+}

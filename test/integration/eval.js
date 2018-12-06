@@ -37,8 +37,20 @@ const mockData = {
 
 const sandbox = sinon.createSandbox();
 
+describe('Integration test for eval command', function () {
+  afterEach(function () {
+    sandbox.restore();
+  });
+
+  it('should display results on succesful submission', testSucessfulSubmission);
+  it('should display error message on invalid event', testInvalidEvent);
+  it('should display results on succesful submission with prompt input', testSucessfulSubmissionPrompt);
+  it('should display message for pending submission', testSubmissionPending);
+  it('should show error message for expired session', testExpiredSession);
+});
+
 // eslint-disable-next-line max-lines-per-function
-const testSucessfulSubmission = async () => {
+async function testSucessfulSubmission() {
   const logStub = sandbox.stub(console, 'log');
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'eval', '--lang', 'java', '-l', 'test3'];
@@ -81,9 +93,9 @@ const testSucessfulSubmission = async () => {
   mocklogger.verify();
   mockSocket.close();
   sandbox.restore();
-};
+}
 
-const testInvalidEvent = async () => {
+async function testInvalidEvent() {
   const logStub = sandbox.stub(console, 'log');
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'eval', '--lang', 'java', '-l', 'test3'];
@@ -112,10 +124,10 @@ const testInvalidEvent = async () => {
   mocklogger.verify();
   mockSocket.close();
   sandbox.restore();
-};
+}
 
 // eslint-disable-next-line max-lines-per-function
-const testSucessfulSubmissionPrompt = async () => {
+async function testSucessfulSubmissionPrompt() {
   const logStub = sandbox.stub(console, 'log');
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'eval'];
@@ -161,9 +173,9 @@ const testSucessfulSubmissionPrompt = async () => {
   mocklogger.verify();
   mockSocket.close();
   sandbox.restore();
-};
+}
 
-const testSubmissionPending = async () => {
+async function testSubmissionPending() {
   const logStub = sandbox.stub(console, 'log');
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'eval', '--lang', 'java', '-l', 'test3'];
@@ -191,9 +203,9 @@ const testSubmissionPending = async () => {
   mocklogger.verify();
   mockSocket.close();
   sandbox.restore();
-};
+}
 
-const testExpiredSession = async () => {
+async function testExpiredSession() {
   const logStub = sandbox.stub(console, 'log');
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'eval', '--lang', 'java', '-l', 'test3'];
@@ -206,16 +218,4 @@ const testExpiredSession = async () => {
   mockPreferenceManager.verify();
   mocklogger.verify();
   sandbox.restore();
-};
-
-describe('Integration test for eval command', () => {
-  afterEach(() => {
-    sandbox.restore();
-  });
-
-  it('should display results on succesful submission', testSucessfulSubmission);
-  it('should display error message on invalid event', testInvalidEvent);
-  it('should display results on succesful submission with prompt input', testSucessfulSubmissionPrompt);
-  it('should display message for pending submission', testSubmissionPending);
-  it('should show error message for expired session', testExpiredSession);
-});
+}

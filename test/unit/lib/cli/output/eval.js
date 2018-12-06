@@ -23,7 +23,16 @@ const mockData = {
   penalty: 0,
 };
 
-const testSpinnerOnEval = (done) => {
+describe('For eval output', function () {
+  it('should start the spinner when evaluation starts', testSpinnerOnEval);
+  it('should draw table for scores event and display total score', testDrawTableOnScores);
+  it('should show penalty score when status is not 0', testPenalityScore);
+  it('should display error message for invalid request', testInvalidRequest);
+  it('should display error message for submission_pending event', testSubmissionPending);
+  it('should display error message for invalid event', testInvalidEvent);
+});
+
+function testSpinnerOnEval(done) {
   const mockStdout = sandbox.mock(process.stdout);
 
   mockStdout.expects('write').atLeast(1);
@@ -34,9 +43,9 @@ const testSpinnerOnEval = (done) => {
   mockStdout.verify();
   sandbox.restore();
   done();
-};
+}
 
-const testDrawTableOnScores = () => {
+function testDrawTableOnScores(done) {
   const logStub = sandbox.stub(console, 'log');
   evalOutput.sendOutput({
     name: 'scores',
@@ -61,9 +70,10 @@ const testDrawTableOnScores = () => {
   logStub.should.have.been.calledWith(`${chalk.green('Total Score: ')}2`);
 
   sandbox.restore();
-};
+  done();
+}
 
-const testPenalityScore = () => {
+function testPenalityScore(done) {
   const logStub = sandbox.stub(console, 'log');
 
   mockData.status = 1;
@@ -76,9 +86,10 @@ const testPenalityScore = () => {
 
   logStub.should.have.been.calledWith(chalk.red('Penalty : ') + 0);
   sandbox.restore();
-};
+  done();
+}
 
-const testInvalidRequest = () => {
+function testInvalidRequest(done) {
   const logStub = sandbox.stub(console, 'log');
   evalOutput.sendOutput({
     name: 'invalid',
@@ -86,9 +97,10 @@ const testInvalidRequest = () => {
 
   logStub.should.have.been.calledWith(chalk.red('\nAccess Denied. Please try submitting again'));
   sandbox.restore();
-};
+  done();
+}
 
-const testSubmissionPending = () => {
+function testSubmissionPending(done) {
   const logStub = sandbox.stub(console, 'log');
 
   evalOutput.sendOutput({
@@ -97,9 +109,10 @@ const testSubmissionPending = () => {
 
   logStub.should.have.been.calledWith(chalk.yellow('\nYou have a pending submission. Please try after some time.'));
   sandbox.restore();
-};
+  done();
+}
 
-const testInvalidEvent = () => {
+function testInvalidEvent(done) {
   const logStub = sandbox.stub(console, 'log');
 
   evalOutput.sendOutput({
@@ -108,13 +121,5 @@ const testInvalidEvent = () => {
 
   logStub.should.have.been.calledWith(chalk.red('\nInvalid Event'));
   sandbox.restore();
-};
-
-describe('For eval output', () => {
-  it('should start the spinner when evaluation starts', testSpinnerOnEval);
-  it('should draw table for scores event and display total score', testDrawTableOnScores);
-  it('should show penalty score when status is not 0', testPenalityScore);
-  it('should display error message for invalid request', testInvalidRequest);
-  it('should display error message for submission_pending event', testSubmissionPending);
-  it('should display error message for invalid event', testInvalidEvent);
-});
+  done();
+}

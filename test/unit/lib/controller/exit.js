@@ -14,7 +14,21 @@ chai.should();
 
 const sandbox = sinon.createSandbox();
 
-const testExitValid = (done) => {
+describe('For exit controller', function () {
+  beforeEach(function () {
+    const mocklogger = sandbox.stub(logger);
+    program.logger(mocklogger);
+  });
+
+  afterEach(function () {
+    sandbox.restore();
+  });
+
+  it('should call the action of program with right arguments', testExitValid);
+  it('should not execute when already exited', testInvalidExit);
+});
+
+function testExitValid(done) {
   const mockexitOutput = sandbox.mock(exitOutput);
   const mockexitModel = sandbox.mock(exitModel);
   const mockCommandValidator = sandbox.mock(commandValidator);
@@ -35,9 +49,9 @@ const testExitValid = (done) => {
     mockexitModel.verify();
     done();
   }, 0);
-};
+}
 
-const testInvalidExit = (done) => {
+function testInvalidExit(done) {
   const mockexitOutput = sandbox.mock(exitOutput);
   const mockexitModel = sandbox.mock(exitModel);
   const mockCommandValidator = sandbox.mock(commandValidator);
@@ -55,18 +69,4 @@ const testInvalidExit = (done) => {
     mockexitModel.verify();
     done();
   }, 0);
-};
-
-describe('For exit controller', () => {
-  beforeEach(() => {
-    const mocklogger = sandbox.stub(logger);
-    program.logger(mocklogger);
-  });
-
-  afterEach(() => {
-    sandbox.restore();
-  });
-
-  it('should call the action of program with right arguments', testExitValid);
-  it('should not execute when already exited', testInvalidExit);
-});
+}

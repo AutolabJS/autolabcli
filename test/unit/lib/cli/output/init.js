@@ -11,7 +11,16 @@ chai.should();
 
 const sandbox = sinon.createSandbox();
 
-const testWelcomeText = () => {
+describe('For init output', function () {
+  it('should send expected welcome text', testWelcomeText);
+  it('should start the spinner when authentication starts', testAuthSpinner);
+  it('should display sucess message for status code as 200', testSucessfulAuth);
+  it('should display error message for invalid credentials', testInvalidCredentials);
+  it('should display appropriate error message  for no connection', testNetworkError);
+  it('should display error message for invalid event', testInvalidEvent);
+});
+
+function testWelcomeText(done) {
   const logStub = sandbox.stub(console, 'log');
   const mockFiglet = sandbox.mock(figlet);
 
@@ -24,9 +33,10 @@ const testWelcomeText = () => {
   logStub.should.have.been.calledWith(chalk.yellow('Autolab CLI'));
 
   sandbox.restore();
-};
+  done();
+}
 
-const testAuthSpinner = () => {
+function testAuthSpinner(done) {
   const mockStdout = sandbox.mock(process.stdout);
 
   mockStdout.expects('write').atLeast(1);
@@ -37,9 +47,10 @@ const testAuthSpinner = () => {
   mockStdout.verify();
 
   sandbox.restore();
-};
+  done();
+}
 
-const testSucessfulAuth = () => {
+function testSucessfulAuth(done) {
   const logStub = sandbox.stub(console, 'log');
   const httpOK = 200;
   initOutput.sendOutput({
@@ -53,9 +64,10 @@ const testSucessfulAuth = () => {
   logStub.should.have.been.calledWith(chalk.green('\nHi test_user! You have successfully logged into AutolabJS. Run \'autolabjs help\' for help.'));
 
   sandbox.restore();
-};
+  done();
+}
 
-const testInvalidCredentials = () => {
+function testInvalidCredentials(done) {
   const logStub = sandbox.stub(console, 'log');
   const httpUnauth = 401;
   initOutput.sendOutput({
@@ -68,9 +80,10 @@ const testInvalidCredentials = () => {
   logStub.should.have.been.calledWith(chalk.red('\nInvalid Username or Password'));
 
   sandbox.restore();
-};
+  done();
+}
 
-const testNetworkError = () => {
+function testNetworkError(done) {
   const logStub = sandbox.stub(console, 'log');
   const httpFailure = 4;
   initOutput.sendOutput({
@@ -83,9 +96,10 @@ const testNetworkError = () => {
   logStub.should.have.been.calledWith(chalk.red('\nPlease check your network connection'));
 
   sandbox.restore();
-};
+  done();
+}
 
-const testInvalidEvent = (done) => {
+function testInvalidEvent(done) {
   const logStub = sandbox.stub(console, 'log');
 
   initOutput.sendOutput({
@@ -95,13 +109,4 @@ const testInvalidEvent = (done) => {
   logStub.should.have.been.calledWith(chalk.red('\nInvalid Event'));
   sandbox.restore();
   done();
-};
-
-describe('For init output', () => {
-  it('should send expected welcome text', testWelcomeText);
-  it('should start the spinner when authentication starts', testAuthSpinner);
-  it('should display sucess message for status code as 200', testSucessfulAuth);
-  it('should display error message for invalid credentials', testInvalidCredentials);
-  it('should display appropriate error message  for no connection', testNetworkError);
-  it('should display error message for invalid event', testInvalidEvent);
-});
+}

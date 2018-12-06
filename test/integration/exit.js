@@ -9,33 +9,17 @@ const { logger } = require('../../lib/utils/logger');
 chai.use(sinonChai);
 chai.should();
 
-const login = async () => {
+async function login() {
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'init', '-u', 'testuser2', '-p', '123'];
 
   await controller.start();
-};
+}
 
 const sandbox = sinon.createSandbox();
 
-const testCredentialsDeleted = async () => {
-  const logSpy = sandbox.stub(console, 'log');
-  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
-  await login();
-
-  process.argv = ['/usr/local/nodejs/bin/node',
-    '/usr/local/nodejs/bin/autolab', 'exit'];
-  await controller.start();
-
-  preferenceManager.getPreference({ name: 'gitLabPrefs' }).privateToken.should.equal('');
-  preferenceManager.getPreference({ name: 'gitLabPrefs' }).storedTime.should.equal(-1);
-  logSpy.callCount.should.be.greaterThan(0);
-  mocklogger.verify();
-  sandbox.restore();
-};
-
-describe('Integration test for exit command', () => {
-  beforeEach(() => {
+describe('Integration test for exit command', function () {
+  beforeEach(function () {
     const fakeServer = nock('https://autolab.bits-goa.ac.in')
       .post('/api/v4/session?login=testuser2&password=123');
 
@@ -49,3 +33,19 @@ describe('Integration test for exit command', () => {
 
   it('should remove the stored credentials', testCredentialsDeleted);
 });
+
+async function testCredentialsDeleted() {
+  const logSpy = sandbox.stub(console, 'log');
+  const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
+  await login();
+
+  process.argv = ['/usr/local/nodejs/bin/node',
+    '/usr/local/nodejs/bin/autolab', 'exit'];
+  await controller.start();
+
+  preferenceManager.getPreference({ name: 'gitLabPrefs' }).privateToken.should.equal('');
+  preferenceManager.getPreference({ name: 'gitLabPrefs' }).storedTime.should.equal(-1);
+  logSpy.callCount.should.be.greaterThan(0);
+  mocklogger.verify();
+  sandbox.restore();
+}

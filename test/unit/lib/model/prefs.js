@@ -12,7 +12,16 @@ const prefsModel = require('../../../../lib/model/prefs');
 chai.use(chaiAsPromised);
 chai.should();
 
-const testChangeLang = async () => {
+describe('for prefsModel', function () {
+  it('should change the language', testChangeLang);
+  it('should change the gitlab server', testChangeGitlabServer);
+  it('should change the main server', testChangeMainServer);
+  it('should change the logger file size', testChangeLoggerFileSize);
+  it('should change the logger blacklists', testChangeLoggerBlacklist);
+  it('should send the stored preferences on show', testShowPrefs);
+});
+
+async function testChangeLang() {
   const mockPreferenceManager = sinon.mock(preferenceManager);
   mockPreferenceManager.expects('setPreference').withExactArgs({
     name: 'cliPrefs',
@@ -31,9 +40,9 @@ const testChangeLang = async () => {
   });
 
   mockPreferenceManager.verify();
-};
+}
 
-const testChangeGitlabServer = async () => {
+async function testChangeGitlabServer() {
   const mockPreferenceManager = sinon.mock(preferenceManager);
   mockPreferenceManager.expects('setPreference').withExactArgs({
     name: 'cliPrefs',
@@ -53,9 +62,9 @@ const testChangeGitlabServer = async () => {
   });
 
   mockPreferenceManager.verify();
-};
+}
 
-const testChangeMainServer = async () => {
+async function testChangeMainServer() {
   const mockPreferenceManager = sinon.mock(preferenceManager);
   const testMsPort = 3333;
   mockPreferenceManager.expects('setPreference').withExactArgs({
@@ -78,9 +87,9 @@ const testChangeMainServer = async () => {
   });
 
   mockPreferenceManager.verify();
-};
+}
 
-const testChangeLoggerFileSize = async () => {
+async function testChangeLoggerFileSize() {
   const mockPreferenceManager = sinon.mock(preferenceManager);
   const testSize = 72000;
   mockPreferenceManager.expects('setPreference').withExactArgs({
@@ -103,9 +112,9 @@ const testChangeLoggerFileSize = async () => {
   });
 
   mockPreferenceManager.verify();
-};
+}
 
-const testChangeLoggerBlacklist = async () => {
+async function testChangeLoggerBlacklist() {
   const mockPreferenceManager = sinon.mock(preferenceManager);
   mockPreferenceManager.expects('setPreference').withExactArgs({
     name: 'loggerPrefs',
@@ -127,9 +136,9 @@ const testChangeLoggerBlacklist = async () => {
   });
 
   mockPreferenceManager.verify();
-};
+}
 
-const testShowPrefs = async () => {
+async function testShowPrefs() {
   const mockPreferenceManager = sinon.mock(preferenceManager);
   const testSize = 52457;
   const testMsPort = 3333;
@@ -155,13 +164,4 @@ const testShowPrefs = async () => {
   prefsModel.storePrefs({ name: 'show_prefs' });
 
   mockPreferenceManager.verify();
-};
-
-describe('for prefsModel', () => {
-  it('should change the language', testChangeLang);
-  it('should change the gitlab server', testChangeGitlabServer);
-  it('should change the main server', testChangeMainServer);
-  it('should change the logger file size', testChangeLoggerFileSize);
-  it('should change the logger blacklists', testChangeLoggerBlacklist);
-  it('should send the stored preferences on show', testShowPrefs);
-});
+}

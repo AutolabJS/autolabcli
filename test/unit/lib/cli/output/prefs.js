@@ -18,79 +18,94 @@ chai.should();
 
 const sandbox = sinon.createSandbox();
 
-const testLangChanged = () => {
+describe('For prefs output', function () {
+  it('should send expected output when language is changed', testLangChanged);
+  it('should send expected output when main server is changed', testMSChanged);
+  it('should send expected output when gitlab server is changed', testGitlabChanged);
+  it('should send expected output when logger preferences are changed', testLoggerPrefChanged);
+  it('should send expected output when no host is provided', testInvalidHost);
+  it('should send expected output when invalid port is provided', testInvalidPort);
+  it('should send expected output when invalid language is provided', testInvalidLang);
+  it('should send expected output when invalid blacklist keyword is provided', testInvalidBlacklist);
+  it('should send expected output when invalid server is provides', testInvalidServer);
+  it('should send expected output when invalid command is provides', testInvalidCommand);
+  it('should draw table for show prefs command', testShowPrefs);
+  it('should display error message for invalid event', testInvalidEvent);
+});
+
+function testLangChanged() {
   const logStub = sandbox.stub(console, 'log');
 
   prefsOutput.sendOutput({ name: 'lang_changed', details: { lang: 'cpp' } });
   logStub.should.have.been.calledWith(chalk.green('Your submission language has been changed to cpp'));
 
   sandbox.restore();
-};
+}
 
-const testMSChanged = () => {
+function testMSChanged() {
   const logStub = sandbox.stub(console, 'log');
 
   prefsOutput.sendOutput({ name: 'server_changed', details: { type: 'ms', host: 'abc', port: '8999' } });
   logStub.should.have.been.calledWith(chalk.green('Your main server has been changed to abc at port 8999'));
 
   sandbox.restore();
-};
+}
 
-const testGitlabChanged = () => {
+function testGitlabChanged() {
   const logStub = sandbox.stub(console, 'log');
 
   prefsOutput.sendOutput({ name: 'server_changed', details: { type: 'gitlab', host: 'abc.com' } });
   logStub.should.have.been.calledWith(chalk.green('Your gitlab server has been changed to abc.com'));
 
   sandbox.restore();
-};
+}
 
-const testLoggerPrefChanged = () => {
+function testLoggerPrefChanged() {
   const logStub = sandbox.stub(console, 'log');
 
   prefsOutput.sendOutput({ name: 'logger_pref_changed', details: { keyword: 'gitlab' } });
   logStub.should.have.been.calledWith(chalk.green('Your logger preferences have been updated.'));
 
   sandbox.restore();
-};
+}
 
-const testInvalidHost = () => {
+function testInvalidHost() {
   const logStub = sandbox.stub(console, 'log');
 
   prefsOutput.sendOutput({ name: 'invalid_host' });
   logStub.should.have.been.calledWith(chalk.red('Please provide a valid host'));
 
   sandbox.restore();
-};
+}
 
-const testInvalidPort = () => {
+function testInvalidPort() {
   const logStub = sandbox.stub(console, 'log');
 
   prefsOutput.sendOutput({ name: 'invalid_port' });
   logStub.should.have.been.calledWith(chalk.red('Please provide a valid port'));
 
   sandbox.restore();
-};
+}
 
-const testInvalidLang = () => {
+function testInvalidLang() {
   const logStub = sandbox.stub(console, 'log');
 
   prefsOutput.sendOutput({ name: 'invalid_lang', details: { supportedLanguages } });
   logStub.should.have.been.calledWith(chalk.red(`Please provide the a valid language. The supported languages are ${supportedLanguages}`));
 
   sandbox.restore();
-};
+}
 
-const testInvalidBlacklist = () => {
+function testInvalidBlacklist() {
   const logStub = sandbox.stub(console, 'log');
 
   prefsOutput.sendOutput({ name: 'invalid_blacklist_keyword' });
   logStub.should.have.been.calledWith(chalk.red('Keyword already exixts, please provide valid blacklist keyword'));
 
   sandbox.restore();
-};
+}
 
-const testInvalidServer = () => {
+function testInvalidServer() {
   const logStub = sandbox.stub(console, 'log');
   const supportedServers = ['ms', 'gitlab'];
   prefsOutput.sendOutput({
@@ -102,19 +117,19 @@ const testInvalidServer = () => {
   logStub.should.have.been.calledWith(chalk.red(`Please provide a valid server for config. The valid servers are ${supportedServers}`));
 
   sandbox.restore();
-};
+}
 
-const testInvalidCommand = () => {
+function testInvalidCommand() {
   const logStub = sandbox.stub(console, 'log');
 
   prefsOutput.sendOutput({ name: 'invalid_command' });
   logStub.should.have.been.calledWith(chalk.red('Please provide a valid command'));
 
   sandbox.restore();
-};
+}
 
 /* eslint-disable max-lines-per-function */
-const testShowPrefs = () => {
+function testShowPrefs() {
   const logStub = sandbox.stub(console, 'log');
 
   const testMSPort = 5235;
@@ -155,9 +170,9 @@ const testShowPrefs = () => {
   logStub.should.have.been.calledWith(table.toString());
 
   sandbox.restore();
-};
+}
 
-const testInvalidEvent = () => {
+function testInvalidEvent() {
   const logStub = sandbox.stub(console, 'log');
 
   prefsOutput.sendOutput({
@@ -166,19 +181,4 @@ const testInvalidEvent = () => {
 
   logStub.should.have.been.calledWith(chalk.red('\nInvalid Event'));
   sandbox.restore();
-};
-
-describe('For prefs output', () => {
-  it('should send expected output when language is changed', testLangChanged);
-  it('should send expected output when main server is changed', testMSChanged);
-  it('should send expected output when gitlab server is changed', testGitlabChanged);
-  it('should send expected output when logger preferences are changed', testLoggerPrefChanged);
-  it('should send expected output when no host is provided', testInvalidHost);
-  it('should send expected output when invalid port is provided', testInvalidPort);
-  it('should send expected output when invalid language is provided', testInvalidLang);
-  it('should send expected output when invalid blacklist keyword is provided', testInvalidBlacklist);
-  it('should send expected output when invalid server is provides', testInvalidServer);
-  it('should send expected output when invalid command is provides', testInvalidCommand);
-  it('should draw table for show prefs command', testShowPrefs);
-  it('should display error message for invalid event', testInvalidEvent);
-});
+}

@@ -10,13 +10,29 @@ chai.should();
 
 const sandbox = sinon.createSandbox();
 
-const testWinstonInstance = (done) => {
+describe('for logger', function () {
+  it('should be an instance of winston', testWinstonInstance);
+
+  describe('moduleLog', function () {
+    afterEach(function () {
+      sandbox.restore();
+    });
+
+    it('should call log with correct arguments; string', testCorrectCallString);
+    it('should call log with correct arguments; object no filter', testCorrectCallNoFilter);
+    it('should call log with correct arguments; object filter password', testCorrectCallFilterPassword);
+    it('should call log with correct arguments; array no filter', testCorrectCallArrayNoFilter);
+    it('should call log as MAIN', testMAINLog);
+  });
+});
+
+function testWinstonInstance(done) {
   logger.should.be.an.instanceOf(winston.constructor);
   logger.should.have.a.property('moduleLog');
   done();
-};
+}
 
-const testCorrectCallString = (done) => {
+function testCorrectCallString(done) {
   const mocklog = sandbox.mock(logger);
   mocklog.expects('log').withExactArgs({
     level: 'warn',
@@ -26,9 +42,9 @@ const testCorrectCallString = (done) => {
   logger.moduleLog('warn', 'test1', 'Test Message');
   mocklog.verify();
   done();
-};
+}
 
-const testCorrectCallNoFilter = (done) => {
+function testCorrectCallNoFilter(done) {
   const mocklog = sandbox.mock(logger);
   const testObject = {
     username: 'Mike',
@@ -42,9 +58,9 @@ const testCorrectCallNoFilter = (done) => {
   });
   logger.moduleLog('info', 'test2', testObject);
   done();
-};
+}
 
-const testCorrectCallFilterPassword = (done) => {
+function testCorrectCallFilterPassword(done) {
   const mocklog = sandbox.mock(logger);
   const testObject = {
     username: 'Bob',
@@ -63,9 +79,9 @@ const testCorrectCallFilterPassword = (done) => {
   logger.moduleLog('error', 'test3', testObject);
   mocklog.verify();
   done();
-};
+}
 
-const testCorrectCallArrayNoFilter = (done) => {
+function testCorrectCallArrayNoFilter(done) {
   const mocklog = sandbox.mock(logger);
   const testObject = ['stud_det', {
     username: 'Mike',
@@ -82,9 +98,9 @@ const testCorrectCallArrayNoFilter = (done) => {
   logger.moduleLog('info', 'test2', testObject);
   mocklog.verify();
   done();
-};
+}
 
-const testMAINLog = (done) => {
+function testMAINLog(done) {
   const stubConsole = sandbox.stub(process.stdout, 'write');
   const testTransport = new winston.transports.Console();
   logger.add(testTransport);
@@ -95,20 +111,4 @@ const testMAINLog = (done) => {
   logger.remove(testTransport);
 
   done();
-};
-
-describe('for logger', () => {
-  it('should be an instance of winston', testWinstonInstance);
-
-  describe('moduleLog', () => {
-    afterEach(() => {
-      sandbox.restore();
-    });
-
-    it('should call log with correct arguments; string', testCorrectCallString);
-    it('should call log with correct arguments; object no filter', testCorrectCallNoFilter);
-    it('should call log with correct arguments; object filter password', testCorrectCallFilterPassword);
-    it('should call log with correct arguments; array no filter', testCorrectCallArrayNoFilter);
-    it('should call log as MAIN', testMAINLog);
-  });
-});
+}

@@ -11,7 +11,16 @@ chai.should();
 
 const sandbox = sinon.createSandbox();
 
-const testController = (done) => {
+describe('For controller entry point', function () {
+  afterEach(function () {
+    sandbox.restore();
+  });
+
+  it('should call the other controllers', testController);
+});
+
+
+function testController(done) {
   const mockInitController = sandbox.mock(initController);
   const mockProgram = sandbox.mock(program);
 
@@ -23,12 +32,4 @@ const testController = (done) => {
   mockInitController.verify();
   mockProgram.verify();
   done();
-};
-
-describe('For controller entry point', () => {
-  afterEach(() => {
-    sandbox.restore();
-  });
-
-  it('should call the other controllers', testController);
-});
+}

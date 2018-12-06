@@ -14,8 +14,21 @@ chai.should();
 
 const sandbox = sinon.createSandbox();
 
+describe('For prefs controller', function () {
+  beforeEach(function () {
+    const mocklogger = sandbox.stub(logger);
+    program.logger(mocklogger);
+  });
+
+  afterEach(function () {
+    sandbox.restore();
+  });
+
+  it('should call the prefs action of program with right arguments when command is valid', testPrefsValid);
+});
+
 /* eslint-disable max-lines-per-function */
-const testPrefsValid = (done) => {
+function testPrefsValid(done) {
   const mockprefsInput = sandbox.mock(prefsInput);
   const mockprefsOutput = sandbox.mock(prefsOutput);
   const mockprefsModel = sandbox.mock(prefsModel);
@@ -50,17 +63,4 @@ const testPrefsValid = (done) => {
     mockprefsModel.verify();
     done();
   }, 0);
-};
-
-describe('For prefs controller', () => {
-  beforeEach(() => {
-    const mocklogger = sandbox.stub(logger);
-    program.logger(mocklogger);
-  });
-
-  afterEach(() => {
-    sandbox.restore();
-  });
-
-  it('should call the prefs action of program with right arguments when command is valid', testPrefsValid);
-});
+}

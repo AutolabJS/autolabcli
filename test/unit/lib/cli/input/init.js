@@ -12,15 +12,25 @@ chai.should();
 const mockUser = { u: 'testuser', p: '123' };
 const sandbox = sinon.createSandbox();
 
-const testInitFlags = async () => {
+describe('for init getInput', function () {
+  afterEach(function () {
+    sandbox.restore();
+  });
+
+  it('should return promise with correct values when flags provided', testInitFlags);
+  it('should return promise with correct values when flags not provided', testNoFlags);
+  it('should not accept empty getInput', testEmptyInput);
+});
+
+async function testInitFlags() {
   const ret = await initInput.getInput(null, mockUser);
   ret.should.deep.equal({
     username: 'testuser',
     password: '123',
   });
-};
+}
 
-const testNoFlags = () => {
+function testNoFlags() {
   const mockInquirer = sandbox.mock(inquirer);
   mockInquirer.expects('prompt').resolves({ username: 'testuser2', password: '123' });
 
@@ -28,11 +38,11 @@ const testNoFlags = () => {
     username: 'testuser2',
     password: '123',
   });
-};
+}
 
-const testEmptyInput = async (done) => {
+async function testEmptyInput(done) {
   let promptStub;
-  const invalidInputTester = () => {
+  function invalidInputTester() {
     try {
       const emptyUsernamePrompt = promptStub.getCalls()[0].args[0][0].validate('');
       const emptyPasswordPrompt = promptStub.getCalls()[0].args[0][1].validate('');
@@ -42,18 +52,8 @@ const testEmptyInput = async (done) => {
     } finally {
       done();
     }
-  };
+  }
 
   promptStub = sandbox.stub(inquirer, 'prompt').callsFake(invalidInputTester);
   await initInput.getInput(null, {});
-};
-
-describe('for init getInput', () => {
-  afterEach(() => {
-    sandbox.restore();
-  });
-
-  it('should return promise with correct values when flags provided', testInitFlags);
-  it('should return promise with correct values when flags not provided', testNoFlags);
-  it('should not accept empty getInput', testEmptyInput);
-});
+}

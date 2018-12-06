@@ -22,7 +22,21 @@ const mockOptions = {
   commitHash: '',
 };
 
-const testEvalCommandValid = async () => {
+describe('For eval controller', function () {
+  beforeEach(function () {
+    const mocklogger = sandbox.stub(logger);
+    program.logger(mocklogger);
+  });
+
+  afterEach(function () {
+    sandbox.restore();
+  });
+
+  it('should call the eval action of program with right arguments when command is valid', testEvalCommandValid);
+  it('should NOT proceed for invalid session', testInvalidSession);
+});
+
+async function testEvalCommandValid() {
   const mockevalInput = sandbox.mock(evalInput);
   const mockevalOutput = sandbox.mock(evalOutput);
   const mockcommandValidator = sandbox.mock(commandValidator);
@@ -51,9 +65,9 @@ const testEvalCommandValid = async () => {
 
   mockevalInput.verify();
   mockevalOutput.verify();
-};
+}
 
-const testInvalidSession = async () => {
+async function testInvalidSession() {
   const mockevalOutput = sandbox.mock(evalOutput);
   const mockcommandValidator = sandbox.mock(commandValidator);
 
@@ -68,18 +82,4 @@ const testInvalidSession = async () => {
   });
 
   mockevalOutput.verify();
-};
-
-describe('For eval controller', () => {
-  beforeEach(() => {
-    const mocklogger = sandbox.stub(logger);
-    program.logger(mocklogger);
-  });
-
-  afterEach(() => {
-    sandbox.restore();
-  });
-
-  it('should call the eval action of program with right arguments when command is valid', testEvalCommandValid);
-  it('should NOT proceed for invalid session', testInvalidSession);
-});
+}

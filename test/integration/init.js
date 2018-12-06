@@ -19,7 +19,26 @@ chai.should();
 
 const sandbox = sinon.createSandbox();
 
-const testInitFlags = async () => {
+describe('Integration test for init command', function () {
+  beforeEach(function () {
+    const fakeServer = nock(`https://${host}`)
+      .post('/api/v4/session?login=testuser2&password=123');
+
+    const httpOK = 200;
+
+    fakeServer.reply(httpOK, {
+      ok: true,
+      name: 'test_user2',
+      private_token: 'zxcvbnb',
+    });
+  });
+
+  it('should have output as expected when init command is provided with flags', testInitFlags);
+  it('should have output as expected when network fails', testNetworkFailure);
+  it('should have output as expected when init command is NOT provided with flags', testInitNoFlags);
+});
+
+async function testInitFlags() {
   const logstub = sandbox.stub(console, 'log');
   const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   process.argv = ['/usr/local/nodejs/bin/node',
@@ -32,9 +51,9 @@ const testInitFlags = async () => {
   preferenceManager.getPreference({ name: 'gitLabPrefs' }).privateToken.should.equal('zxcvbnb');
   mocklogger.verify();
   sandbox.restore();
-};
+}
 
-const testNetworkFailure = async () => {
+async function testNetworkFailure() {
   const faultServer = nock(`https://${host}`)
     .post('/api/v4/session?login=testuser3&password=123');
 
@@ -52,9 +71,9 @@ const testNetworkFailure = async () => {
   logstub.should.to.have.been.calledWith(chalk.red('\nPlease check your network connection'));
   mocklogger.verify();
   sandbox.restore();
-};
+}
 
-const testInitNoFlags = async () => {
+async function testInitNoFlags() {
   const logstub = sandbox.stub(console, 'log');
   const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   process.argv = ['/usr/local/nodejs/bin/node',
@@ -70,23 +89,4 @@ const testInitNoFlags = async () => {
   mockInquirer.verify();
   mocklogger.verify();
   sandbox.restore();
-};
-
-describe('Integration test for init command', () => {
-  beforeEach(() => {
-    const fakeServer = nock(`https://${host}`)
-      .post('/api/v4/session?login=testuser2&password=123');
-
-    const httpOK = 200;
-
-    fakeServer.reply(httpOK, {
-      ok: true,
-      name: 'test_user2',
-      private_token: 'zxcvbnb',
-    });
-  });
-
-  it('should have output as expected when init command is provided with flags', testInitFlags);
-  it('should have output as expected when network fails', testNetworkFailure);
-  it('should have output as expected when init command is NOT provided with flags', testInitNoFlags);
-});
+}

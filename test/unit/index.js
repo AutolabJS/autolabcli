@@ -10,18 +10,19 @@ chai.should();
 
 const sandbox = sinon.createSandbox();
 
-const testStartController = () => {
-  const mockController = sandbox.mock(controller);
-  mockController.expects('start').once();
-  exec('npm link;autolabjs', () => {
-    mockController.verify();
-  });
-};
 
-describe('For application entry point', () => {
-  afterEach(() => {
+describe('For application entry point', function () {
+  afterEach(function () {
     sandbox.restore();
   });
 
   it('should start the controller', testStartController);
 });
+
+function testStartController() {
+  const mockController = sandbox.mock(controller);
+  mockController.expects('start').once();
+  exec('npm link;autolabjs', () => {
+    mockController.verify();
+  });
+}

@@ -21,7 +21,17 @@ chai.should();
 
 const sandbox = sinon.createSandbox();
 
-const testSucessfulLogin = async () => {
+describe('for initModel', function () {
+  afterEach(function () {
+    sandbox.restore();
+  });
+
+  it('should return status code 200 after successful login', testSucessfulLogin);
+  it('should return status code of 401 when invalid login provided', testInvalidLogin);
+  it('should return code 4 if unkown error occurs', testNetworkError);
+});
+
+async function testSucessfulLogin() {
   const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   const fakeServer = nock(`https://${host}`)
     .post('/api/v4/session?login=testuser3&password=123');
@@ -41,9 +51,9 @@ const testSucessfulLogin = async () => {
   status.name.should.equal('test_user3');
   preferenceManager.getPreference({ name: 'gitLabPrefs' }).privateToken.should.equal('zxcvbnb');
   mocklogger.verify();
-};
+}
 
-const testInvalidLogin = async () => {
+async function testInvalidLogin() {
   const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   const fakeServer = nock(`https://${host}`)
     .post('/api/v4/session?login=testuser&password=123');
@@ -56,9 +66,9 @@ const testInvalidLogin = async () => {
   });
   status.code.should.equal(httpUnauth);
   mocklogger.verify();
-};
+}
 
-const testNetworkError = async () => {
+async function testNetworkError() {
   const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   const httpFailure = 4;
   const status = await initModel.authenticate({
@@ -67,14 +77,4 @@ const testNetworkError = async () => {
   });
   status.code.should.equal(httpFailure);
   mocklogger.verify();
-};
-
-describe('for initModel', () => {
-  afterEach(() => {
-    sandbox.restore();
-  });
-
-  it('should return status code 200 after successful login', testSucessfulLogin);
-  it('should return status code of 401 when invalid login provided', testInvalidLogin);
-  it('should return code 4 if unkown error occurs', testNetworkError);
-});
+}

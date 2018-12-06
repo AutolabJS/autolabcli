@@ -10,26 +10,44 @@ chai.should();
 
 const sandbox = sinon.createSandbox();
 
-const testGetCliPrefs = (done) => {
+describe('for preference manager', function () {
+  before(function () {
+    preferenceManager.setPreference('default');
+  });
+
+  afterEach(function () {
+    sandbox.restore();
+  });
+
+  it('should send an instance of Preferences on cliPrefs', testGetCliPrefs);
+  it('should send an instance of Preferences on gitLabPrefs', testGetGitlabPrefs);
+  it('should not send an instance of Preferences on any other', testInvalidPref);
+  it('should update cliPrefs', testSetCliPrefs);
+  it('should update gitLabPrefs', testSetGitlabPrefs);
+  it('should update loggerPrefs; maxSize', testSetLoggerMaxSizePrefs);
+  it('should update loggerPrefs; blacklist', testSetLoggerBlacklistPrefs);
+});
+
+function testGetCliPrefs(done) {
   const cliPrefs = preferenceManager.getPreference({ name: 'cliPrefs' });
   cliPrefs.should.be.an.instanceOf(Preferences);
   done();
-};
+}
 
-const testGetGitlabPrefs = (done) => {
+function testGetGitlabPrefs(done) {
   const gitLabPrefs = preferenceManager.getPreference({ name: 'gitLabPrefs' });
   gitLabPrefs.should.be.an.instanceOf(Preferences);
   done();
-};
+}
 
-const testInvalidPref = (done) => {
+function testInvalidPref(done) {
   const invalidPrefs = preferenceManager.getPreference({ name: 'others' });
   invalidPrefs.should.not.be.an.instanceOf(Preferences);
   invalidPrefs.should.deep.equal({});
   done();
-};
+}
 
-const testSetCliPrefs = (done) => {
+function testSetCliPrefs(done) {
   preferenceManager.setPreference({
     name: 'cliPrefs',
     values: {
@@ -41,9 +59,9 @@ const testSetCliPrefs = (done) => {
   const cliPrefs = preferenceManager.getPreference({ name: 'cliPrefs' });
   cliPrefs.should.deep.property('submission', { language: 'python3.5' });
   done();
-};
+}
 
-const testSetGitlabPrefs = (done) => {
+function testSetGitlabPrefs(done) {
   preferenceManager.setPreference({
     name: 'gitLabPrefs',
     values: {
@@ -53,9 +71,9 @@ const testSetGitlabPrefs = (done) => {
   const gitLabPrefs = preferenceManager.getPreference({ name: 'gitLabPrefs' });
   gitLabPrefs.should.deep.property('username', 'test2');
   done();
-};
+}
 
-const testSetLoggerMaxSizePrefs = (done) => {
+function testSetLoggerMaxSizePrefs(done) {
   const testSize = 674850;
   preferenceManager.setPreference({
     name: 'loggerPrefs',
@@ -68,9 +86,9 @@ const testSetLoggerMaxSizePrefs = (done) => {
   const loggerPrefs = preferenceManager.getPreference({ name: 'cliPrefs' }).logger;
   loggerPrefs.should.deep.property('maxSize', testSize);
   done();
-};
+}
 
-const testSetLoggerBlacklistPrefs = (done) => {
+function testSetLoggerBlacklistPrefs(done) {
   preferenceManager.setPreference({
     name: 'loggerPrefs',
     values: {
@@ -84,23 +102,4 @@ const testSetLoggerBlacklistPrefs = (done) => {
   const loggerPrefs = preferenceManager.getPreference({ name: 'cliPrefs' }).logger;
   loggerPrefs.blacklist.should.include('testkey');
   done();
-};
-
-
-describe('for preference manager', () => {
-  before(() => {
-    preferenceManager.setPreference('default');
-  });
-
-  afterEach(() => {
-    sandbox.restore();
-  });
-
-  it('should send an instance of Preferences on cliPrefs', testGetCliPrefs);
-  it('should send an instance of Preferences on gitLabPrefs', testGetGitlabPrefs);
-  it('should not send an instance of Preferences on any other', testInvalidPref);
-  it('should update cliPrefs', testSetCliPrefs);
-  it('should update gitLabPrefs', testSetGitlabPrefs);
-  it('should update loggerPrefs; maxSize', testSetLoggerMaxSizePrefs);
-  it('should update loggerPrefs; blacklist', testSetLoggerBlacklistPrefs);
-});
+}

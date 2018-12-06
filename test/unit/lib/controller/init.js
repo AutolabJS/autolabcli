@@ -14,8 +14,22 @@ chai.should();
 
 const sandbox = sinon.createSandbox();
 
+describe('For init controller', function () {
+  beforeEach(function () {
+    const mocklogger = sandbox.stub(logger);
+    program.logger(mocklogger);
+  });
+
+  afterEach(function () {
+    sandbox.restore();
+  });
+
+  it('should call the action of program with right arguments', testInitValid);
+});
+
+
 /* eslint-disable max-lines-per-function */
-const testInitValid = async () => {
+async function testInitValid() {
   const mockInitInput = sandbox.mock(initInput);
   const mockInitOutput = sandbox.mock(initOutput);
   const mockInitModel = sandbox.mock(initModel);
@@ -54,17 +68,4 @@ const testInitValid = async () => {
   mockInitInput.verify();
   mockInitOutput.verify();
   mockInitModel.verify();
-};
-
-describe('For init controller', () => {
-  beforeEach(() => {
-    const mocklogger = sandbox.stub(logger);
-    program.logger(mocklogger);
-  });
-
-  afterEach(() => {
-    sandbox.restore();
-  });
-
-  it('should call the action of program with right arguments', testInitValid);
-});
+}

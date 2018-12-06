@@ -15,7 +15,12 @@ chai.should();
 
 const sandbox = sinon.createSandbox();
 
-const testSesionValidator = (done) => {
+describe('for command validator', function () {
+  it('should have session validator as expected', testSesionValidator);
+  it('should return true for valid session', testValidSession);
+});
+
+function testSesionValidator(done) {
   const logSpy = sandbox.stub(console, 'log');
   const mockPreferenceManager = sandbox.mock(preferenceManager);
   mockPreferenceManager.expects('getPreference').once().returns(-1);
@@ -27,9 +32,9 @@ const testSesionValidator = (done) => {
   mockPreferenceManager.verify();
   sandbox.restore();
   done();
-};
+}
 
-const testValidSession = (done) => {
+function testValidSession(done) {
   const mockPreferenceManager = sandbox.mock(preferenceManager);
   mockPreferenceManager.expects('getPreference').once().returns({ storedTime: Date.now() });
 
@@ -39,9 +44,4 @@ const testValidSession = (done) => {
   mockPreferenceManager.verify();
   sandbox.restore();
   done();
-};
-
-describe('for command validator', () => {
-  it('should have session validator as expected', testSesionValidator);
-  it('should return true for valid session', testValidSession);
-});
+}

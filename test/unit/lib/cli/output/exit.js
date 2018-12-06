@@ -10,16 +10,21 @@ chai.should();
 
 const sandbox = sinon.createSandbox();
 
-const testSuccessfulLogout = (done) => {
+describe('For exit output', function () {
+  it('should send logout message on succesful logout', testSuccessfulLogout);
+  it('should display error message for invalid event', testInvalidEvent);
+});
+
+function testSuccessfulLogout(done) {
   const logStub = sandbox.stub(console, 'log');
   exitOutput.sendOutput({ name: 'logout_success' });
   logStub.should.have.been.calledWith(chalk.green('Your have been succesfully logged out!'));
 
   sandbox.restore();
   done();
-};
+}
 
-const testInvalidEvent = (done) => {
+function testInvalidEvent(done) {
   const logStub = sandbox.stub(console, 'log');
 
   exitOutput.sendOutput({
@@ -29,9 +34,4 @@ const testInvalidEvent = (done) => {
   logStub.should.have.been.calledWith(chalk.red('\nInvalid Event'));
   sandbox.restore();
   done();
-};
-
-describe('For exit output', () => {
-  it('should send logout message on succesful logout', testSuccessfulLogout);
-  it('should display error message for invalid event', testInvalidEvent);
-});
+}
