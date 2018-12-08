@@ -4,16 +4,25 @@ const sinonChai = require('sinon-chai');
 const Preferences = require('preferences');
 
 const preferenceManager = require('../../../../lib/utils/preference-manager');
+const defaultPrefs = require('../../../../default-prefs.json');
+
+const { submission } = defaultPrefs;
+// eslint-disable-next-line camelcase
+const { main_server } = defaultPrefs;
+const { gitlab } = defaultPrefs;
+const defaultLogger = defaultPrefs.logger;
+
 
 chai.use(sinonChai);
 chai.should();
 
 const sandbox = sinon.createSandbox();
 
+// eslint-disable-next-line max-lines-per-function
 describe('for preference manager', function () {
-  before(function () {
-    preferenceManager.setPreference('default');
-  });
+  after(setPrefsDefaults);
+
+  beforeEach(setPrefsDefaults);
 
   afterEach(function () {
     sandbox.restore();
@@ -27,6 +36,19 @@ describe('for preference manager', function () {
   it('should update loggerPrefs; maxSize', testSetLoggerMaxSizePrefs);
   it('should update loggerPrefs; blacklist', testSetLoggerBlacklistPrefs);
 });
+
+function setPrefsDefaults() {
+  preferenceManager.setPreference({
+    name: 'cliPrefs',
+    values: {
+      main_server,
+      submission,
+      logger: { ...defaultLogger },
+      gitlab,
+    },
+  });
+  preferenceManager.deleteCredentials();
+}
 
 function testGetCliPrefs(done) {
   const cliPrefs = preferenceManager.getPreference({ name: 'cliPrefs' });
@@ -57,7 +79,7 @@ function testSetCliPrefs(done) {
     },
   });
   const cliPrefs = preferenceManager.getPreference({ name: 'cliPrefs' });
-  cliPrefs.should.deep.property('submission', { language: 'python3.5' });
+  cliPrefs.submission.language.should.equal('python3.5');
   done();
 }
 

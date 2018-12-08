@@ -14,13 +14,24 @@ const defaultPrefPath = path.join(__dirname, '../../default-prefs.json');
 const defaultPrefs = JSON.parse(fs.readFileSync(defaultPrefPath, 'utf8'));
 
 const { supportedLanguages } = defaultPrefs;
+const { submission } = defaultPrefs;
+// eslint-disable-next-line camelcase
+const { main_server } = defaultPrefs;
+const { gitlab } = defaultPrefs;
+const defaultLogger = defaultPrefs.logger;
+
 
 chai.use(sinonChai);
 chai.should();
 
 const sandbox = sinon.createSandbox();
 
+// eslint-disable-next-line max-lines-per-function
 describe('Integration test for prefs command', function () {
+  after(setPrefsDefaults);
+
+  beforeEach(setPrefsDefaults);
+
   afterEach(function () {
     sandbox.restore();
   });
@@ -43,6 +54,19 @@ describe('Integration test for prefs command', function () {
   it('should be able to add to log file size using prompt', testChangeLoggerFileSizePrompt);
   it('should display error message for invalid command', testInvalidCommand);
 });
+
+function setPrefsDefaults() {
+  preferenceManager.setPreference({
+    name: 'cliPrefs',
+    values: {
+      main_server,
+      submission,
+      logger: { ...defaultLogger },
+      gitlab,
+    },
+  });
+  preferenceManager.deleteCredentials();
+}
 
 async function testChangeLang() {
   const logSpy = sandbox.stub(console, 'log');
@@ -121,19 +145,12 @@ async function testChangeLoggerBlacklist() {
   const logSpy = sandbox.stub(console, 'log');
   const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
 
-  const testSize = 786770;
-  const testOutput = {
-    maxSize: testSize,
-    logDirectory: '.autolabjs',
-    logLocation: 'cli.log',
-    blacklist: ['log', 'password', 'privateToken', 'usrname'],
-  };
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'prefs', 'logger',
     '--blacklist', 'usrname'];
 
   await controller.start();
-  preferenceManager.getPreference({ name: 'cliPrefs' }).logger.should.deep.equal(testOutput);
+  preferenceManager.getPreference({ name: 'cliPrefs' }).logger.blacklist.should.include('usrname');
   logSpy.should.have.been.calledWith(chalk.green('Your logger preferences have been updated.'));
   mocklogger.verify();
   sandbox.restore();
@@ -152,17 +169,14 @@ async function testShowPrefs() {
     colWidths: [prefsColWidth, valuesColWidth],
   });
 
-  const testMSPort = 9090;
-  const testSize = 786770;
-
   table.push(
-    ['Gitlab host', 'abc.com'],
-    ['Main Server host', 'xyz.com'],
-    ['Main Server port', testMSPort],
-    ['Logger file MaxSize', testSize],
-    ['Log file Directory', '.autolabjs'],
-    ['Log file name', 'cli.log'],
-    ['Logger blacklist keys', ['log', 'password', 'privateToken', 'usrname']],
+    ['Gitlab host', gitlab.host],
+    ['Main Server host', main_server.host],
+    ['Main Server port', main_server.port],
+    ['Logger file MaxSize', defaultLogger.maxSize],
+    ['Log file Directory', defaultLogger.logDirectory],
+    ['Log file name', defaultLogger.logLocation],
+    ['Logger blacklist keys', defaultLogger.blacklist],
   );
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'prefs', 'show'];

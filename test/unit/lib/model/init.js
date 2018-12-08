@@ -31,10 +31,17 @@ describe('for initModel', function () {
   it('should return code 4 if unkown error occurs', testNetworkError);
 });
 
+// eslint-disable-next-line max-lines-per-function
 async function testSucessfulLogin() {
   const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
+  const mockpreferenceManager = sandbox.mock(preferenceManager);
+  const testUser = {
+    username: 'testuser3',
+    password: '123',
+  };
+
   const fakeServer = nock(`https://${host}`)
-    .post('/api/v4/session?login=testuser3&password=123');
+    .post(`/api/v4/session?login=${testUser.username}&password=${testUser.password}`);
 
   const httpOK = 200;
 
@@ -43,20 +50,34 @@ async function testSucessfulLogin() {
     name: 'test_user3',
     private_token: 'zxcvbnb',
   });
+
+  mockpreferenceManager.expects('setPreference').withExactArgs({
+    name: 'gitLabPrefs',
+    values: {
+      ...testUser,
+      privateToken: 'zxcvbnb',
+    },
+  });
+
   const status = await initModel.authenticate({
     username: 'testuser3',
     password: '123',
   });
   status.code.should.equal(httpOK);
   status.name.should.equal('test_user3');
-  preferenceManager.getPreference({ name: 'gitLabPrefs' }).privateToken.should.equal('zxcvbnb');
+  mockpreferenceManager.verify();
   mocklogger.verify();
 }
 
 async function testInvalidLogin() {
   const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
+  const testUser = {
+    username: 'testuser',
+    password: '123',
+  };
+
   const fakeServer = nock(`https://${host}`)
-    .post('/api/v4/session?login=testuser&password=123');
+    .post(`/api/v4/session?login=${testUser.username}&password=${testUser.password}`);
 
   const httpUnauth = 401;
   fakeServer.reply(httpUnauth);
