@@ -12,52 +12,55 @@ const prefsController = require('../../../../lib/controller/prefs');
 chai.use(sinonChai);
 chai.should();
 
-describe('For prefs controller', () => {
-  const sandbox = sinon.createSandbox();
+const sandbox = sinon.createSandbox();
 
-  beforeEach(() => {
+describe('For prefs controller', function () {
+  beforeEach(function () {
     const mocklogger = sandbox.stub(logger);
     program.logger(mocklogger);
   });
 
-  afterEach(() => {
+  afterEach(function () {
     sandbox.restore();
   });
 
-  it('should call the prefs action of program with right arguments when command is valid', (done) => {
-    const mockprefsInput = sandbox.mock(prefsInput);
-    const mockprefsOutput = sandbox.mock(prefsOutput);
-    const mockprefsModel = sandbox.mock(prefsModel);
+  it('should call the prefs action of program with right arguments when command is valid', testPrefsValid);
+});
 
-    const testMsPort = 8999;
+/* eslint-disable max-lines-per-function */
+function testPrefsValid(done) {
+  const mockprefsInput = sandbox.mock(prefsInput);
+  const mockprefsOutput = sandbox.mock(prefsOutput);
+  const mockprefsModel = sandbox.mock(prefsModel);
 
-    const changedPrefs = {
-      name: 'server_changed',
-      details: {
-        type: 'ms',
-        host: 'abc',
-        port: testMsPort,
-      },
-    };
-    mockprefsInput.expects('getInput').once().withExactArgs({ preference: 'changeserver' }, {
-      type: 'ms', host: 'abc', port: '8999', lang: undefined, maxsize: undefined, blacklist: undefined,
-    }).resolves(changedPrefs);
-    mockprefsModel.expects('storePrefs').withExactArgs(changedPrefs).resolves(changedPrefs);
-    mockprefsOutput.expects('sendOutput').withExactArgs(changedPrefs);
+  const testMsPort = 8999;
 
-    prefsController.addTo(program);
-
-    program.exec(['prefs', 'changeserver'], {
+  const changedPrefs = {
+    name: 'server_changed',
+    details: {
       type: 'ms',
       host: 'abc',
-      port: '8999',
-    });
+      port: testMsPort,
+    },
+  };
+  mockprefsInput.expects('getInput').once().withExactArgs({ preference: 'changeserver' }, {
+    type: 'ms', host: 'abc', port: '8999', lang: undefined, maxsize: undefined, blacklist: undefined,
+  }).resolves(changedPrefs);
+  mockprefsModel.expects('storePrefs').withExactArgs(changedPrefs).resolves(changedPrefs);
+  mockprefsOutput.expects('sendOutput').withExactArgs(changedPrefs);
 
-    setTimeout(() => {
-      mockprefsInput.verify();
-      mockprefsOutput.verify();
-      mockprefsModel.verify();
-      done();
-    }, 0);
+  prefsController.addTo(program);
+
+  program.exec(['prefs', 'changeserver'], {
+    type: 'ms',
+    host: 'abc',
+    port: '8999',
   });
-});
+
+  setTimeout(() => {
+    mockprefsInput.verify();
+    mockprefsOutput.verify();
+    mockprefsModel.verify();
+    done();
+  }, 0);
+}

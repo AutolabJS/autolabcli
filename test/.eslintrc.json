@@ -1,5 +1,16 @@
 {
+    "plugins" : [
+        "mocha"
+    ],
     "rules": {
-        "max-lines-per-function" : ["off"]
+        "func-names" : "off",
+        "prefer-arrow-callback" : "off",
+        "no-use-before-define" : "off",
+
+        "mocha/handle-done-callback" : "error",
+        "mocha/no-mocha-arrows" : "error",
+        "mocha/no-setup-in-describe" : "error",
+        "mocha/no-top-level-hooks" : "error",
+        "mocha/no-nested-tests" : "error"
     }
 }

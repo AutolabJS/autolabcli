@@ -8,18 +8,21 @@ const controller = require('../../lib/controller');
 chai.use(sinonChai);
 chai.should();
 
-describe('For application entry point', () => {
-  const sandbox = sinon.createSandbox();
+const sandbox = sinon.createSandbox();
 
-  afterEach(() => {
+
+describe('For application entry point', function () {
+  afterEach(function () {
     sandbox.restore();
   });
 
-  it('should start the controller', () => {
-    const mockController = sandbox.mock(controller);
-    mockController.expects('start').once();
-    exec('npm link;autolabjs', () => {
-      mockController.verify();
-    });
-  });
+  it('should start the controller', testStartController);
 });
+
+function testStartController() {
+  const mockController = sandbox.mock(controller);
+  mockController.expects('start').once();
+  exec('npm link;autolabjs', () => {
+    mockController.verify();
+  });
+}

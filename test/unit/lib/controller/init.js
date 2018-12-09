@@ -12,56 +12,60 @@ const initController = require('../../../../lib/controller/init');
 chai.use(sinonChai);
 chai.should();
 
-describe('For init controller', () => {
-  const sandbox = sinon.createSandbox();
+const sandbox = sinon.createSandbox();
 
-  beforeEach(() => {
+describe('For init controller', function () {
+  beforeEach(function () {
     const mocklogger = sandbox.stub(logger);
     program.logger(mocklogger);
   });
 
-  afterEach(() => {
+  afterEach(function () {
     sandbox.restore();
   });
 
-  it('should call the action of program with right arguments', async () => {
-    const mockInitInput = sandbox.mock(initInput);
-    const mockInitOutput = sandbox.mock(initOutput);
-    const mockInitModel = sandbox.mock(initModel);
+  it('should call the action of program with right arguments', testInitValid);
+});
 
-    const httpOK = 200;
 
-    mockInitOutput.expects('sendOutput').withExactArgs({
-      name: 'welcome',
-    });
-    mockInitInput.expects('getInput').once().withExactArgs({}, { u: 'testuser1', p: '123' }).resolves({ username: 'testuser1', password: '123' });
-    mockInitOutput.expects('sendOutput').withExactArgs({
-      name: 'authentication_started',
-    });
-    mockInitModel.expects('authenticate').withExactArgs({
-      username: 'testuser1',
-      password: '123',
-    }).resolves({
+/* eslint-disable max-lines-per-function */
+async function testInitValid() {
+  const mockInitInput = sandbox.mock(initInput);
+  const mockInitOutput = sandbox.mock(initOutput);
+  const mockInitModel = sandbox.mock(initModel);
+
+  const httpOK = 200;
+
+  mockInitOutput.expects('sendOutput').withExactArgs({
+    name: 'welcome',
+  });
+  mockInitInput.expects('getInput').once().withExactArgs({}, { u: 'testuser1', p: '123' }).resolves({ username: 'testuser1', password: '123' });
+  mockInitOutput.expects('sendOutput').withExactArgs({
+    name: 'authentication_started',
+  });
+  mockInitModel.expects('authenticate').withExactArgs({
+    username: 'testuser1',
+    password: '123',
+  }).resolves({
+    name: 'test_user1',
+    code: httpOK,
+  });
+  mockInitOutput.expects('sendOutput').withExactArgs({
+    name: 'authentication_ended',
+    details: {
       name: 'test_user1',
       code: httpOK,
-    });
-    mockInitOutput.expects('sendOutput').withExactArgs({
-      name: 'authentication_ended',
-      details: {
-        name: 'test_user1',
-        code: httpOK,
-      },
-    });
-
-    initController.addTo(program);
-
-    await program.exec(['init'], {
-      u: 'testuser1',
-      p: '123',
-    });
-
-    mockInitInput.verify();
-    mockInitOutput.verify();
-    mockInitModel.verify();
+    },
   });
-});
+
+  initController.addTo(program);
+
+  await program.exec(['init'], {
+    u: 'testuser1',
+    p: '123',
+  });
+
+  mockInitInput.verify();
+  mockInitOutput.verify();
+  mockInitModel.verify();
+}

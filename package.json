@@ -52,6 +52,7 @@
     "eslint": "^5.7.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-mocha": "^5.2.0",
     "jsinspect": "^0.12.7",
     "madge": "^3.3.0",
     "mocha": "^4.1.0",

@@ -17,53 +17,58 @@ const mockOptions = {
   commitHash: '',
 };
 
-describe('for eval getInput', () => {
-  const sandbox = sinon.createSandbox();
+const sandbox = sinon.createSandbox();
 
-  afterEach(() => {
+describe('for eval getInput', function () {
+  afterEach(function () {
     sandbox.restore();
   });
 
-  it('should return promise with correct values when flags provided', async () => {
-    const mockPreferenceManager = sandbox.mock(preferenceManager);
-    mockPreferenceManager.expects('getPreference').once().returns({ username: 'testuser' });
-    const evalOptions = await evalInput.getInput(null, {
-      l: 'test3',
-      lang: 'java',
-    });
-    evalOptions.should.deep.equal(mockOptions);
-  });
-
-  it('should return promise with correct values when flags not provided', () => {
-    const mockInquirer = sandbox.mock(inquirer);
-    mockInquirer.expects('prompt').resolves(mockOptions);
-
-    return evalInput.getInput(null, { l: 'test3', lang: 'cpp15' }).should.eventually.deep.equal(mockOptions);
-  });
-
-  it('should not accept empty getInput', async () => {
-    let promptStub;
-    const invalidInputTester = () => {
-      const prompt = promptStub.getCalls()[0].args[0][0];
-      const emptyLabPrompt = prompt.validate('');
-      emptyLabPrompt.should.equal('Please enter the lab name');
-      const validLab = prompt.validate('test3');
-      validLab.should.equal(true);
-      return mockOptions;
-    };
-
-    promptStub = sandbox.stub(inquirer, 'prompt').callsFake(invalidInputTester);
-    await evalInput.getInput(null, {});
-  });
-
-  it('should return id provided in options for root user', async () => {
-    const mockPreferenceManager = sandbox.mock(preferenceManager);
-    mockPreferenceManager.expects('getPreference').once().returns({ username: 'root' });
-    const evalOptions = await evalInput.getInput(null, {
-      l: 'test3',
-      lang: 'java',
-      i: '12345',
-    });
-    evalOptions.should.deep.equal({ ...mockOptions, idNo: '12345' });
-  });
+  it('should return promise with correct values when flags provided', testEvalFlags);
+  it('should return promise with correct values when flags not provided', testEvalNoFlags);
+  it('should not accept empty getInput', testEmptyInput);
+  it('should return id provided in options for root user', testRootUser);
 });
+
+async function testEvalFlags() {
+  const mockPreferenceManager = sandbox.mock(preferenceManager);
+  mockPreferenceManager.expects('getPreference').once().returns({ username: 'testuser' });
+  const evalOptions = await evalInput.getInput(null, {
+    l: 'test3',
+    lang: 'java',
+  });
+  evalOptions.should.deep.equal(mockOptions);
+}
+
+function testEvalNoFlags() {
+  const mockInquirer = sandbox.mock(inquirer);
+  mockInquirer.expects('prompt').resolves(mockOptions);
+
+  return evalInput.getInput(null, { l: 'test3', lang: 'cpp15' }).should.eventually.deep.equal(mockOptions);
+}
+
+async function testEmptyInput() {
+  let promptStub;
+  function invalidInputTester() {
+    const prompt = promptStub.getCalls()[0].args[0][0];
+    const emptyLabPrompt = prompt.validate('');
+    emptyLabPrompt.should.equal('Please enter the lab name');
+    const validLab = prompt.validate('test3');
+    validLab.should.equal(true);
+    return mockOptions;
+  }
+
+  promptStub = sandbox.stub(inquirer, 'prompt').callsFake(invalidInputTester);
+  await evalInput.getInput(null, {});
+}
+
+async function testRootUser() {
+  const mockPreferenceManager = sandbox.mock(preferenceManager);
+  mockPreferenceManager.expects('getPreference').once().returns({ username: 'root' });
+  const evalOptions = await evalInput.getInput(null, {
+    l: 'test3',
+    lang: 'java',
+    i: '12345',
+  });
+  evalOptions.should.deep.equal({ ...mockOptions, idNo: '12345' });
+}
