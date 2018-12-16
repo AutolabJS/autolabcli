@@ -11,3 +11,4 @@ script:
   - npm run integration
   - npm run post-integration
   - npm run quality
+  - npm run dependency-check
