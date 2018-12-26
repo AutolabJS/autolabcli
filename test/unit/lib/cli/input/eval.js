@@ -11,10 +11,14 @@ chai.use(sinonChai);
 chai.should();
 
 const mockOptions = {
-  lab: 'test3',
-  lang: 'java',
-  idNo: 'testuser',
-  commitHash: '',
+  name: 'evaluate',
+  details: {
+    lab: 'test3',
+    lang: 'java',
+    idNo: 'testuser',
+    i: undefined,
+    commitHash: '',
+  },
 };
 
 const sandbox = sinon.createSandbox();
@@ -40,11 +44,22 @@ async function testEvalFlags() {
   evalOptions.should.deep.equal(mockOptions);
 }
 
-function testEvalNoFlags() {
+async function testEvalNoFlags() {
   const mockInquirer = sandbox.mock(inquirer);
-  mockInquirer.expects('prompt').resolves(mockOptions);
+  const mockPreferenceManager = sandbox.mock(preferenceManager);
+  mockPreferenceManager.expects('getPreference').once().returns({ username: 'testuser' });
+  mockInquirer.expects('prompt').resolves({
+    lab: 'test3',
+    lang: 'java',
+    idNo: 'testuser',
+    i: undefined,
+    commitHash: '',
+  });
 
-  return evalInput.getInput(null, { l: 'test3', lang: 'cpp15' }).should.eventually.deep.equal(mockOptions);
+  const ret = await evalInput.getInput(null, { lang: 'cpp15' });
+  ret.should.deep.equal(mockOptions);
+  mockInquirer.verify();
+  mockPreferenceManager.verify();
 }
 
 async function testEmptyInput() {
@@ -70,5 +85,12 @@ async function testRootUser() {
     lang: 'java',
     i: '12345',
   });
-  evalOptions.should.deep.equal({ ...mockOptions, idNo: '12345' });
+  evalOptions.should.deep.equal({
+    name: 'evaluate',
+    details: {
+      ...mockOptions.details,
+      i: '12345',
+      idNo: 'root',
+    },
+  });
 }

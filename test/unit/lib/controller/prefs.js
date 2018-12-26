@@ -8,7 +8,7 @@ const prefsInput = require('../../../../lib/cli/input/prefs');
 const prefsOutput = require('../../../../lib/cli/output/prefs');
 const prefsModel = require('../../../../lib/model/prefs');
 const prefsController = require('../../../../lib/controller/prefs');
-const validator = require('../../../../lib/controller/validation');
+const validator = require('../../../../lib/controller/validate/prefs');
 
 chai.use(sinonChai);
 chai.should();
@@ -51,9 +51,7 @@ function testPrefsValid(done) {
   }).resolves(changedPrefs);
   mockprefsModel.expects('storePrefs').withExactArgs(changedPrefs).resolves(changedPrefs);
   mockprefsOutput.expects('sendOutput').withExactArgs(changedPrefs);
-  mockValidator.expects('prefs').withExactArgs({ preference: 'changeserver' }, {
-    type: 'ms', host: 'abc', port: '8999', lang: undefined, maxsize: undefined, blacklist: undefined,
-  }).returns(true);
+  mockValidator.expects('validate').withExactArgs(changedPrefs).returns(changedPrefs);
 
   prefsController.addTo(program);
 
@@ -73,10 +71,31 @@ function testPrefsValid(done) {
 }
 
 function testPrefsInvalid(done) {
+  const mockprefsInput = sandbox.mock(prefsInput);
+  const mockprefsOutput = sandbox.mock(prefsOutput);
+  const mockprefsModel = sandbox.mock(prefsModel);
   const mockValidator = sandbox.mock(validator);
-  mockValidator.expects('prefs').withExactArgs({ preference: 'changeserver' }, {
+
+  const changedPrefs = {
+    name: 'server_changed',
+    details: {
+      type: 'github',
+      host: 'abc',
+      port: '8999',
+    },
+  };
+  const invalidPrefEvent = {
+    name: 'invalid_server',
+    details: {
+      supportedServers: ['ms', 'gitlab'],
+    },
+  };
+  mockprefsInput.expects('getInput').once().withExactArgs({ preference: 'changeserver' }, {
     type: 'github', host: 'abc', port: '8999', lang: undefined, maxsize: undefined, blacklist: undefined,
-  }).returns(false);
+  }).resolves(changedPrefs);
+  mockValidator.expects('validate').withExactArgs(changedPrefs).returns(invalidPrefEvent);
+  mockprefsModel.expects('storePrefs').withExactArgs(invalidPrefEvent).resolves(invalidPrefEvent);
+  mockprefsOutput.expects('sendOutput').withExactArgs(invalidPrefEvent);
 
   prefsController.addTo(program);
 

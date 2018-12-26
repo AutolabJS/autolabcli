@@ -13,10 +13,13 @@ const preferenceManager = require('../../../../lib/utils/preference-manager');
 const evalModel = require('../../../../lib/model/eval');
 
 const mockOptions = {
-  lab: 'test3',
-  lang: 'java',
-  idNo: 'testuser',
-  commitHash: '',
+  name: 'evaluate',
+  details: {
+    lab: 'test3',
+    lang: 'java',
+    idNo: 'testuser',
+    commitHash: '',
+  },
 };
 
 const mockCliPref = {
@@ -37,6 +40,7 @@ describe('for evalModel', function () {
   it('should work as expected on invalid event ', testInvalidEvent);
   it('should work as expected on submission_pending event ', testSubmissionPendingEvent);
   it('should work as expected on default event ', testDefaultEvent);
+  it('should work as expected on invalid evaluate event ', testInvalidEvalEvent);
 });
 
 function testScoresEvent(done) {
@@ -149,5 +153,15 @@ function testDefaultEvent(done) {
   mockIo.verify();
   mockPreferenceManager.verify();
   mockSocket.close();
+  done();
+}
+
+function testInvalidEvalEvent(done) {
+  const spy = sandbox.spy();
+  const evalEvent = {
+    name: 'invalid_id',
+  };
+  evalModel.evaluate(evalEvent, spy);
+  spy.calledWithExactly(evalEvent).should.be.equal(true);
   done();
 }

@@ -3,19 +3,11 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
-const path = require('path');
-const fs = require('fs');
 
 chai.use(sinonChai);
 chai.should();
 
 const prefsInput = require('../../../../../lib/cli/input/prefs');
-const preferenceManager = require('../../../../../lib/utils/preference-manager');
-
-const defaultPrefPath = path.join(__dirname, '../../../../../default-prefs.json');
-const defaultPrefs = JSON.parse(fs.readFileSync(defaultPrefPath, 'utf8'));
-
-const { supportedLanguages } = defaultPrefs;
 
 chai.use(chaiAsPromised);
 chai.should();
@@ -29,20 +21,15 @@ describe('for prefs input', function () {
 
   it('should send the right event when language is changed using prompt', testLangChangePrompt);
   it('should send the right event when language is changed using lang flag', testLangChangeFlag);
-  it('should send the right event when invalid language is provided using lang flag', testInvalidLang);
   it('should prompt when type of the server is not provided', testServerTypePrompt);
   it('should send the right event when main server is changed', testChangeMainServer);
   it('should send the right event when gitlab server is changed', testGitlabChanged);
   it('should prompt when host is not given for changing main server', testMSHostPrompt);
   it('should prompt when host is not given for changing gitlab server', testGitlabHostPrompt);
-  it('should send the appropriate message when invalid host is given for main server', testMSInvalidHost);
-  it('should send the appropriate message when invalid host is given for gitlab server', testGitlabInvalidHost);
-  it('should send the appropriate message when invalid port is given', testInvalidPort);
-  it('should send the appropriate message when invalid server is given', testInvalidServer);
+  it('should send the right event when differnt server is changed', testDefaultServer);
   it('should send the right event when logger prefs are changed', testLoggerPrefs);
   it('should prompt when logger prefs are not given, blacklist', testLoggerBlacklistPrompt);
   it('should prompt when logger prefs are not given, maxsize', testLoggerMaxsizePrompt);
-  it('should send the appropriate message when invalid keyword is given', testInvalidKeyword);
   it('should send the appropriate message  for show argument', testShowPrefs);
   it('should send the appropriate message for invalid prefs commmand', testInvalidCommand);
 });
@@ -65,16 +52,6 @@ async function testLangChangeFlag() {
     name: 'lang_changed',
     details: {
       lang: 'cpp',
-    },
-  });
-}
-
-async function testInvalidLang() {
-  const ret = await prefsInput.getInput({ preference: 'changelang' }, { lang: 'python4' });
-  ret.should.deep.equal({
-    name: 'invalid_lang',
-    details: {
-      supportedLanguages,
     },
   });
 }
@@ -160,54 +137,20 @@ async function testGitlabHostPrompt() {
   });
 }
 
-async function testMSInvalidHost() {
-  const ret = await prefsInput.getInput({
-    preference: 'changeserver',
-  }, {
-    type: 'ms',
-    host: 'abc',
-    port: '555',
-  });
-  ret.should.deep.equal({
-    name: 'invalid_host',
-  });
-}
-
-async function testGitlabInvalidHost() {
-  const ret = await prefsInput.getInput({
-    preference: 'changeserver',
-  }, {
-    type: 'gitlab',
-    host: 'abc',
-  });
-  ret.should.deep.equal({
-    name: 'invalid_host',
-  });
-}
-
-async function testInvalidPort() {
-  const ret = await prefsInput.getInput({
-    preference: 'changeserver',
-  }, {
-    type: 'ms',
-    host: 'abc.com',
-    port: '555a',
-  });
-  ret.should.deep.equal({
-    name: 'invalid_port',
-  });
-}
-
-async function testInvalidServer() {
+async function testDefaultServer() {
   const ret = await prefsInput.getInput({
     preference: 'changeserver',
   }, {
     type: 'github',
+    host: 'abc.com',
+    port: '4849',
   });
   ret.should.deep.equal({
-    name: 'invalid_server',
+    name: 'server_changed',
     details: {
-      supportedServers: ['ms', 'gitlab'],
+      type: 'github',
+      host: 'abc.com',
+      port: '4849',
     },
   });
 }
@@ -259,23 +202,6 @@ async function testLoggerMaxsizePrompt() {
     details: {
       maxSize: testSize,
     },
-  });
-}
-
-async function testInvalidKeyword() {
-  const mockpreferenceManager = sandbox.mock(preferenceManager);
-  mockpreferenceManager.expects('getPreference').withExactArgs({ name: 'cliPrefs' }).returns({
-    logger: {
-      blacklist: ['xyz'],
-    },
-  });
-  const ret = await prefsInput.getInput({
-    preference: 'logger',
-  }, {
-    blacklist: 'xyz',
-  });
-  ret.should.deep.equal({
-    name: 'invalid_blacklist_keyword',
   });
 }
 

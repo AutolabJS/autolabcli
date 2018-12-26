@@ -287,7 +287,7 @@ async function testChangeMSPrompt() {
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'prefs', 'changeserver', '--type', 'ms'];
   const mockInquirer = sandbox.mock(inquirer);
-  const testPort = 5687;
+  const testPort = '5687';
   mockInquirer.expects('prompt').resolves({ host: 'abc.com', port: testPort });
 
   await controller.start();
