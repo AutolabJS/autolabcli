@@ -27,6 +27,7 @@ describe('For eval output', function () {
   it('should start the spinner when evaluation starts', testSpinnerOnEval);
   it('should draw table for scores event and display total score', testDrawTableOnScores);
   it('should show penalty score when status is not 0', testPenalityScore);
+  it('should display error message for invalid lang', testInvalidLang);
   it('should display error message for invalid request', testInvalidRequest);
   it('should display error message for submission_pending event', testSubmissionPending);
   it('should display error message for invalid event', testInvalidEvent);
@@ -85,6 +86,20 @@ function testPenalityScore(done) {
   });
 
   logStub.should.have.been.calledWith(chalk.red('Penalty : ') + 0);
+  sandbox.restore();
+  done();
+}
+
+function testInvalidLang(done) {
+  const logStub = sandbox.stub(console, 'log');
+  evalOutput.sendOutput({
+    name: 'invalid_lang',
+    details: {
+      supportedLanguages: ['java'],
+    },
+  });
+
+  logStub.should.have.been.calledWith(chalk.red('\nPlease provide the a valid language. The supported languages are java'));
   sandbox.restore();
   done();
 }
