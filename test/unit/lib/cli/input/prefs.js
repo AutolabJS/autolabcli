@@ -26,7 +26,7 @@ describe('for prefs input', function () {
   it('should send the right event when gitlab server is changed', testGitlabChanged);
   it('should prompt when host is not given for changing main server', testMSHostPrompt);
   it('should prompt when host is not given for changing gitlab server', testGitlabHostPrompt);
-  it('should send the right event when differnt server is changed', testDefaultServer);
+  it('should send the right event when different server is changed', testDefaultServer);
   it('should send the right event when logger prefs are changed', testLoggerPrefs);
   it('should prompt when logger prefs are not given, blacklist', testLoggerBlacklistPrompt);
   it('should prompt when logger prefs are not given, maxsize', testLoggerMaxsizePrompt);
