@@ -2,9 +2,6 @@ dist: xenial
 
 language: node_js
 
-install:
-  - npm install
-
 script:
   - npm run unit
   - npm run post-unit
