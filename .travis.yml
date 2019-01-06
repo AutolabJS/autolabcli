@@ -1,9 +1,6 @@
-language: node_js
-node_js:
-  - "8"
+dist: xenial
 
-install:
-  - npm install
+language: node_js
 
 script:
   - npm run unit
@@ -11,3 +8,4 @@ script:
   - npm run integration
   - npm run post-integration
   - npm run quality
+  - npm run dependency-check

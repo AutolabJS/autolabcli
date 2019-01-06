@@ -11,7 +11,8 @@
     "feature": "nyc --reporter=lcov --reporter=text-lcov -s --all cucumber-js 'test/feature/features' -r 'test/feature/steps'",
     "post-feature": "nyc report --reporter=lcov > coverage.lcov && codecov -F feature",
     "quality": "eslint ./lib/ ./test/ index.js && jsinspect ./lib ./test/ index.js && buddy ./lib ./test/ index.js;",
-    "module-depencency": "madge --image module-depencency.svg ./lib/ index.js"
+    "module-depencency": "madge --image module-depencency.svg ./lib/ index.js",
+    "dependency-check": "npm outdated || :  && npm-check || :"
   },
   "bin": {
     "autolabjs": "./index.js"
@@ -27,39 +28,37 @@
   },
   "homepage": "https://github.com/AutolabJS/autolabcli#readme",
   "dependencies": {
-    "caporal": "^0.10.0",
-    "chalk": "^2.3.0",
+    "caporal": "^1.1.0",
+    "chalk": "^2.4.1",
     "cli-spinner": "^0.2.8",
     "cli-table": "^0.3.1",
-    "figlet": "^1.2.0",
-    "inquirer": "^5.0.0",
-    "lodash": "^4.17.5",
+    "figlet": "^1.2.1",
+    "inquirer": "^6.2.1",
+    "lodash": "^4.17.11",
     "preferences": "^1.0.2",
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
-    "socket.io-client": "^2.1.0",
-    "validator": "^9.4.1",
-    "winston": "^3.0.0"
+    "socket.io-client": "^2.2.0",
+    "validator": "^10.10.0",
+    "winston": "^3.1.0"
   },
   "devDependencies": {
     "buddy.js": "^0.9.3",
-    "chai": "^4.1.2",
+    "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
-    "codeclimate-test-reporter": "^0.5.0",
     "codecov": "^3.1.0",
-    "coveralls": "^3.0.0",
-    "cucumber": "^4.0.0",
-    "eslint": "^5.7.0",
+    "cucumber": "^5.1.0",
+    "eslint": "^5.11.1",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-mocha": "^5.2.0",
     "jsinspect": "^0.12.7",
     "madge": "^3.3.0",
-    "mocha": "^4.1.0",
-    "mock-stdin": "^0.3.1",
-    "nock": "^9.2.3",
-    "nyc": "^11.4.1",
-    "sinon": "^4.1.5",
-    "sinon-chai": "^2.14.0"
+    "mocha": "^5.2.0",
+    "nock": "^10.0.6",
+    "npm-check": "^5.9.0",
+    "nyc": "^13.1.0",
+    "sinon": "^7.2.2",
+    "sinon-chai": "^3.3.0"
   }
 }
