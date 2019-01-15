@@ -1,9 +1,11 @@
 const {
-  Given, When, Then, Before, After, setDefaultTimeout,
+  Given, When, Then, setDefaultTimeout,
 } = require('cucumber');
 const chai = require('chai');
 const sinonChai = require('sinon-chai');
 const chalk = require('chalk');
+const sinon = require('sinon');
+
 const controller = require('../../../lib/controller');
 const preferenceManager = require('../../../lib/utils/preference-manager');
 
@@ -16,84 +18,149 @@ const defaultTimeoutTime = SECONDS * MSECONDS;
 setDefaultTimeout(defaultTimeoutTime);
 
 const mockOptions = {
-  lab: 'test3',
+  lab: 'test',
   lang: 'java',
   idNo: 'testuser',
   commitHash: '',
 };
 
-Given('I have NOT logged in', () => {
+Given('I have NOT logged in', function () {
   preferenceManager.deleteCredentials();
 });
 
-Given('I have logged in as root', () => {
+Given('I have logged in as root', function () {
   preferenceManager.setPreference({ name: 'gitLabPrefs', values: { username: 'root' } });
 });
 
-When('I run eval command with using {string}', async (inputType) => {
+When('I run eval command with using {string}', async function (inputType) {
+  this.lab = 'test';
   process.argv = ['/usr/local/nodejs/bin/node',
-    '/usr/local/nodejs/bin/autolabjs', 'eval'];
+    '/usr/local/nodejs/bin/autolabjs', 'eval', '-v'];
   if (inputType === 'flags') {
-    process.argv = process.argv.concat(['-l', 'test3', '--lang', 'java']);
+    process.argv = process.argv.concat(['-l', 'test', '--lang', 'java']);
   } else if (inputType === 'prompt') {
-    global.promptStub.resolves(mockOptions);
+    this.promptStub.resolves(mockOptions);
   }
 
   await controller.start();
 });
 
-When('I run eval command using i flag for id', async () => {
+When('I run eval command using i flag for id', async function () {
+  this.lab = 'test';
+  this.idNo = 'AutolabJS_Tester';
   process.argv = ['/usr/local/nodejs/bin/node',
-    '/usr/local/nodejs/bin/autolabjs', 'eval',
-    '-l', 'test3', '--lang', 'java', '-i', 'AutolabJS_Tester'];
+    '/usr/local/nodejs/bin/autolabjs', 'eval', '-v',
+    '-l', 'test', '--lang', 'java', '-i', 'AutolabJS_Tester'];
   await controller.start();
 });
 
-When('I run eval command without using i flag for id', async () => {
+When('I run eval command without using i flag for id', async function () {
+  this.lab = 'test';
+  this.idNo = 'root';
   process.argv = ['/usr/local/nodejs/bin/node',
-    '/usr/local/nodejs/bin/autolabjs', 'eval',
-    '-l', 'test3', '--lang', 'java'];
+    '/usr/local/nodejs/bin/autolabjs', 'eval', '-v',
+    '-l', 'test', '--lang', 'java'];
   await controller.start();
 });
 
-When('I run eval command with invalid lab', async () => {
+When('I run eval command with invalid lab', async function () {
+  this.lab = 'test1000';
+  this.idNo = 'AutolabJS_Tester';
   process.argv = ['/usr/local/nodejs/bin/node',
-    '/usr/local/nodejs/bin/autolabjs', 'eval',
+    '/usr/local/nodejs/bin/autolabjs', 'eval', '-v',
     '-l', 'test1000', '--lang', 'java'];
   await controller.start();
 });
 
-Then('I should be displayed an error message for invalid session', (done) => {
+Then('I should be displayed an error message for invalid session', function (done) {
   const testSeconds = 1.5;
   const testTimeout = testSeconds * MSECONDS;
   setTimeout(() => {
-    global.logSpy.should.have.been.calledWith(chalk.red('Your session has expired. Please run \'autolabjs init\' to login again'));
+    this.logSpy.should.have.been.calledWith(chalk.red('Your session has expired. Please run \'autolabjs init\' to login again'));
+
+    this.loggerStub.should.have.been.calledWith({ level: 'info', message: 'Eval command invoked.', module: 'Eval' });
+    this.loggerStub.should.have.been.calledWith({ level: 'debug', message: 'Session expired!', module: 'Command Validator' });
     done();
   }, testTimeout);
 });
 
-Then('I should be able to submit for student with the given id', (done) => {
+Then('I should be able to submit for student with the given id', function (done) {
   const testSeconds = 6.5;
   const testTimeout = testSeconds * MSECONDS;
   setTimeout(() => {
-    global.logSpy.should.have.been.calledWith(chalk.green('\nSubmission successful. Retreiving results'));
+    this.logSpy.should.have.been.calledWith(chalk.green('\nSubmission successful. Retreiving results'));
+
+    const msHost = preferenceManager.getPreference({ name: 'cliPrefs' }).main_server.host;
+    const msPort = preferenceManager.getPreference({ name: 'cliPrefs' }).main_server.port;
+    this.loggerStub.should.have.been.calledWith({ level: 'info', message: 'Eval command invoked.', module: 'Eval' });
+    this.loggerStub.should.have.been.calledWith({ level: 'debug', message: 'Fetching id to submit.', module: 'Eval Input' });
+    this.loggerStub.should.have.been.calledWith({ level: 'debug', message: 'Evaluate request for', module: 'Eval' });
+    this.loggerStub.should.have.been.calledWith({
+      level: 'debug',
+      message: `{"name":"evaluate","details":{"idNo":"${this.idNo}","lab":"${this.lab}","lang":"java","commitHash":""}}`,
+      module: 'Eval',
+    });
+    this.loggerStub.should.have.been.calledWith({
+      level: 'debug',
+      message: `Opening a socket connection to http://${msHost}:${msPort}`,
+      module: 'Eval Model',
+    });
+    this.loggerStub.should.have.been.calledWith({
+      level: 'debug',
+      message: 'Sucessfully Sumbitted. Evaluated results',
+      module: 'Eval Model',
+    });
+    this.loggerStub.should.have.been.calledWithMatch(sinon.match.has('message', sinon.match('"marks":[0]')));
     done();
   }, testTimeout);
 });
 
-Then('I should be displayed an error message for invalid submission', (done) => {
+Then('I should be displayed an error message for invalid submission', function (done) {
   const testSeconds = 2.5;
   const testTimeout = testSeconds * MSECONDS;
   setTimeout(() => {
-    global.logSpy.should.have.been.calledWith(chalk.red('\nAccess Denied. Please try submitting again'));
+    this.logSpy.should.have.been.calledWith(chalk.red('\nAccess Denied. Please try submitting again'));
+
+    const msHost = preferenceManager.getPreference({ name: 'cliPrefs' }).main_server.host;
+    const msPort = preferenceManager.getPreference({ name: 'cliPrefs' }).main_server.port;
+    this.loggerStub.should.have.been.calledWith({ level: 'info', message: 'Eval command invoked.', module: 'Eval' });
+    this.loggerStub.should.have.been.calledWith({ level: 'debug', message: 'Fetching id to submit.', module: 'Eval Input' });
+    this.loggerStub.should.have.been.calledWith({ level: 'debug', message: 'Evaluate request for', module: 'Eval' });
+    if (this.idNo === 'root') {
+      this.loggerStub.should.have.been.calledWith({ level: 'debug', message: '{"name":"invalid"}', module: 'Eval' });
+    } else {
+      this.loggerStub.should.have.been.calledWith({
+        level: 'debug',
+        message: `{"name":"evaluate","details":{"idNo":"${this.idNo}","lab":"${this.lab}","lang":"java","commitHash":""}}`,
+        module: 'Eval',
+      });
+      this.loggerStub.should.have.been.calledWith({
+        level: 'debug',
+        message: `Opening a socket connection to http://${msHost}:${msPort}`,
+        module: 'Eval Model',
+      });
+      this.loggerStub.should.have.been.calledWith({ level: 'error', message: 'Invalid options provided.', module: 'Eval Model' });
+      this.loggerStub.should.have.been.calledWith({ level: 'debug', message: 'Invalid Lab No', module: 'Eval Model' });
+    }
     done();
   }, testTimeout);
 });
-Then('I should be able to make submisison', (done) => {
+
+Then('I should be able to make submisison', function (done) {
   const testSeconds = 7;
   const testTimeout = testSeconds * MSECONDS;
   setTimeout(() => {
-    global.logSpy.should.have.been.calledWith(`${chalk.green('Total Score: ')}0`);
+    this.logSpy.should.have.been.calledWith(`${chalk.green('Total Score: ')}0`);
+
+    this.loggerStub.should.have.been.calledWith({ level: 'info', message: 'Eval command invoked.', module: 'Eval' });
+    this.loggerStub.should.have.been.calledWith({ level: 'debug', message: 'Fetching id to submit.', module: 'Eval Input' });
+    this.loggerStub.should.have.been.calledWith({ level: 'debug', message: 'Evaluate request for', module: 'Eval' });
+    this.loggerStub.should.have.been.calledWith({
+      level: 'debug',
+      message: `{"name":"evaluate","details":{"idNo":"AutolabJS_Tester","lab":"${this.lab}","lang":"java","commitHash":""}}`,
+      module: 'Eval',
+    });
+    this.loggerStub.should.have.been.calledWithMatch(sinon.match.has('message', sinon.match('"marks":[0]')));
     done();
   }, testTimeout);
 });
