@@ -1,0 +1,11 @@
+{
+    "plugins" : [
+        "cucumber"
+    ],
+    "rules": {
+        "rules": {
+            "cucumber/async-then": 2,
+            "no-arrow-functions": 2
+        }
+    }
+}
