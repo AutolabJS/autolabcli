@@ -7,8 +7,8 @@ const sinonChai = require('sinon-chai');
 chai.use(sinonChai);
 chai.should();
 
-const preferenceManager = require('../../../../lib/utils/preference-manager');
-const exitModel = require('../../../../lib/model/exit');
+const preferenceManager = require('@utils/preference-manager');
+const exitModel = require('@model/exit');
 
 chai.use(chaiAsPromised);
 chai.should();

@@ -5,9 +5,9 @@ const chalk = require('chalk');
 const inquirer = require('inquirer');
 const Table = require('cli-table');
 const io = require('socket.io-client');
-const controller = require('../../lib/controller');
-const preferenceManager = require('../../lib/utils/preference-manager');
-const commandValidator = require('../../lib/utils/command-validator');
+const controller = require('controller');
+const preferenceManager = require('@utils/preference-manager');
+const commandValidator = require('@utils/command-validator');
 
 chai.use(sinonChai);
 chai.should();

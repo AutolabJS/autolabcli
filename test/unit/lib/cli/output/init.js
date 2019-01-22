@@ -5,7 +5,7 @@ const chalk = require('chalk');
 const figlet = require('figlet');
 const { Spinner } = require('cli-spinner');
 
-const initOutput = require('../../../../../lib/cli/output/init');
+const initOutput = require('@output/init');
 
 chai.use(sinonChai);
 chai.should();

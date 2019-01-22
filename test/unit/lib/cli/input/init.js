@@ -1,4 +1,4 @@
-const initInput = require('../../../../../lib/cli/input/init');
+const initInput = require('@input/init');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const chai = require('chai');

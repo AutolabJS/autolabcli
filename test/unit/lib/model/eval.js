@@ -8,8 +8,8 @@ const io = require('socket.io-client');
 chai.use(sinonChai);
 chai.should();
 
-const preferenceManager = require('../../../../lib/utils/preference-manager');
-const evalModel = require('../../../../lib/model/eval');
+const preferenceManager = require('@utils/preference-manager');
+const evalModel = require('@model/eval');
 
 const mockOptions = {
   lab: 'test3',

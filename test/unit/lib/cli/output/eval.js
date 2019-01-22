@@ -5,7 +5,7 @@ const chalk = require('chalk');
 const Table = require('cli-table');
 const path = require('path');
 
-const evalOutput = require('../../../../../lib/cli/output/eval');
+const evalOutput = require('@output/eval');
 
 chai.use(sinonChai);
 chai.should();

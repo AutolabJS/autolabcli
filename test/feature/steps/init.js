@@ -10,9 +10,9 @@ const path = require('path');
 const figlet = require('figlet');
 const chalk = require('chalk');
 const inquirer = require('inquirer');
-const controller = require('../../../lib/controller');
-const initInput = require('../../../lib/cli/input/init');
-const preferenceManager = require('../../../lib/utils/preference-manager');
+const controller = require('controller');
+const initInput = require('@input/init');
+const preferenceManager = require('@utils/preference-manager');
 
 chai.use(sinonChai);
 chai.should();

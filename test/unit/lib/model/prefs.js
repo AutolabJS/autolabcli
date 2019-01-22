@@ -7,8 +7,8 @@ const sinonChai = require('sinon-chai');
 chai.use(sinonChai);
 chai.should();
 
-const preferenceManager = require('../../../../lib/utils/preference-manager');
-const prefsModel = require('../../../../lib/model/prefs');
+const preferenceManager = require('@utils/preference-manager');
+const prefsModel = require('@model/prefs');
 
 chai.use(chaiAsPromised);
 chai.should();

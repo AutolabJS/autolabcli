@@ -1,0 +1,5 @@
+{
+  "name": "@utils/PromptGenerator",
+  "main": "PromptGenerator.js",
+  "version": "0.0.0"
+}
