@@ -10,9 +10,9 @@ const fs = require('fs');
 const chalk = require('chalk');
 const inquirer = require('inquirer');
 const Table = require('cli-table');
-const controller = require('../../../lib/controller');
-const preferenceManager = require('../../../lib/utils/preference-manager');
-const PromptGenerator = require('../../../lib/utils/PromptGenerator');
+const controller = require('controller');
+const preferenceManager = require('@utils/preference-manager');
+const PromptGenerator = require('@utils/PromptGenerator');
 const path = require('path');
 
 const defaultPrefPath = path.join(__dirname, '../../../default-prefs.json');

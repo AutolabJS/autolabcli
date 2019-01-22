@@ -1,0 +1,5 @@
+{
+  "name": "@utils/command-validator",
+  "main": "command-validator.js",
+  "version": "0.0.0"
+}

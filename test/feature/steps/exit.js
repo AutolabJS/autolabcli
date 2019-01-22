@@ -8,8 +8,8 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const fs = require('fs');
 const chalk = require('chalk');
-const controller = require('../../../lib/controller');
-const preferenceManager = require('../../../lib/utils/preference-manager');
+const controller = require('controller');
+const preferenceManager = require('@utils/preference-manager');
 
 chai.use(sinonChai);
 chai.should();

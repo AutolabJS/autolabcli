@@ -3,7 +3,7 @@ const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const chalk = require('chalk');
 
-const exitOutput = require('../../../../../lib/cli/output/exit');
+const exitOutput = require('@output/exit');
 
 chai.use(sinonChai);
 chai.should();

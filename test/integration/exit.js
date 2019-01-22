@@ -4,8 +4,8 @@ const sinonChai = require('sinon-chai');
 const { exec } = require('child_process');
 const chalk = require('chalk');
 const nock = require('nock');
-const controller = require('../../lib/controller');
-const preferenceManager = require('../../lib/utils/preference-manager');
+const controller = require('controller');
+const preferenceManager = require('@utils/preference-manager');
 
 chai.use(sinonChai);
 chai.should();

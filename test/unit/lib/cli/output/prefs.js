@@ -5,9 +5,9 @@ const chalk = require('chalk');
 const Table = require('cli-table');
 const path = require('path');
 
-const prefsOutput = require('../../../../../lib/cli/output/prefs');
+const prefsOutput = require('@output/prefs');
 
-const defaultPrefPath = path.join(__dirname, '../../../../../default-prefs.json');
+const defaultPrefPath = path.join(__dirname, '../../../../../../default-prefs.json');
 const defaultPrefs = JSON.parse(require('fs').readFileSync(defaultPrefPath, 'utf8'));
 
 const { supportedLanguages } = defaultPrefs;

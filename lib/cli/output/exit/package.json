@@ -1,0 +1,5 @@
+{
+  "name": "@output/exit",
+  "main": "exit.js",
+  "version": "0.0.0"
+}

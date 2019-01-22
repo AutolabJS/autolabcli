@@ -1,10 +1,10 @@
-const evalInput = require('../../../../../lib/cli/input/eval');
+const evalInput = require('@input/eval');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const inquirer = require('inquirer');
-const preferenceManager = require('../../../../../lib/utils/preference-manager');
+const preferenceManager = require('@utils/preference-manager');
 
 chai.use(chaiAsPromised);
 chai.use(sinonChai);
