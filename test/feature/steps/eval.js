@@ -17,12 +17,10 @@ const SECONDS = 7;
 const defaultTimeoutTime = SECONDS * MSECONDS;
 setDefaultTimeout(defaultTimeoutTime);
 
-const mockOptions = {
-  lab: 'test',
-  lang: 'java',
-  idNo: 'testuser',
-  commitHash: '',
-};
+Given('a valid lab {string} and an invalid lab {string}', function (validLab, invalidLab) {
+  this.validLab = validLab;
+  this.invalidLab = invalidLab;
+});
 
 Given('I have NOT logged in', function () {
   preferenceManager.deleteCredentials();
@@ -33,11 +31,18 @@ Given('I have logged in as root', function () {
 });
 
 When('I run eval command with using {string}', async function (inputType) {
-  this.lab = 'test';
+  this.lab = this.validLab;
+  const mockOptions = {
+    lab: this.lab,
+    lang: 'java',
+    idNo: 'testuser',
+    commitHash: '',
+  };
+
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'eval', '-v'];
   if (inputType === 'flags') {
-    process.argv = process.argv.concat(['-l', 'test', '--lang', 'java']);
+    process.argv = process.argv.concat(['-l', this.lab, '--lang', 'java']);
   } else if (inputType === 'prompt') {
     this.promptStub.resolves(mockOptions);
   }
@@ -46,34 +51,34 @@ When('I run eval command with using {string}', async function (inputType) {
 });
 
 When('I run eval command using i flag for id', async function () {
-  this.lab = 'test';
+  this.lab = this.validLab;
   this.idNo = 'AutolabJS_Tester';
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'eval', '-v',
-    '-l', 'test', '--lang', 'java', '-i', 'AutolabJS_Tester'];
+    '-l', this.lab, '--lang', 'java', '-i', 'AutolabJS_Tester'];
   await controller.start();
 });
 
 When('I run eval command without using i flag for id', async function () {
-  this.lab = 'test';
+  this.lab = this.validLab;
   this.idNo = 'root';
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'eval', '-v',
-    '-l', 'test', '--lang', 'java'];
+    '-l', this.lab, '--lang', 'java'];
   await controller.start();
 });
 
 When('I run eval command with invalid lab', async function () {
-  this.lab = 'test1000';
+  this.lab = this.invalidLab;
   this.idNo = 'AutolabJS_Tester';
   process.argv = ['/usr/local/nodejs/bin/node',
     '/usr/local/nodejs/bin/autolabjs', 'eval', '-v',
-    '-l', 'test1000', '--lang', 'java'];
+    '-l', this.lab, '--lang', 'java'];
   await controller.start();
 });
 
-Then('I should be displayed an error message for invalid session', function (done) {
-  const testSeconds = 1.5;
+Then('I should be displayed an error message for invalid session, with a maximum wait of {float} seconds', function (waitTime, done) {
+  const testSeconds = waitTime;
   const testTimeout = testSeconds * MSECONDS;
   setTimeout(() => {
     this.logSpy.should.have.been.calledWith(chalk.red('Your session has expired. Please run \'autolabjs init\' to login again'));
@@ -84,8 +89,8 @@ Then('I should be displayed an error message for invalid session', function (don
   }, testTimeout);
 });
 
-Then('I should be able to submit for student with the given id', function (done) {
-  const testSeconds = 6.5;
+Then('I should be able to submit for student with the given id, with a maximum wait of {float} seconds', function (waitTime, done) {
+  const testSeconds = waitTime;
   const testTimeout = testSeconds * MSECONDS;
   setTimeout(() => {
     this.logSpy.should.have.been.calledWith(chalk.green('\nSubmission successful. Retreiving results'));
@@ -115,8 +120,8 @@ Then('I should be able to submit for student with the given id', function (done)
   }, testTimeout);
 });
 
-Then('I should be displayed an error message for invalid submission', function (done) {
-  const testSeconds = 2.5;
+Then('I should be displayed an error message for invalid submission, with a maximum wait of {float} seconds', function (waitTime, done) {
+  const testSeconds = waitTime;
   const testTimeout = testSeconds * MSECONDS;
   setTimeout(() => {
     this.logSpy.should.have.been.calledWith(chalk.red('\nAccess Denied. Please try submitting again'));
@@ -146,8 +151,8 @@ Then('I should be displayed an error message for invalid submission', function (
   }, testTimeout);
 });
 
-Then('I should be able to make submisison', function (done) {
-  const testSeconds = 7;
+Then('I should be able to make submisison, with a maximum wait of {float} seconds', function (waitTime, done) {
+  const testSeconds = waitTime;
   const testTimeout = testSeconds * MSECONDS;
   setTimeout(() => {
     this.logSpy.should.have.been.calledWith(`${chalk.green('Total Score: ')}0`);

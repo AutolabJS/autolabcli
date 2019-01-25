@@ -3,10 +3,10 @@ const {
 } = require('cucumber');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
-const sinonChai = require('sinon-chai');
 const chalk = require('chalk');
 const inquirer = require('inquirer');
 const sinon = require('sinon');
+const sinonChai = require('sinon-chai');
 
 const controller = require('../../../lib/controller');
 const initInput = require('../../../lib/cli/input/init');
