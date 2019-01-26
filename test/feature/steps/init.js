@@ -4,7 +4,9 @@ const {
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const chalk = require('chalk');
+const fs = require('fs');
 const inquirer = require('inquirer');
+const path = require('path');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 
@@ -24,13 +26,15 @@ Before(function () {
   this.loggerStub = sinon.stub(logger, 'log');
 });
 
-Given('that the gitlab host is {string}', function (host) {
+Given('that the gitlab host is set from the file {string}', function (file) {
+  const prefsPath = path.join(__dirname, file);
+  const prefs = JSON.parse(fs.readFileSync(prefsPath, 'utf8'));
+  const { gitlab } = prefs;
+
   preferenceManager.setPreference({
     name: 'cliPrefs',
     values: {
-      gitlab: {
-        host,
-      },
+      gitlab,
     },
   });
 });

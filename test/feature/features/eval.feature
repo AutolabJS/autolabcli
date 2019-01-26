@@ -3,7 +3,7 @@ Feature: Eval
 
   Background:
     Given a valid lab 'test' and an invalid lab 'test1000'
-    And that the main server host is 'autolab.bits-goa.ac.in' and port is '9000'
+    And that the main server host is set from the file '../feature-prefs.json'
   
   Scenario: Eval command to submitting using flags
     Given I have already logged in

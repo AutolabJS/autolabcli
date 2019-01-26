@@ -2,7 +2,7 @@ Feature: Init
   I should be able to store my login credentials with  init  command
 
   Background:
-    Given that the gitlab host is 'autolab.bits-goa.ac.in'
+    Given that the gitlab host is set from the file '../feature-prefs.json'
 
   Scenario: Init coomand with flags -u and -p for correct login credentials
     Given a valid username as 'AutolabJS_Tester' and corresponding password as 'autolabjs123'

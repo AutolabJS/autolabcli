@@ -2,6 +2,8 @@ const {
   Given, When, Then, setDefaultTimeout,
 } = require('cucumber');
 const chai = require('chai');
+const fs = require('fs');
+const path = require('path');
 const sinonChai = require('sinon-chai');
 const chalk = require('chalk');
 const sinon = require('sinon');
@@ -22,13 +24,16 @@ Given('a valid lab {string} and an invalid lab {string}', function (validLab, in
   this.invalidLab = invalidLab;
 });
 
-Given('that the main server host is {string} and port is {string}', function (host, port) {
+Given('that the main server host is set from the file {string}', function (file) {
+  const prefsPath = path.join(__dirname, file);
+  const prefs = JSON.parse(fs.readFileSync(prefsPath, 'utf8'));
+  // eslint-disable-next-line camelcase
+  const { main_server } = prefs;
+
   preferenceManager.setPreference({
     name: 'cliPrefs',
     values: {
-      main_server: {
-        host, port,
-      },
+      main_server,
     },
   });
 });
