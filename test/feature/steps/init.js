@@ -24,6 +24,17 @@ Before(function () {
   this.loggerStub = sinon.stub(logger, 'log');
 });
 
+Given('that the gitlab host is {string}', function (host) {
+  preferenceManager.setPreference({
+    name: 'cliPrefs',
+    values: {
+      gitlab: {
+        host,
+      },
+    },
+  });
+});
+
 Given('a valid username as {string} and corresponding password as {string}', function (user, pass) {
   this.username = user;
   this.password = pass;

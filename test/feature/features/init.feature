@@ -1,6 +1,9 @@
 Feature: Init
   I should be able to store my login credentials with  init  command
 
+  Background:
+    Given that the gitlab host is 'autolab.bits-goa.ac.in'
+
   Scenario: Init coomand with flags -u and -p for correct login credentials
     Given a valid username as 'AutolabJS_Tester' and corresponding password as 'autolabjs123'
     When I run init command with 'AutolabJS_Tester' as username and 'autolabjs123' as password using 'flags'

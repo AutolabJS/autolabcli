@@ -22,6 +22,17 @@ Given('a valid lab {string} and an invalid lab {string}', function (validLab, in
   this.invalidLab = invalidLab;
 });
 
+Given('that the main server host is {string} and port is {string}', function (host, port) {
+  preferenceManager.setPreference({
+    name: 'cliPrefs',
+    values: {
+      main_server: {
+        host, port,
+      },
+    },
+  });
+});
+
 Given('I have NOT logged in', function () {
   preferenceManager.deleteCredentials();
 });
