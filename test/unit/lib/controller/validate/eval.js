@@ -17,7 +17,8 @@ chai.should();
 describe('for eval validate', function () {
   it('should return right event on valid language', testValidLang);
   it('should return right event on invalid language', testInvalidLang);
-  it('should return right event on root user', testRootUser);
+  it('should return right event on root user with id', testRootValidUser);
+  it('should return invalid event on root user without the id', testRootInvalidUser);
 });
 
 function testValidLang(done) {
@@ -61,7 +62,7 @@ function testInvalidLang(done) {
   done();
 }
 
-function testRootUser(done) {
+function testRootValidUser(done) {
   const ret = evalValidator.validate({
     name: 'evaluate',
     details: {
@@ -80,6 +81,22 @@ function testRootUser(done) {
       idNo: 'testuser2',
       commitHash: '',
     },
+  });
+  done();
+}
+
+function testRootInvalidUser(done) {
+  const ret = evalValidator.validate({
+    name: 'evaluate',
+    details: {
+      lab: 'test3',
+      lang: 'java',
+      idNo: 'root',
+      commitHash: '',
+    },
+  });
+  ret.should.deep.equal({
+    name: 'invalid',
   });
   done();
 }

@@ -1,72 +1,115 @@
 const {
-  Given, When, Then, Before, After,
+  Given, When, Then,
 } = require('cucumber');
-const Preferences = require('preferences');
-const { exec } = require('child_process');
 const chai = require('chai');
-const sinon = require('sinon');
-const sinonChai = require('sinon-chai');
-const path = require('path');
-const figlet = require('figlet');
+const chaiAsPromised = require('chai-as-promised');
 const chalk = require('chalk');
-const inquirer = require('inquirer');
+const fs = require('fs');
+const path = require('path');
+const sinonChai = require('sinon-chai');
+
 const controller = require('../../../lib/controller');
 const initInput = require('../../../lib/cli/input/init');
 const preferenceManager = require('../../../lib/utils/preference-manager');
 
 chai.use(sinonChai);
+chai.use(chaiAsPromised);
 chai.should();
 
-global.promptStub = sinon.stub(inquirer, 'prompt');
-global.logSpy = sinon.stub(console, 'log');
+// The Before and the After hooks run before/after each scenario are present in the hook.js file
 
-Given('a valid username as {string} and corresponding password as {string}', (user, pass) => {
-  username = user;
-  password = pass;
+Given('that the gitlab host is set from the file {string}', function (file) {
+  const prefsPath = path.join(__dirname, file);
+  const prefs = JSON.parse(fs.readFileSync(prefsPath, 'utf8'));
+  const { gitlab } = prefs;
+
+  preferenceManager.setPreference({
+    name: 'cliPrefs',
+    values: {
+      gitlab,
+    },
+  });
 });
 
-When('I run init command with {string} as username and {string} as password using {string}', async (username, password, inputType) => {
+Given('a valid username as {string} and corresponding password as {string}', function (user, pass) {
+  this.username = user;
+  this.password = pass;
+});
+
+When('I run init command with {string} as username and {string} as password using {string}', async function (username, password, inputType) {
   if (inputType === 'flags') {
     process.argv = ['/usr/local/nodejs/bin/node',
-      '/usr/local/nodejs/bin/autolabjs', 'init', '-u', username, '-p', password];
+      '/usr/local/nodejs/bin/autolabjs', 'init', '-v', '-u', this.username, '-p', this.password];
 
     await controller.start();
   } else if (inputType === 'prompt') {
     process.argv = ['/usr/local/nodejs/bin/node',
-      '/usr/local/nodejs/bin/autolabjs', 'init'];
-    global.promptStub.resolves({ username, password });
+      '/usr/local/nodejs/bin/autolabjs', 'init', '-v'];
+    this.promptStub.resolves({ username, password });
 
     await controller.start();
   }
 });
 
 let emptyUsernamePrompt;
-
-
 let emptyPasswordPrompt;
-When('I give empty input to init command at the prompt', async () => {
+
+When('I give empty input to init command at the prompt', async function () {
   const invalidInputTester = () => {
-    const credentails = promptStub.getCalls()[1].args[0];
-    try {
-      emptyUsernamePrompt = promptStub.getCalls()[1].args[0][0].validate('');
-      emptyPasswordPrompt = promptStub.getCalls()[1].args[0][1].validate('');
-    } catch (e) {}
+    const credentials = this.promptStub.getCall(0).args[0];
+    emptyUsernamePrompt = credentials[0].validate('');
+    emptyPasswordPrompt = credentials[1].validate('');
   };
 
-  global.promptStub.callsFake(invalidInputTester);
-  const ret = await initInput.getInput(null, {});
+  this.promptStub.callsFake(invalidInputTester);
+  await initInput.getInput(null, {});
 });
 
-Then('My login credentials and private token should be stored locally', () => {
+Then('My login credentials and private token should be stored locally', function (done) {
+  // eslint-disable-next-line no-unused-expressions
   preferenceManager.getPreference({ name: 'gitLabPrefs' }).privateToken.should.not.be.empty;
+
+  const gitlabHost = preferenceManager.getPreference({ name: 'cliPrefs' }).gitlab.host;
+  this.loggerStub.should.have.been.calledWith({ level: 'info', message: 'Init command invoked.', module: 'init' });
+  this.loggerStub.should.have.been.calledWith({
+    level: 'debug',
+    message: `Login request from ${this.username}. Authenticating...`,
+    module: 'Init',
+  });
+  this.loggerStub.should.have.been.calledWith({
+    level: 'debug',
+    message: `POST request to https://${gitlabHost}/api/v4/session?login=${this.username}&password=${this.password}`,
+    module: 'Init Model',
+  });
+  this.loggerStub.should.have.been.calledWith({ level: 'debug', message: `Authenticated ${this.username}.`, module: 'Init Model' });
+  done();
 });
 
-Then('I should be displayed a warning message when input is given using {string}', (inputType) => {
-  global.logSpy.should.have.been.calledWith(chalk.red('\nInvalid Username or Password'));
+Then('I should be displayed a warning message when invalid input', function (done) {
+  this.logSpy.should.have.been.calledWith(chalk.red('\nInvalid Username or Password'));
+
+  const gitlabHost = preferenceManager.getPreference({ name: 'cliPrefs' }).gitlab.host;
+  this.loggerStub.should.have.been.calledWith({ level: 'info', message: 'Init command invoked.', module: 'init' });
+  this.loggerStub.should.have.been.calledWith({
+    level: 'debug',
+    message: `Login request from ${this.username}. Authenticating...`,
+    module: 'Init',
+  });
+  this.loggerStub.should.have.been.calledWith({
+    level: 'debug',
+    message: `POST request to https://${gitlabHost}/api/v4/session?login=${this.username}&password=autolabjs121`,
+    module: 'Init Model',
+  });
+  this.loggerStub.should.have.been.calledWith({
+    level: 'error',
+    message: 'StatusCodeError: 401 - {"message":"401 Unauthorized"}',
+    module: 'Init Model',
+  });
+  done();
 });
 
-Then('I should be displayed a warning message to give non-empty input', () => {
-  global.promptStub.getCalls()[0].args[0][0].validate('testuser2').should.equal(true);
+Then('I should be displayed a warning message to give non-empty input', async function () {
+  this.promptStub.getCall(0).args[0][0].validate('testuser2').should.equal(true);
   emptyUsernamePrompt.should.equal('Please enter your username');
   emptyPasswordPrompt.should.equal('Please enter your password');
 });

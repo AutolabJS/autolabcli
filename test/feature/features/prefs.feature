@@ -1,4 +1,4 @@
-Feature: Init
+Feature: Prefs
   I should be able to change my cli preferences
 
   Scenario: Prefs command to change language using flags
@@ -50,6 +50,26 @@ Feature: Init
     Given I have already logged in
     When I run prefs command with changeserver using 'prompt' for 'gitlab'
     Then I should be able to change the gitlab server
+
+  Scenario: Prefs command to change logger file size using flags
+    Given I have already logged in
+    When I run prefs command with logger using 'flags' for 'maxsize'
+    Then I should be able to change logger file size
+
+  Scenario: Prefs command to change logger blacklist size using flags
+    Given I have already logged in
+    When I run prefs command with logger using 'flags' for 'blacklist'
+    Then I should be able to change logger blacklist
+
+  Scenario: Prefs command to change logger file size using prompt
+    Given I have already logged in
+    When I run prefs command with logger using 'prompt' for 'maxsize'
+    Then I should be able to change logger file size
+
+  Scenario: Prefs command to change logger blacklist again size using prompt
+    Given I have already logged in
+    When I run prefs command with logger using 'prompt' for 'blacklist'
+    Then I should be displayed an error message for invalid keyword
 
   Scenario: Prefs command to show preferences
     Given I have already logged in

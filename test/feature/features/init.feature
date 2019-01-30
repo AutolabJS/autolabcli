@@ -1,6 +1,9 @@
 Feature: Init
   I should be able to store my login credentials with  init  command
 
+  Background:
+    Given that the gitlab host is set from the file '../feature-prefs.json'
+
   Scenario: Init coomand with flags -u and -p for correct login credentials
     Given a valid username as 'AutolabJS_Tester' and corresponding password as 'autolabjs123'
     When I run init command with 'AutolabJS_Tester' as username and 'autolabjs123' as password using 'flags'
@@ -12,14 +15,14 @@ Feature: Init
     Then My login credentials and private token should be stored locally
 
   Scenario: Init command with flags -u and -p for incorrect login credentials
-    Given a valid username as 'AutolabJS_Tester' and corresponding password as 'autolabjs123'
+    Given a valid username as 'AutolabJS_Tester' and corresponding password as 'autolabjs121'
     When I run init command with 'AutolabJS_Tester' as username and 'autolabjs121' as password using 'flags'
-    Then I should be displayed a warning message when input is given using 'flags'
+    Then I should be displayed a warning message when invalid input
 
   Scenario: Init command without flags for incorrect login credentials
     Given a valid username as 'AutolabJS_Tester' and corresponding password as 'autolabjs123'
     When I run init command with 'AutolabJS_Tester' as username and 'autolabjs121' as password using 'prompt'
-    Then I should be displayed a warning message when input is given using 'prompt'
+    Then I should be displayed a warning message when invalid input
 
   Scenario: Init command with empty inputs in prompt
     Given a valid username as 'AutolabJS_Tester' and corresponding password as 'autolabjs123'

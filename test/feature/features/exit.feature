@@ -7,6 +7,6 @@ Feature: Exit
     Then My login credentials should be removed
 
   Scenario: Exit command when NOT logged in
-  Given I am NOT logged in
-  When I run exit command
-  Then I should receive a warning message for invalid exit
+    Given I am NOT logged in
+    When I run exit command
+    Then I should receive a warning message for invalid exit

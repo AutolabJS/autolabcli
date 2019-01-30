@@ -1,0 +1,9 @@
+{
+    "gitlab": {
+        "host": "localhost:9003"
+    },
+    "main_server": {
+        "host": "localhost",
+        "port": "9000"
+    }
+}
