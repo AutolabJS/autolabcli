@@ -19,7 +19,7 @@ const { supportedLanguages } = defaultPrefs;
 chai.use(sinonChai);
 chai.should();
 
-// The Before and the After hooks run before/after each scenario are present in te hook.js file
+// The Before and the After hooks run before/after each scenario are present in the hook.js file
 
 When('I run prefs command with changelang using {string}', async function (inputType) {
   process.argv = ['/usr/local/nodejs/bin/node',

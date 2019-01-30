@@ -16,7 +16,7 @@ chai.use(sinonChai);
 chai.use(chaiAsPromised);
 chai.should();
 
-// The Before and the After hooks run before/after each scenario are present in te hook.js file
+// The Before and the After hooks run before/after each scenario are present in the hook.js file
 
 Given('that the gitlab host is set from the file {string}', function (file) {
   const prefsPath = path.join(__dirname, file);

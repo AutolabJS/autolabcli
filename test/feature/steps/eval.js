@@ -14,6 +14,8 @@ const preferenceManager = require('../../../lib/utils/preference-manager');
 chai.use(sinonChai);
 chai.should();
 
+// The Before and the After hooks run before/after each scenario are present in the hook.js file
+
 const MSECONDS = 1000;
 const SECONDS = 7;
 const defaultTimeoutTime = SECONDS * MSECONDS;
