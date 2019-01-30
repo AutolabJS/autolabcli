@@ -1,30 +1,22 @@
 const {
-  Given, When, Then, Before, After,
+  Given, When, Then,
 } = require('cucumber');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const chalk = require('chalk');
 const fs = require('fs');
-const inquirer = require('inquirer');
 const path = require('path');
-const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
 
 const controller = require('../../../lib/controller');
 const initInput = require('../../../lib/cli/input/init');
 const preferenceManager = require('../../../lib/utils/preference-manager');
-const { logger } = require('../../../lib/utils/logger');
-
 
 chai.use(sinonChai);
 chai.use(chaiAsPromised);
 chai.should();
 
-Before(function () {
-  this.promptStub = sinon.stub(inquirer, 'prompt');
-  this.logSpy = sinon.stub(console, 'log');
-  this.loggerStub = sinon.stub(logger, 'log');
-});
+// The Before and the After hooks run before/after each scenario are present in te hook.js file
 
 Given('that the gitlab host is set from the file {string}', function (file) {
   const prefsPath = path.join(__dirname, file);
@@ -120,10 +112,4 @@ Then('I should be displayed a warning message to give non-empty input', async fu
   this.promptStub.getCall(0).args[0][0].validate('testuser2').should.equal(true);
   emptyUsernamePrompt.should.equal('Please enter your username');
   emptyPasswordPrompt.should.equal('Please enter your password');
-});
-
-After(function () {
-  this.promptStub.restore();
-  this.logSpy.restore();
-  this.loggerStub.restore();
 });

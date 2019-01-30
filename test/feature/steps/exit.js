@@ -10,6 +10,8 @@ const preferenceManager = require('../../../lib/utils/preference-manager');
 chai.use(sinonChai);
 chai.should();
 
+// The Before and the After hooks run before/after each scenario are present in te hook.js file
+
 Given('I have already logged in', async function () {
   preferenceManager.setPreference({ name: 'gitLabPrefs', values: { username: 'AutolabJS_Tester' } });
 });
