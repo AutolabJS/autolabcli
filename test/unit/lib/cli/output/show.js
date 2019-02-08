@@ -91,7 +91,7 @@ async function testShowScoreLab() {
   const mockFs = sandbox.mock(fs);
   const stubSpawn = sandbox.stub(childProcess, 'spawn');
   const file = '/tmp/autolabjs/scoreboard';
-  const testScores = [['user1', 5, '14 July, 1989'], ['user2', 9, '14 July, 1989'], ['user3', 10, '14 July, 1989']];
+  const testScores = [['user1', '5', '14 July, 1989'], ['user2', '9', '14 July, 1989'], ['user3', '10', '14 July, 1989']];
 
   const scoreboard = setupTestScores(testScores);
   mockFs.expects('outputFile').withExactArgs(file, scoreboard).resolves({});
@@ -116,7 +116,7 @@ async function testFsException() {
   const logStub = sandbox.stub(console, 'log');
   const mockchildProcess = sandbox.mock(childProcess);
   const file = '/tmp/autolabjs/scoreboard';
-  const testScores = [['user1', 5, '14 July, 1989'], ['user2', 9, '14 July, 1989'], ['user3', 10, '14 July, 1989']];
+  const testScores = [['user1', '5', '14 July, 1989'], ['user2', '9', '14 July, 1989'], ['user3', '10', '14 July, 1989']];
 
   const scoreboard = setupTestScores(testScores);
   mockFs.expects('outputFile').withExactArgs(file, scoreboard).throws();
@@ -137,7 +137,7 @@ async function testFsException() {
 
 async function testShowScoreStudent() {
   const logStub = sandbox.stub(console, 'log');
-  const testScores = [['user1', 5, '14 July, 1989']];
+  const testScores = [['user1', '5', '14 July, 1989']];
 
   showOutput.sendOutput({
     name: 'score',
@@ -162,11 +162,11 @@ function testInvalidLab(done) {
 
 function testHttpError(done) {
   const logStub = sandbox.stub(console, 'log');
-
+  const httpError = 4;
   showOutput.sendOutput({
     name: 'httpFailure',
     details: {
-      code: 4,
+      code: httpError,
     },
   });
 
@@ -176,11 +176,11 @@ function testHttpError(done) {
 
 function testQueryFailure(done) {
   const logStub = sandbox.stub(console, 'log');
-
+  const httpUauth = 401;
   showOutput.sendOutput({
     name: 'httpFailure',
     details: {
-      code: 401,
+      code: httpUauth,
     },
   });
 

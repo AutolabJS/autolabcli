@@ -41,6 +41,8 @@ describe('for showModel', function () {
 function testShowStatus(done) {
   const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   const callbackSpy = sandbox.spy();
+  const testTimeout = 30;
+
   const testStatus = {
     components: [
       { role: 'execution_node', hostname: 'localhost', port: '8091', status: 'up' },
@@ -69,12 +71,13 @@ function testShowStatus(done) {
     });
     mocklogger.verify();
     done();
-  }, 30);
+  }, testTimeout);
 }
 
 function testHttpError(done) {
   const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   const callbackSpy = sandbox.spy();
+  const testTimeout = 10;
 
   const fakeServer = nock(`https://${host}:${port}`)
     .get('/status');
@@ -89,21 +92,22 @@ function testHttpError(done) {
     callbackSpy.should.have.been.calledWithExactly({
       name: 'httpFailure',
       details: {
-        code: 401,
+        code: httpUnauth,
       },
     });
     mocklogger.verify();
     done();
-  }, 10);
+  }, testTimeout);
 }
 
 // eslint-disable-next-line max-lines-per-function
 function testShowScore(done) {
   const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   const callbackSpy = sandbox.spy();
+  const testTimeout = 20;
   const testScores = [
-    { id_no: 'testuser1', score: 10, time: '5, July 2017 13:12:00' },
-    { id_no: 'testuser2', score: 9, time: '5, July 2017 13:05:00' },
+    { id_no: 'testuser1', score: '10', time: '5, July 2017 13:12:00' },
+    { id_no: 'testuser2', score: '9', time: '5, July 2017 13:05:00' },
   ];
 
   const fakeServer = nock(`https://${host}:${port}`)
@@ -124,18 +128,19 @@ function testShowScore(done) {
     callbackSpy.should.have.been.calledWithExactly({
       name: 'score',
       details: {
-        scores: [['testuser1', 10, '5, July 2017 13:12:00'],
-          ['testuser2', 9, '5, July 2017 13:05:00']],
+        scores: [['testuser1', '10', '5, July 2017 13:12:00'],
+          ['testuser2', '9', '5, July 2017 13:05:00']],
       },
     });
     mocklogger.verify();
     done();
-  }, 20);
+  }, testTimeout);
 }
 
 // function testInvalidLab(done) {
 //   const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
 //   const callbackSpy = sandbox.spy();
+//   const testTimeout = 20;
 
 //   const fakeServer = nock(`https://${host}:${port}`)
 //     .get('/scoreboard/lab2');
@@ -155,16 +160,17 @@ function testShowScore(done) {
 //     callbackSpy.should.have.been.calledWithExactly({ name: 'invalid_lab' });
 //     mocklogger.verify();
 //     done();
-//   }, 20);
+//   }, testTimeout);
 // }
 
 // eslint-disable-next-line max-lines-per-function
 function testShowScoreStudent(done) {
   const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   const callbackSpy = sandbox.spy();
+  const testTimeout = 20;
   const testScores = [
-    { id_no: 'testuser1', score: 10, time: '5, July 2017 13:12:00' },
-    { id_no: 'testuser2', score: 9, time: '5, July 2017 13:05:00' },
+    { id_no: 'testuser1', score: '10', time: '5, July 2017 13:12:00' },
+    { id_no: 'testuser2', score: '9', time: '5, July 2017 13:05:00' },
   ];
 
   const fakeServer = nock(`https://${host}:${port}`)
@@ -186,18 +192,20 @@ function testShowScoreStudent(done) {
     callbackSpy.should.have.been.calledWithExactly({
       name: 'score',
       details: {
-        scores: [['testuser2', 9, '5, July 2017 13:05:00']],
+        scores: [['testuser2', '9', '5, July 2017 13:05:00']],
       },
     });
     mocklogger.verify();
     done();
-  }, 20);
+  }, testTimeout);
 }
 
 function testHttpFailure(done) {
   const mocklogger = sandbox.mock(logger).expects('log').atLeast(1);
   const callbackSpy = sandbox.spy();
+  const testTimeout = 10;
 
+  const httpError = 4;
   showModel.show({
     name: 'score',
     details: {
@@ -209,12 +217,12 @@ function testHttpFailure(done) {
     callbackSpy.should.have.been.calledWithExactly({
       name: 'httpFailure',
       details: {
-        code: 4,
+        code: httpError,
       },
     });
     mocklogger.verify();
     done();
-  }, 10);
+  }, testTimeout);
 }
 
 function testDefaultEvent(done) {
