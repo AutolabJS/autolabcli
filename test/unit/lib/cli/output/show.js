@@ -89,7 +89,7 @@ function setupTestScores(testScores) {
 
 async function testShowScoreLab() {
   const mockFs = sandbox.mock(fs);
-  const mockchildProcess = sandbox.mock(childProcess);
+  const stubSpawn = sandbox.stub(childProcess, 'spawn');
   const file = '/tmp/autolabjs/scoreboard';
   const testScores = [['user1', 5, '14 July, 1989'], ['user2', 9, '14 July, 1989'], ['user3', 10, '14 July, 1989']];
 
@@ -104,10 +104,10 @@ async function testShowScoreLab() {
   });
 
 
-  mockchildProcess.expects('spawn').withExactArgs('cat /tmp/autolabjs/scoreboard | less -r', {
+  stubSpawn.should.be.calledWithExactly('cat /tmp/autolabjs/scoreboard | less -r', {
     stdio: 'inherit',
     shell: true,
-  }).returns({});
+  });
   mockFs.verify();
 }
 
