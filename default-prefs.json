@@ -26,5 +26,9 @@
     "logDirectory": ".autolabjs",
     "logLocation" : "cli.log",
     "blacklist" : ["log", "password", "privateToken"]
+  },
+
+  "timeouts": {
+    "session": 7200
   }
 }
